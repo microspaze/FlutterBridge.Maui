@@ -1,0 +1,66 @@
+﻿<metadata>
+    <attr path="/api/package[@name='io.flutter']" name="managedName">FlutterBinding</attr>
+    <attr path="/api/package[@name='io.flutter.app']" name="managedName">FlutterBinding.App</attr>
+    <attr path="/api/package[@name='io.flutter.embedding']" name="managedName">FlutterBinding.Embedding</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.android']" name="managedName">FlutterBinding.Embedding.Android</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine']" name="managedName">FlutterBinding.Embedding.Engine</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine.dart']" name="managedName">FlutterBinding.Embedding.Engine.Dart</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine.deferredcomponents']" name="managedName">FlutterBinding.Embedding.Engine.DeferredComponents</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine.loader']" name="managedName">FlutterBinding.Embedding.Engine.Loader</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine.mutatorsstack']" name="managedName">FlutterBinding.Embedding.Engine.MutatorsStack</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine.plugins']" name="managedName">FlutterBinding.Embedding.Engine.Plugins</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine.plugins.activity']" name="managedName">FlutterBinding.Embedding.Engine.Plugins</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine.plugins.broadcastreceiver']" name="managedName">FlutterBinding.Embedding.Engine.Plugins.BroadcastReceiver</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine.plugins.contentprovider']" name="managedName">FlutterBinding.Embedding.Engine.Plugins.ContentProvider</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine.plugins.lifecycle']" name="managedName">FlutterBinding.Embedding.Engine.Plugins.Lifecycle</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine.plugins.service']" name="managedName">FlutterBinding.Embedding.Engine.Plugins.Service</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine.plugins.shim']" name="managedName">FlutterBinding.Embedding.Engine.Plugins.Shim</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine.plugins.util']" name="managedName">FlutterBinding.Embedding.Engine.Plugins.Util</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine.renderer']" name="managedName">FlutterBinding.Embedding.Engine.Renderer</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine.systemchannels']" name="managedName">FlutterBinding.Embedding.Engine.SystemChannels</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.common']" name="managedName">FlutterBinding.Plugin.Common</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.editing']" name="managedName">FlutterBinding.Plugin.Editing</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.localization']" name="managedName">FlutterBinding.Plugin.Localization</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.mouse']" name="managedName">FlutterBinding.Plugin.Mouse</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.platform']" name="managedName">FlutterBinding.Plugin.Platform</attr>
+    <attr path="/api/package[@name='io.flutter.util']" name="managedName">FlutterBinding.Util</attr>
+    <attr path="/api/package[@name='io.flutter.view']" name="managedName">FlutterBinding.View</attr>
+
+    <!-- This line prevents the creation of a wrapper around interface DartExecutor.IsolateServiceIdListener inside package 'io.flutter.embedding.engine.dart' -->
+    <!-- This interface won't be available in C# (as it should be: its visibility is internal at package 'io.flutter.embedding.engine.dart' by design) -->
+    <remove-node path="/api/package[@name='io.flutter.embedding.engine.dart']/interface[@name='DartExecutor.IsolateServiceIdListener']" />
+
+    <attr path="/api/package[@name='io.flutter.app']/class[@name='FlutterActivity']/method[@name='onUserLeaveHint' and count(parameter)=0]" name="visibility">protected</attr>
+    <attr path="/api/package[@name='io.flutter.app']/class[@name='FlutterFragmentActivity']/method[@name='onUserLeaveHint' and count(parameter)=0]" name="visibility">protected</attr>
+
+    <remove-node path="/api/package[@name='io.flutter.embedding.android']/class[@name='FlutterActivity']/field[@name='delegate']" />
+    <remove-node path="/api/package[@name='io.flutter.embedding.android']/class[@name='FlutterActivity']/method[@name='getBackgroundMode']" />
+    <attr path="/api/package[@name='io.flutter.embedding.android']/class[@name='FlutterActivity']/method[@name='onPostResume' and count(parameter)=0]" name="visibility">protected</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.android']/class[@name='FlutterActivity']/method[@name='onUserLeaveHint' and count(parameter)=0]" name="visibility">protected</attr>
+    <remove-node path="/api/package[@name='io.flutter.embedding.android']/class[@name='FlutterActivity.CachedEngineIntentBuilder']/method[@name='backgroundMode']" />
+    <remove-node path="/api/package[@name='io.flutter.embedding.android']/class[@name='FlutterActivity.NewEngineIntentBuilder']/method[@name='backgroundMode']" />
+
+    <remove-node path="/api/package[@name='io.flutter.embedding.android']/class[@name='FlutterFragmentActivity']/method[@name='getBackgroundMode']" />
+    <attr path="/api/package[@name='io.flutter.embedding.android']/class[@name='FlutterFragmentActivity']/method[@name='onPostResume' and count(parameter)=0]" name="visibility">protected</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.android']/class[@name='FlutterFragmentActivity']/method[@name='onUserLeaveHint' and count(parameter)=0]" name="visibility">protected</attr>
+    <remove-node path="/api/package[@name='io.flutter.embedding.android']/class[@name='FlutterFragmentActivity.CachedEngineIntentBuilder']/method[@name='backgroundMode']" />
+    <remove-node path="/api/package[@name='io.flutter.embedding.android']/class[@name='FlutterFragmentActivity.NewEngineIntentBuilder']/method[@name='backgroundMode']" />
+
+    <attr path="/api/package[@name='io.flutter.plugin.common']/interface[@name='MethodChannel.MethodCallHandler']/method[@name='onMethodCall']/parameter[@name='p0']" name="name">call</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.common']/interface[@name='MethodChannel.MethodCallHandler']/method[@name='onMethodCall']/parameter[@name='p1']" name="name">result</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.common']/interface[@name='MethodChannel.Result']/method[@name='error']/parameter[@name='p0']" name="name">errorCode</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.common']/interface[@name='MethodChannel.Result']/method[@name='error']/parameter[@name='p1']" name="name">errorMessage</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.common']/interface[@name='MethodChannel.Result']/method[@name='error']/parameter[@name='p2']" name="name">errorDetails</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.common']/interface[@name='MethodChannel.Result']/method[@name='success']/parameter[@name='p0']" name="name">result</attr>
+
+    <attr path="/api/package[@name='io.flutter.plugin.common']/interface[@name='EventChannel.EventSink']/method[@name='error']/parameter[@name='p0']" name="name">errorCode</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.common']/interface[@name='EventChannel.EventSink']/method[@name='error']/parameter[@name='p1']" name="name">errorMessage</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.common']/interface[@name='EventChannel.EventSink']/method[@name='error']/parameter[@name='p2']" name="name">errorDetails</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.common']/interface[@name='EventChannel.EventSink']/method[@name='success']/parameter[@name='p0']" name="name">@event</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.common']/interface[@name='EventChannel.StreamHandler']/method[@name='onCancel']/parameter[@name='p0']" name="name">arguments</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.common']/interface[@name='EventChannel.StreamHandler']/method[@name='onListen']/parameter[@name='p0']" name="name">arguments</attr>
+    <attr path="/api/package[@name='io.flutter.plugin.common']/interface[@name='EventChannel.StreamHandler']/method[@name='onListen']/parameter[@name='p1']" name="name">events</attr>
+
+    <remove-node path="/api/package[@name='io.flutter.plugin.mouse']/interface[@name='MouseCursorPlugin.MouseCursorViewDelegate']/method[@name='setPointerIcon']" />
+    <remove-node path="/api/package[@name='io.flutter.embedding.android']/class[@name='KeyboardManager']"/>
+</metadata>

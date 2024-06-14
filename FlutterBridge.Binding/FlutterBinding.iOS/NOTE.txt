@@ -1,0 +1,50 @@
+﻿In order to generate ApiDefinitions.cs and StructsAndEnums.cs via Objective Sharpie one must run the following command:
+
+sharpie bind --output=<path_to_folder> --namespace=Flutter --sdk=iphoneos13.2 Flutter.framework/Headers/Flutter.h -scope Flutter.framework/Headers -c -xobjective-c F .
+
+where 
+- argument --sdk must match the SDK version bundled with the installed version of Xcode (i.e. iphoneos14.4 for Xcode 12.4)
+- argument -xobjective-c must be provided AFTER argument -c
+- the final dot is required
+
+The command can be run after a Flutter module has been built for iOS integration.
+
+For example, if we have a Flutter module located at <path_to_flutter_module>:
+- navigate to   <path_to_flutter_module>
+- run           flutter build ios-framework --no-profile --no-release
+- navigate to   <path_to_flutter_module>/build/ios/framework/Debug/
+
+If we're using Flutter 1.x, run the above Objective Sharpie command.
+If we're using Flutter 2.x, navigate to Flutter.xcframework/ios-armv7_arm64/ and then run the Objective Sharpie command.
+
+Objective Shapie will generate ApiDefinitions.cs and StructsAndEnums.cs at <path_to_folder> overwriting any existing file.
+
+The generated files MUST always BE REVISED in order to:
+- fix all the definitions decorated with Verify attribute (please see: https://docs.microsoft.com/it-it/xamarin/cross-platform/macios/binding/objective-sharpie/platform/verify)
+- fix all the definitions that generate errors when compiling the binding library
+
+
+=== General Notes ===
+
+The following warning at compile time:
+
+/Library/Frameworks/Mono.framework/Versions/6.4.0/lib/mono/msbuild/Current/bin/Microsoft.Common.CurrentVersion.targets(5,5): Warning MSB9004: ManifestResourceWithNoCulture item type is deprecated. Emit EmbeddedResource items instead, with metadata WithCulture='false', Type='Resx', and optional LogicalName. (MSB9004) (Flutter.Framework)
+
+is linked to:
+
+https://github.com/xamarin/xamarin-macios/issues/3876
+
+
+
+=== Objective Sharpie ===
+
+The latest version can be downloaded at:
+
+http://aka.ms/objective-sharpie
+
+Run the following command to check for updates:
+
+sharpie update
+
+Objective Sharpie is installed by default at: /Library/Frameworks/ObjectiveSharpie.framework
+while the command "sharpie" is installed at: /usr/local/bin/sharpie
