@@ -1,0 +1,121 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net8.0-android</TargetFrameworks>
+		<!--<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>-->
+		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
+
+		<!-- Note for MacCatalyst:
+		The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
+		When specifying both architectures, use the plural <RuntimeIdentifiers> instead of the singular <RuntimeIdentifier>.
+		The Mac App Store will NOT accept apps with ONLY maccatalyst-arm64 indicated;
+		either BOTH runtimes must be indicated or ONLY macatalyst-x64. -->
+		<!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
+
+		<OutputType>Exe</OutputType>
+		<RootNamespace>FlutterBridge.Sample</RootNamespace>
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<!-- Display name -->
+		<ApplicationTitle>FlutterBridge.Sample</ApplicationTitle>
+
+		<!-- App Identifier -->
+		<ApplicationId>com.companyname.flutterbridge.sample</ApplicationId>
+
+		<!-- Versions -->
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
+
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<!--<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>-->
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- App Icon -->
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+
+		<!-- Splash Screen -->
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+
+		<!-- Images -->
+		<MauiImage Include="Resources\Images\*" />
+		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
+
+		<!-- Custom Fonts -->
+		<MauiFont Include="Resources\Fonts\*" />
+
+		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AndroidResource Remove="Flutter\**" />
+	  <AndroidResource Remove="Platforms\iOS\**" />
+	  <AndroidResource Remove="Platforms\MacCatalyst\**" />
+	  <AndroidResource Remove="Platforms\Windows\**" />
+	  <Compile Remove="Flutter\**" />
+	  <Compile Remove="Platforms\iOS\**" />
+	  <Compile Remove="Platforms\MacCatalyst\**" />
+	  <Compile Remove="Platforms\Windows\**" />
+	  <EmbeddedResource Remove="Flutter\**" />
+	  <EmbeddedResource Remove="Platforms\iOS\**" />
+	  <EmbeddedResource Remove="Platforms\MacCatalyst\**" />
+	  <EmbeddedResource Remove="Platforms\Windows\**" />
+	  <MauiCss Remove="Flutter\**" />
+	  <MauiCss Remove="Platforms\iOS\**" />
+	  <MauiCss Remove="Platforms\MacCatalyst\**" />
+	  <MauiCss Remove="Platforms\Windows\**" />
+	  <MauiXaml Remove="Flutter\**" />
+	  <MauiXaml Remove="Platforms\iOS\**" />
+	  <MauiXaml Remove="Platforms\MacCatalyst\**" />
+	  <MauiXaml Remove="Platforms\Windows\**" />
+	  <None Remove="Flutter\**" />
+	  <None Remove="Platforms\iOS\**" />
+	  <None Remove="Platforms\MacCatalyst\**" />
+	  <None Remove="Platforms\Windows\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.60" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.60" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+		<PackageReference Include="Xamarin.AndroidX.Activity" Version="1.9.0.3" />
+		<PackageReference Include="Xamarin.AndroidX.Activity.Ktx" Version="1.9.0.3" />
+		<PackageReference Include="Xamarin.AndroidX.Browser" Version="1.8.0.3" />
+		<PackageReference Include="Xamarin.AndroidX.Collection" Version="1.4.0.5" />
+		<PackageReference Include="Xamarin.AndroidX.Collection.Jvm" Version="1.4.0.4" />
+		<PackageReference Include="Xamarin.AndroidX.Collection.Ktx" Version="1.4.0.4" />
+		<PackageReference Include="Xamarin.AndroidX.Fragment" Version="1.7.0.2" />
+        <PackageReference Include="Xamarin.AndroidX.Lifecycle.Common" Version="2.7.0.4" />
+        <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.7.0.4" />
+        <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.7.0.4" />
+		<PackageReference Include="Xamarin.AndroidX.Tracing.Tracing" Version="1.2.0.4" />
+		<PackageReference Include="Xamarin.AndroidX.Window" Version="1.2.0.5" />
+	</ItemGroup>
+
+	<ItemGroup>
+      <ProjectReference Include="..\FlutterBridge.Binding\FlutterBinding.Droid\FlutterBinding.Droid.csproj" />
+	  <!--<ProjectReference Include="..\FlutterBridge.Maui\FlutterBridge.Maui.csproj" />-->
+	</ItemGroup>
+
+    <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+        <AndroidLibrary Condition="'$(Configuration)' == 'Debug'" Include="Flutter\flutter_module\build\host\outputs\repo\com\example\flutter_module\flutter_debug\1.0\flutter_debug-1.0.aar" Bind="false" >
+            <Link>Platforms\Android\Jars\flutter_debug-1.0.aar</Link>
+        </AndroidLibrary >
+        <AndroidLibrary Condition="'$(Configuration)' == 'Release'" Include="Flutter\flutter_module\build\host\outputs\repo\com\example\flutter_module\flutter_release\1.0\flutter_release-1.0.aar" Bind="false" >
+            <Link>Platforms\Android\Jars\flutter_release-1.0.aar</Link>
+        </AndroidLibrary >
+    </ItemGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionFlutterBridgeSampleDroidHideInfoBar="True" /></VisualStudio></ProjectExtensions>
+
+</Project>

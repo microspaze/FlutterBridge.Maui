@@ -9,7 +9,7 @@
     <attr path="/api/package[@name='io.flutter.embedding.engine.loader']" name="managedName">FlutterBinding.Embedding.Engine.Loader</attr>
     <attr path="/api/package[@name='io.flutter.embedding.engine.mutatorsstack']" name="managedName">FlutterBinding.Embedding.Engine.MutatorsStack</attr>
     <attr path="/api/package[@name='io.flutter.embedding.engine.plugins']" name="managedName">FlutterBinding.Embedding.Engine.Plugins</attr>
-    <attr path="/api/package[@name='io.flutter.embedding.engine.plugins.activity']" name="managedName">FlutterBinding.Embedding.Engine.Plugins</attr>
+    <attr path="/api/package[@name='io.flutter.embedding.engine.plugins.activity']" name="managedName">FlutterBinding.Embedding.Engine.Plugins.Activity</attr>
     <attr path="/api/package[@name='io.flutter.embedding.engine.plugins.broadcastreceiver']" name="managedName">FlutterBinding.Embedding.Engine.Plugins.BroadcastReceiver</attr>
     <attr path="/api/package[@name='io.flutter.embedding.engine.plugins.contentprovider']" name="managedName">FlutterBinding.Embedding.Engine.Plugins.ContentProvider</attr>
     <attr path="/api/package[@name='io.flutter.embedding.engine.plugins.lifecycle']" name="managedName">FlutterBinding.Embedding.Engine.Plugins.Lifecycle</attr>
@@ -18,6 +18,7 @@
     <attr path="/api/package[@name='io.flutter.embedding.engine.plugins.util']" name="managedName">FlutterBinding.Embedding.Engine.Plugins.Util</attr>
     <attr path="/api/package[@name='io.flutter.embedding.engine.renderer']" name="managedName">FlutterBinding.Embedding.Engine.Renderer</attr>
     <attr path="/api/package[@name='io.flutter.embedding.engine.systemchannels']" name="managedName">FlutterBinding.Embedding.Engine.SystemChannels</attr>
+    <attr path="/api/package[@name='io.flutter.plugins']" name="managedName">FlutterBinding.Plugins</attr>
     <attr path="/api/package[@name='io.flutter.plugin.common']" name="managedName">FlutterBinding.Plugin.Common</attr>
     <attr path="/api/package[@name='io.flutter.plugin.editing']" name="managedName">FlutterBinding.Plugin.Editing</attr>
     <attr path="/api/package[@name='io.flutter.plugin.localization']" name="managedName">FlutterBinding.Plugin.Localization</attr>
