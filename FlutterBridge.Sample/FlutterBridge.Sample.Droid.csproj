@@ -88,6 +88,11 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.60" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.60" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+		<PackageReference Include="protobuf-net" Version="3.2.30" />
+		<PackageReference Include="protobuf-net.BuildTools" Version="3.2.33">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Xamarin.AndroidX.Activity" Version="1.9.0.3" />
 		<PackageReference Include="Xamarin.AndroidX.Activity.Ktx" Version="1.9.0.3" />
 		<PackageReference Include="Xamarin.AndroidX.Browser" Version="1.8.0.3" />
@@ -102,18 +107,25 @@
 		<PackageReference Include="Xamarin.AndroidX.Window" Version="1.2.0.5" />
 	</ItemGroup>
 
-	<ItemGroup>
-      <ProjectReference Include="..\FlutterBridge.Binding\FlutterBinding.Droid\FlutterBinding.Droid.csproj" />
-	  <!--<ProjectReference Include="..\FlutterBridge.Maui\FlutterBridge.Maui.csproj" />-->
+    <ItemGroup>
+		<AdditionalFiles Include="Flutter\flutter_module\proto\*.proto" Link="Protos\%(RecursiveDir)%(FileName)%(Extension)" />
 	</ItemGroup>
 
     <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-        <AndroidLibrary Condition="'$(Configuration)' == 'Debug'" Include="Flutter\flutter_module\build\host\outputs\repo\com\example\flutter_module\flutter_debug\1.0\flutter_debug-1.0.aar" Bind="false" >
+        <AndroidLibrary Condition="'$(Configuration)' == 'Debug'" Include="Flutter\flutter_module\build\host\outputs\repo\com\example\flutter_module\flutter_debug\1.0\flutter_debug-1.0.aar" Bind="false">
             <Link>Platforms\Android\Jars\flutter_debug-1.0.aar</Link>
-        </AndroidLibrary >
-        <AndroidLibrary Condition="'$(Configuration)' == 'Release'" Include="Flutter\flutter_module\build\host\outputs\repo\com\example\flutter_module\flutter_release\1.0\flutter_release-1.0.aar" Bind="false" >
+        </AndroidLibrary>
+        <AndroidLibrary Condition="'$(Configuration)' == 'Release'" Include="Flutter\flutter_module\build\host\outputs\repo\com\example\flutter_module\flutter_release\1.0\flutter_release-1.0.aar" Bind="false">
             <Link>Platforms\Android\Jars\flutter_release-1.0.aar</Link>
-        </AndroidLibrary >
+        </AndroidLibrary>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Services\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\FlutterBridge.Maui\FlutterBridge.Maui.Droid.csproj" />
     </ItemGroup>
 
 	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionFlutterBridgeSampleDroidHideInfoBar="True" /></VisualStudio></ProjectExtensions>
