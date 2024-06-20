@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace FlutterBridge.Maui.Attributes
 {
-    [AttributeUsage(AttributeTargets.Method)]
-    public sealed class BridgeActionAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Enum)]
+    public sealed class BridgeDataAttribute : Attribute
     {
     }
 }
