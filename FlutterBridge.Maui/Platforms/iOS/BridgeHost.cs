@@ -111,7 +111,7 @@ namespace FlutterBridge.Maui
 
             Mode = mode;
 
-            BridgeRuntime.OnBridgeEvent += FlutnetRuntimeOnPlatformEvent;
+            BridgeRuntime.OnBridgeEvent += OnBridgeEvent;
 
             if (Mode == FlutterBridgeMode.WebSocket)
             {
@@ -127,7 +127,7 @@ namespace FlutterBridge.Maui
             if (_disposed)
                 return;
 
-            BridgeRuntime.OnBridgeEvent -= FlutnetRuntimeOnPlatformEvent;
+            BridgeRuntime.OnBridgeEvent -= OnBridgeEvent;
 
             _methodChannelIncoming.Dispose();
             _methodChannelTest.Dispose();
@@ -295,7 +295,7 @@ namespace FlutterBridge.Maui
             }
         }
 
-        private void FlutnetRuntimeOnPlatformEvent(object sender, BridgeEventArgs e)
+        private void OnBridgeEvent(object sender, BridgeEventArgs e)
         {
             // Prevent dispatching events to Flutter through event channel
             // if bridge is configured for WebSocket communication
