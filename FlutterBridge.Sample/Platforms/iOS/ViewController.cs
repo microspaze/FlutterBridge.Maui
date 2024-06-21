@@ -31,7 +31,7 @@ namespace FlutterBridge.Sample
 #if DEBUG
                 _bridge = new BridgeHost(this.Engine, FlutterBridgeMode.PlatformChannel);
 #else
-                _bridge = new BridgeHost(this.Engine, FlutnetBridgeMode.PlatformChannel);
+                _bridge = new BridgeHost(this.Engine, FlutterBridgeMode.PlatformChannel);
 #endif
                 _initialized = true;
             }
