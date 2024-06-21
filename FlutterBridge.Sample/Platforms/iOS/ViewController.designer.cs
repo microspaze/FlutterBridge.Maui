@@ -6,7 +6,7 @@
 //
 using Foundation;
 
-namespace Flutnet.Sample
+namespace FlutterBridge.Sample
 {
     [Register("ViewController")]
     partial class ViewController
