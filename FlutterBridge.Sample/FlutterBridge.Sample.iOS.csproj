@@ -57,18 +57,23 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Flutter\**" />
 	  <Compile Remove="Platforms\Android\**" />
 	  <Compile Remove="Platforms\MacCatalyst\**" />
 	  <Compile Remove="Platforms\Windows\**" />
+	  <EmbeddedResource Remove="Flutter\**" />
 	  <EmbeddedResource Remove="Platforms\Android\**" />
 	  <EmbeddedResource Remove="Platforms\MacCatalyst\**" />
 	  <EmbeddedResource Remove="Platforms\Windows\**" />
+	  <MauiCss Remove="Flutter\**" />
 	  <MauiCss Remove="Platforms\Android\**" />
 	  <MauiCss Remove="Platforms\MacCatalyst\**" />
 	  <MauiCss Remove="Platforms\Windows\**" />
+	  <MauiXaml Remove="Flutter\**" />
 	  <MauiXaml Remove="Platforms\Android\**" />
 	  <MauiXaml Remove="Platforms\MacCatalyst\**" />
 	  <MauiXaml Remove="Platforms\Windows\**" />
+	  <None Remove="Flutter\**" />
 	  <None Remove="Platforms\Android\**" />
 	  <None Remove="Platforms\MacCatalyst\**" />
 	  <None Remove="Platforms\Windows\**" />
