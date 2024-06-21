@@ -1,6 +1,5 @@
 ﻿using FlutterBridge.Maui.Attributes;
 using FlutterBridge.Maui.Extensions;
-using FlutterBridge.Maui.Helpers;
 using FlutterBridge.Maui.Models;
 using System;
 using System.Collections.Concurrent;
@@ -67,22 +66,6 @@ namespace FlutterBridge.Maui
             public bool TryGetService(string name, out ServiceInfo service)
             {
                 return _services.TryGetValue(name, out service);
-            }
-        }
-
-        internal class ServiceEventReceiver
-        {
-            readonly Action<object, EventArgs> _handle;
-
-            public ServiceEventReceiver(Action<object, EventArgs> handle)
-            {
-                _handle = handle;
-            }
-
-            [Obfuscation(Exclude = true)]
-            private void Handle(object sender, EventArgs args)
-            {
-                _handle.Invoke(sender, args);
             }
         }
 
@@ -179,6 +162,22 @@ namespace FlutterBridge.Maui
                         eventInfo.RemoveEventHandler(_instance, delegateForEvent);
                     }
                 }
+            }
+        }
+
+        internal class ServiceEventReceiver
+        {
+            readonly Action<object, EventArgs> _handle;
+
+            public ServiceEventReceiver(Action<object, EventArgs> handle)
+            {
+                _handle = handle;
+            }
+
+            [Obfuscation(Exclude = true)]
+            private void Handle(object sender, EventArgs args)
+            {
+                _handle.Invoke(sender, args);
             }
         }
 
@@ -290,7 +289,7 @@ namespace FlutterBridge.Maui
         /// <summary>
         /// Called when a .NET event that must be propagated to Flutter is raised.
         /// This method propagates the event through <see cref="OnBridgeEvent"/>
-        /// so that <see cref="FlutterBridge"/> can subscribe and send data to Flutter.
+        /// so that <see cref="BridgeHost"/> can subscribe and send data to Flutter.
         /// </summary>
         private static void PropagateBridgeEvent(string serviceName, string eventName, object sender, EventArgs eventArgs)
         {
@@ -305,12 +304,127 @@ namespace FlutterBridge.Maui
         }
 
         #endregion
-    }
 
-    internal class BridgeEventArgs : EventArgs
-    {
-        public string ServiceName { get; set; } = string.Empty;
-        public string EventName { get; set; } = string.Empty;
-        public EventArgs EventData { get; set; } = EventArgs.Empty;
+        #region Runner
+
+        /// <summary>
+        /// Invoke a platform operation with the specified arguments.
+        /// </summary>
+        public static BridgeOperationResult Run(BridgeOperationInfo operation, object?[] arguments)
+        {
+            // Check if the operation must be invoked on the main (UI) thread
+
+            object? operationResult = null;
+            Exception? operationError = null;
+
+            // 1. Async call on UI Thread
+            var mainThreadRequired = operation.OperationAttribute?.MainThreadRequired == true;
+            if (mainThreadRequired && operation.IsAsyncTask)
+            {
+                ManualResetEvent uiFinishEvent = new ManualResetEvent(false);
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    var task = operation.DelegateWithResult?.Invoke(arguments) as Task;
+                    task?.ContinueWith(t =>
+                    {
+                        if (t.IsFaulted)
+                        {
+                            operationError = t.Exception?.GetBaseException();
+                        }
+                        else if (t.IsCanceled)
+                        {
+                            operationError = new BridgeException(BridgeErrorCode.OperationCanceled);
+                        }
+                        else
+                        {
+                            operationResult = t.TaskResult();
+                        }
+                        uiFinishEvent.Set();
+                    });
+                });
+                uiFinishEvent.WaitOne();
+            }
+            // 2. Sync call on UI Thread
+            else if (mainThreadRequired)
+            {
+                var uiFinishEvent = new ManualResetEvent(false);
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    try
+                    {
+                        if (operation.HasResult)
+                        {
+                            operationResult = operation.DelegateWithResult?.Invoke(arguments);
+                        }
+                        else
+                        {
+                            operation.Delegate?.Invoke(arguments);
+                            operationResult = null;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        operationError = ex;
+                    }
+                    finally
+                    {
+                        uiFinishEvent.Set();
+                    }
+                });
+                uiFinishEvent.WaitOne();
+            }
+            // 3. Async call on Background Thread
+            else if (operation.IsAsyncTask)
+            {
+                var taskFinishEvent = new ManualResetEvent(false);
+                var task = operation.DelegateWithResult?.Invoke(arguments) as Task;
+                task?.ContinueWith(t =>
+                {
+                    if (t.IsFaulted)
+                    {
+                        operationError = t.Exception?.GetBaseException();
+                    }
+                    else if (t.IsCanceled)
+                    {
+                        operationError = new BridgeException(BridgeErrorCode.OperationCanceled);
+                    }
+                    else
+                    {
+                        operationResult = t.TaskResult();
+                    }
+                    taskFinishEvent.Set();
+                });
+                taskFinishEvent.WaitOne();
+            }
+            // 4. Sync call on Background Thread
+            else
+            {
+                try
+                {
+                    if (operation.HasResult)
+                    {
+                        operationResult = operation.DelegateWithResult?.Invoke(arguments);
+                    }
+                    else
+                    {
+                        operation.Delegate?.Invoke(arguments);
+                        operationResult = null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    operationError = ex;
+                }
+            }
+
+            // Return the result
+            return new BridgeOperationResult
+            {
+                Result = operationResult,
+                Error = operationError
+            };
+        }
+
+        #endregion
     }
 }

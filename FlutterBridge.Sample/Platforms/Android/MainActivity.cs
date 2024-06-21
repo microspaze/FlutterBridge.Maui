@@ -4,6 +4,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using FlutterBinding.Embedding.Android;
+using FlutterBinding.Embedding.Engine;
 
 namespace FlutterBridge.Sample
 {
@@ -36,8 +37,24 @@ namespace FlutterBridge.Sample
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
-            Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+        public override void ConfigureFlutterEngine(FlutterEngine flutterEngine)
+        {
+            base.ConfigureFlutterEngine(flutterEngine);
+
+            if (AppStatic.Initialized)
+                AppStatic.ConfigureFlutnetBridge(flutterEngine);
+        }
+
+        public override void CleanUpFlutterEngine(FlutterEngine flutterEngine)
+        {
+            base.CleanUpFlutterEngine(flutterEngine);
+
+            if (AppStatic.Initialized)
+                AppStatic.CleanUpFlutnetBridge();
         }
     }
 }

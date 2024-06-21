@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">Flutnet Interop Sample</string>
+    <string name="app_name">Flutter Bridge</string>
     <string name="action_settings">Settings</string>
 </resources>

@@ -9,7 +9,7 @@ using Object = Java.Lang.Object;
 
 namespace FlutterBridge.Maui
 {
-    public partial class FlutterBridge : IDisposable
+    public partial class BridgeHost : IDisposable
     {
         /// <summary>
         /// A handler for incoming method calls.
@@ -82,10 +82,10 @@ namespace FlutterBridge.Maui
         /// <seealso href="https://medium.com/flutter/flutter-platform-channels-ce7f540a104e"/>
         internal class StreamHandler : Object, EventChannel.IStreamHandler
         {
-            FlutterBridge _bridge;
+            BridgeHost _bridge;
             EventChannel.IEventSink? _events;
 
-            public StreamHandler(FlutterBridge bridge)
+            public StreamHandler(BridgeHost bridge)
             {
                 _bridge = bridge;
             }
@@ -153,17 +153,17 @@ namespace FlutterBridge.Maui
         bool _disposed;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FlutterBridge"/> class.
+        /// Initializes a new instance of the <see cref="BridgeHost"/> class.
         /// </summary>
-        public FlutterBridge(FlutterEngine engine, Android.Content.Context context) : this(engine, context, FlutterBridgeMode.PlatformChannel)
+        public BridgeHost(FlutterEngine engine, Android.Content.Context context) : this(engine, context, FlutterBridgeMode.PlatformChannel)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FlutterBridge"/> class
+        /// Initializes a new instance of the <see cref="BridgeHost"/> class
         /// specifying how platform code and Flutter code communicate.
         /// </summary>
-        public FlutterBridge(FlutterEngine engine, Android.Content.Context context, FlutterBridgeMode mode)
+        public BridgeHost(FlutterEngine engine, Android.Content.Context context, FlutterBridgeMode mode)
         {
             // Create the named channel for communicating with Flutter module using asynchronous method calls
             // NOTE: This channel is used to RECEIVE messages/requests FROM Flutter
@@ -352,7 +352,7 @@ namespace FlutterBridge.Maui
                 return;
             }
 
-            var result = BridgeOperationRunner.Run(operation, arguments);
+            var result = BridgeRuntime.Run(operation, arguments);
             if (result.Error != null)
             {
                 if (result.Error is BridgeExceptionBase flutterException)
@@ -386,7 +386,7 @@ namespace FlutterBridge.Maui
                 EventData = e.EventData
             };
 
-            Object eventValue = FlutterInterop.ToMethodChannelResult(eventInfo);
+            Object? eventValue = FlutterInterop.ToMethodChannelResult(eventInfo);
 
             if (!MainThread.IsMainThread)
             {

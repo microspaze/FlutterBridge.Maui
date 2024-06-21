@@ -10,7 +10,7 @@ namespace FlutterBridge.Maui.Extensions
 {
     internal static class ExceptionExtensions
     {
-        static readonly Assembly BridgeAssembly = typeof(FlutterBridge).Assembly;
+        static readonly Assembly BridgeAssembly = typeof(BridgeHost).Assembly;
 
         public static string GetDetails(this Exception exception)
         {

@@ -193,7 +193,7 @@ namespace FlutterBridge.Maui
                     return;
                 }
 
-                var result = BridgeOperationRunner.Run(operation, arguments);
+                var result = BridgeRuntime.Run(operation, arguments);
                 if (result.Error != null)
                 {
                     if (result.Error is BridgeExceptionBase flutterException)

@@ -65,12 +65,12 @@ namespace FlutterBridge.Maui
         /// that can be sent to Flutter as a successful result of
         /// a <see cref="FlutterBinding.Plugin.Common.MethodChannel"/> method invoke.
         /// </summary>
-        public static Java.Lang.Object ToMethodChannelResult(BridgeEventInfo message)
+        public static Java.Lang.Object? ToMethodChannelResult(BridgeEventInfo message)
         {
             // FIX ISSUES ABOUT DICTIONARY IN FLUTTER
             JObject jsonObject = JObject.FromObject(message, Serializer);
             CleanObjectFromInvalidTypes(ref jsonObject);
-            Java.Lang.Object obj = jsonObject.ToString(Formatting.None);
+            Java.Lang.Object? obj = jsonObject.ToString(Formatting.None);
             return obj;
         }
 
@@ -79,8 +79,9 @@ namespace FlutterBridge.Maui
 
             if (jobject.Type == JTokenType.Object && jobject.ContainsKey("$type"))
             {
-                JToken value = jobject.GetValue("$type");
-                if (value.Value<string>().StartsWith("System")) // Remove system types like Dictionaries
+                JToken? value = jobject.GetValue("$type");
+                var valueStr = value?.Value<string>();
+                if (!string.IsNullOrEmpty(valueStr) && valueStr.StartsWith("System")) // Remove system types like Dictionaries
                 {
                     jobject.Remove("$type");
                 }

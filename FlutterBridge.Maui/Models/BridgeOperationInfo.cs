@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace FlutterBridge.Maui.Models
 {
-    internal class BridgeOperationInfo
+    public class BridgeOperationInfo
     {
-        internal BridgeOperationInfo(MethodInfo method, object? serviceInstance = null)
+        public BridgeOperationInfo(MethodInfo method, object? serviceInstance = null)
         {
             OperationName = method.GetCSharpSignature();
             MethodName = method.Name;

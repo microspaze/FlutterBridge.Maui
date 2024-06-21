@@ -10,7 +10,7 @@ namespace FlutterBridge.Maui.Models
 {
     [Obfuscation(Exclude = true)]
     [ProtoContract]
-    internal enum BridgeErrorCode
+    public enum BridgeErrorCode
     {
         [ProtoEnum]
         OperationNotImplemented = 0,

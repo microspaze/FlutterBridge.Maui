@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FlutterBridge.Maui
 {
-    public partial class FlutterBridge
+    public partial class BridgeHost
     {
     }
 }

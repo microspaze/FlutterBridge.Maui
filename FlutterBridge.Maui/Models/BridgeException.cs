@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace FlutterBridge.Maui.Models
 {
     [Obfuscation(Exclude = true)]
-    internal class BridgeException : BridgeExceptionBase
+    public class BridgeException : BridgeExceptionBase
     {
         public BridgeException(BridgeErrorCode errorCode)
         {

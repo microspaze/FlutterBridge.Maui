@@ -21,10 +21,10 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>FlutterBridge.Sample</ApplicationTitle>
+		<ApplicationTitle>FlutterBridge</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.flutterbridge.sample</ApplicationId>
+		<ApplicationId>com.i7chi.flutterbridge.sample</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -41,7 +41,7 @@
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+		<MauiIcon Include="Resources\AppIcon\appicon.png" Color="#512BD4" />
 
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
@@ -118,10 +118,6 @@
         <AndroidLibrary Condition="'$(Configuration)' == 'Release'" Include="Flutter\flutter_module\build\host\outputs\repo\com\example\flutter_module\flutter_release\1.0\flutter_release-1.0.aar" Bind="false">
             <Link>Platforms\Android\Jars\flutter_release-1.0.aar</Link>
         </AndroidLibrary>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Services\" />
     </ItemGroup>
 
     <ItemGroup>

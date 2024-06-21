@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using Newtonsoft.Json;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +11,18 @@ namespace FlutterBridge.Maui.Models
 {
     [Obfuscation(Exclude = true)]
     [ProtoContract]
-    internal class BridgeEventInfo
+    public class BridgeEventInfo
     {
         [ProtoMember(1)]
+        [JsonProperty("instanceId")]
         public string InstanceId { get; set; } = string.Empty;
 
         [ProtoMember(2)]
+        [JsonProperty("event")]
         public string EventName { get; set; } = string.Empty;
 
         [ProtoMember(3)]
+        [JsonProperty("args")]
         public EventArgs EventData { get; set; } = EventArgs.Empty;
     }
 }

@@ -1,8 +1,17 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_maui_bridge/service_library/counter_service.dart';
+import 'package:flutter_maui_bridge/service_library/value_changed_event_args.dart';
+import 'package:flutter_maui_bridge/flutnet_bridge.dart';
 
 void main() {
+  // Configure the bridge mode
+  // http://semantic-portal.net/flutter-development-existing-app-running
+  // By attaching to Flutter on device, it does not need to set Websocket mode for debugging.
+  // VSCode  (ctrl+shift+p: Debug: Attach Flutter on Device or terminal: flutter attach)
+  // IntelliJ (click Flutter Attach button)
+  FlutnetBridgeConfig.mode = FlutnetBridgeMode.PlatformChannel;
   runApp(MyApp());
 }
 
@@ -48,7 +57,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // Reference to the native (Xamarin) component that holds the business logic
-  //final CounterService _counterService = CounterService("counter_service");
+  final CounterService _counterService = CounterService("counter_service");
 
   // The current counter value
   int _counterValue = 0;
@@ -57,9 +66,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void _load() async {
     // Get the value from xamarin
     try {
-      //int value = await _counterService.getValue();
+      int value = await _counterService.getValue();
       setState(() {
-        //_counterValue = value;
+        _counterValue = value;
         _counterError = "got";
       });
     } catch (ex) {
@@ -72,9 +81,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void _increment() async {
     // Increment the value by calling the proper native (Xamarin) method
     try {
-      //await _counterService.increment();
+      await _counterService.increment();
       setState(() {
-        _counterValue++;
         _counterError = "increased";
       });
     } catch (ex) {
@@ -87,9 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void _decrement() async {
     // Decrement the value by calling the proper native (Xamarin) method
     try {
-      //await _counterService.decrement();
+      await _counterService.decrement();
       setState(() {
-        _counterValue--;
         _counterError = "decreased";
       });
     } catch (ex) {
@@ -99,28 +106,32 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  //StreamSubscription<ValueChangedEventArgs>? _eventSubscription;
+  StreamSubscription<ValueChangedEventArgs>? _eventSubscription;
 
   @override
   void initState() {
     super.initState();
     _load();
 
+    //
     // Subscribe to the native (Xamarin) ValueChanged event
-    // _eventSubscription = _counterService.valueChanged.listen(
-    //   (ValueChangedEventArgs args) {
-    //     setState(() {
-    //       _counterValue = args.value;
-    //     });
-    //   },
-    //   cancelOnError: false,
-    // );
+    //
+    _eventSubscription = _counterService.valueChanged.listen(
+      (ValueChangedEventArgs args) {
+        setState(() {
+          _counterValue = args.value;
+        });
+      },
+      cancelOnError: false,
+    );
   }
 
   @override
   void dispose() {
+    //
     // IMPORTANT: Cancel the subscription from the event to avoid memory leaks!
-    //_eventSubscription?.cancel();
+    //
+    _eventSubscription?.cancel();
     super.dispose();
   }
 
