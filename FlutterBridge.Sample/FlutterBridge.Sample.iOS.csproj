@@ -85,6 +85,17 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 	</ItemGroup>
 
+    <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+        <NativeReference Condition=" '$(Configuration)'=='Debug' " Include="Flutter/flutter_module/build/ios/framework/Debug/App.xcframework">
+            <Kind>Framework</Kind>
+            <SmartLink>False</SmartLink>
+        </NativeReference>
+        <NativeReference Condition=" '$(Configuration)'=='Release' " Include="Flutter/flutter_module/build/ios/framework/Release/App.xcframework">
+            <Kind>Framework</Kind>
+            <SmartLink>False</SmartLink>
+        </NativeReference>
+    </ItemGroup>
+
 	<ItemGroup>
 	  <ProjectReference Include="..\FlutterBridge.Maui\FlutterBridge.Maui.iOS.csproj" />
 	</ItemGroup>
