@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UIKit;
 
-namespace FlutterBridge.Maui.Platforms.iOS
+namespace FlutterBridge.Maui
 {
     public partial class BridgeHost : IDisposable
     {
@@ -202,7 +202,7 @@ namespace FlutterBridge.Maui.Platforms.iOS
 
             taskId[0] = UIApplication.SharedApplication.BeginBackgroundTask(() =>
             {
-                BridgeExceptionBase error = new BridgeException(BridgeErrorCode.OperationCanceled);
+                var error = new BridgeException(BridgeErrorCode.OperationCanceled);
                 MainThread.BeginInvokeOnMainThread(() => SendError(methodInfo, error));
                 UIApplication.SharedApplication.EndBackgroundTask(taskId[0]);
             });

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UIKit;
 
-namespace FlutterBridge.Maui.Platforms.iOS
+namespace FlutterBridge.Maui
 {
     internal class WebSocketService : IDisposable
     {
