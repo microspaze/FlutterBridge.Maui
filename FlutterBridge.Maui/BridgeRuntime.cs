@@ -40,145 +40,24 @@ namespace FlutterBridge.Maui
 
         #region Registry
 
-        static readonly ConcurrentDictionary<string, ContextInfo> _contexts = new ConcurrentDictionary<string, ContextInfo>();
+        static readonly ConcurrentDictionary<string, BridgeContextInfo> _contexts = new();
 
-        internal class ContextInfo
+        /// <summary>
+        /// Creates a named class registration of a platform service instance.
+        /// </summary>
+        /// <param name="service"></param>
+        public static void RegisterBridgeService(BridgeServiceInfo service)
         {
-            readonly ConcurrentDictionary<string, ServiceInfo> _services = new ConcurrentDictionary<string, ServiceInfo>();
+            EnsureInitialized();
 
-            public ContextInfo(string name)
-            {
-                ContextName = name;
-            }
+            // Right now use the default context
+            string contextName = string.Empty;
+            BridgeContextInfo contextObj = _contexts.GetOrAdd(contextName, s => new BridgeContextInfo(s));
 
-            public string ContextName { get; }
+            if (!contextObj.TryAddService(service))
+                throw new ArgumentException("A service has already been registered with the same name.", nameof(service.InstanceName));
 
-            public bool TryAddService(ServiceInfo service)
-            {
-                return _services.TryAdd(service.ServiceInstanceName, service);
-            }
-
-            public bool TryRemoveService(string serviceName)
-            {
-                return _services.TryRemove(serviceName, out _);
-            }
-
-            public bool TryGetService(string name, out ServiceInfo service)
-            {
-                return _services.TryGetValue(name, out service);
-            }
-        }
-
-        internal class ServiceInfo
-        {
-            private readonly Type _type;
-            private readonly object _instance;
-
-            readonly ConcurrentDictionary<string, BridgeOperationInfo> _operations = new ConcurrentDictionary<string, BridgeOperationInfo>();
-
-            public ServiceInfo(Type type, string instanceName, object instance = null)
-            {
-                ServiceInstanceName = instanceName;
-                _type = type;
-                _instance = instance;
-
-                foreach (Type typedef in type.GetBridgeServiceTypeDefinitions())
-                {
-                    foreach (MethodInfo method in typedef.GetBridgeOperations())
-                    {
-                        var operation = new BridgeOperationInfo(method, instance);
-                        _operations.TryAdd(operation.OperationName, operation);
-                    }
-                }
-            }
-
-            public string ServiceInstanceName { get; }
-
-            public bool TryGetOperation(string name, out BridgeOperationInfo operation)
-            {
-                return _operations.TryGetValue(name, out operation);
-            }
-
-            readonly ConcurrentDictionary<string, Delegate> _events = new ConcurrentDictionary<string, Delegate>();
-
-            public void SubscribeToEvents()
-            {
-                if (_instance == null)
-                    return;
-
-                // Method on class ServiceEventReceiver that will be used as handler for all the events
-                MethodInfo? handleMethod = typeof(ServiceEventReceiver).GetMethod("Handle", BindingFlags.NonPublic | BindingFlags.Instance);
-
-                foreach (EventInfo? eventInfo in _type.GetBridgeEvents())
-                {
-                    var eventName = eventInfo.Name;
-                    var receiver = new ServiceEventReceiver((sender, e) =>
-                    {
-                        PropagateBridgeEvent(ServiceInstanceName, eventName, sender, e);
-                    });
-
-                    // Create an handler for the instance event
-                    Delegate delegateForEvent = Delegate.CreateDelegate(eventInfo.EventHandlerType, receiver, handleMethod);
-
-                    // Register the handler in the object instance
-                    eventInfo.AddEventHandler(_instance, delegateForEvent);
-
-                    _events.TryAdd(eventName, delegateForEvent);
-
-                    #region Some documentation
-
-                    // Connect this service info with the instance event
-                    //Delegate delegateForEvent = Delegate.CreateDelegate(eventInfo.EventHandlerType, this, handleMethod);
-                    //eventInfo.AddEventHandler(instance, delegateForEvent);
-
-                    //// Create an instance of the delegate. Using the overloads
-                    //// of CreateDelegate that take MethodInfo is recommended.
-                    //Delegate d = Delegate.CreateDelegate(eventInfo.EventHandlerType, this, handleMethod);
-
-                    //// Get the "add" accessor of the event and invoke it late-
-                    //// bound, passing in the delegate instance. This is equivalent
-                    //// to using the += operator in C#, or AddHandler in Visual
-                    //// Basic. The instance on which the "add" accessor is invoked
-                    //// is the form; the arguments must be passed as an array.
-                    //MethodInfo addHandler = eventInfo.GetAddMethod();
-                    //Object[] addHandlerArgs = { d };
-                    //addHandler.Invoke(instance, addHandlerArgs);
-
-                    #endregion
-                }
-            }
-
-            public void UnsubscribeFromEvents()
-            {
-                if (_instance == null)
-                    return;
-
-                foreach (EventInfo eventInfo in _type.GetBridgeEvents())
-                {
-                    bool exists = _events.TryRemove(eventInfo.Name, out Delegate delegateForEvent);
-                    if (exists && delegateForEvent != null)
-                    {
-                        // Unregister the handler in the object instance
-                        eventInfo.RemoveEventHandler(_instance, delegateForEvent);
-                    }
-                }
-            }
-        }
-
-        internal class ServiceEventReceiver
-        {
-            readonly Action<object, EventArgs> _handle;
-
-            public ServiceEventReceiver(Action<object, EventArgs> handle)
-            {
-                _handle = handle;
-            }
-
-            [Obfuscation(Exclude = true)]
-            private void Handle(object sender, EventArgs args)
-            {
-                _handle.Invoke(sender, args);
-            }
+            service.SubscribeToEvents();
         }
 
         /// <summary>
@@ -186,10 +65,8 @@ namespace FlutterBridge.Maui
         /// </summary>
         /// <param name="instance">Instance to register</param>
         /// <param name="name">Name of registration</param>
-        public static void RegisterPlatformService(object instance, string name)
+        public static void RegisterBridgeService(object instance, string name)
         {
-            EnsureInitialized();
-
             if (instance == null)
                 throw new ArgumentNullException(nameof(instance));
 
@@ -200,15 +77,7 @@ namespace FlutterBridge.Maui
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("Registration name cannot be null or empty.", nameof(name));
 
-            // Right now use the default context
-            string contextName = string.Empty;
-            ContextInfo contextObj = _contexts.GetOrAdd(contextName, s => new ContextInfo(s));
-
-            ServiceInfo service = new ServiceInfo(type, name, instance);
-            if (!contextObj.TryAddService(service))
-                throw new ArgumentException("A service has already been registered with the same name.", nameof(name));
-
-            service.SubscribeToEvents();
+            RegisterBridgeService(new BridgeServiceInfo(type, name, instance));
         }
 
         /// <summary>
@@ -216,7 +85,7 @@ namespace FlutterBridge.Maui
         /// </summary>
         /// <param name="type">Type to register</param>
         /// <param name="name">Name of registration</param>
-        public static void RegisterStaticPlatformService(Type type, string name)
+        public static void RegisterStaticBridgeService(Type type, string name)
         {
             EnsureInitialized();
 
@@ -233,9 +102,9 @@ namespace FlutterBridge.Maui
 
             // Right now use the default context
             string contextName = string.Empty;
-            ContextInfo contextObj = _contexts.GetOrAdd(contextName, s => new ContextInfo(s));
+            BridgeContextInfo contextObj = _contexts.GetOrAdd(contextName, s => new BridgeContextInfo(s));
 
-            ServiceInfo service = new ServiceInfo(type, name);
+            BridgeServiceInfo service = new BridgeServiceInfo(type, name);
             if (!contextObj.TryAddService(service))
                 throw new ArgumentException("A service has already been registered with the same name.", nameof(name));
         }
@@ -254,10 +123,10 @@ namespace FlutterBridge.Maui
 
             // Right now use the default context
             string contextName = string.Empty;
-            if (!_contexts.TryGetValue(contextName, out ContextInfo? contextObj))
+            if (!_contexts.TryGetValue(contextName, out BridgeContextInfo? contextObj))
                 return false;
 
-            bool serviceExists = contextObj.TryGetService(name, out ServiceInfo service);
+            bool serviceExists = contextObj.TryGetService(name, out BridgeServiceInfo service);
 
             if (serviceExists)
             {
@@ -271,8 +140,8 @@ namespace FlutterBridge.Maui
         {
             // Right now use the default context
             string contextName = string.Empty;
-            if (!_contexts.TryGetValue(contextName, out ContextInfo? contextObj) ||
-                !contextObj.TryGetService(serviceName, out ServiceInfo serviceObj))
+            if (!_contexts.TryGetValue(contextName, out BridgeContextInfo? contextObj) ||
+                !contextObj.TryGetService(serviceName, out BridgeServiceInfo serviceObj))
                 throw new ArgumentException("No service registered with the specified name.", nameof(serviceName));
 
             if (!serviceObj.TryGetOperation(operation, out BridgeOperationInfo operationObj))
@@ -291,7 +160,7 @@ namespace FlutterBridge.Maui
         /// This method propagates the event through <see cref="OnBridgeEvent"/>
         /// so that <see cref="BridgeHost"/> can subscribe and send data to Flutter.
         /// </summary>
-        private static void PropagateBridgeEvent(string serviceName, string eventName, object sender, EventArgs eventArgs)
+        internal static void PropagateBridgeEvent(string serviceName, string eventName, object sender, EventArgs eventArgs)
         {
             var args = new BridgeEventArgs
             {
