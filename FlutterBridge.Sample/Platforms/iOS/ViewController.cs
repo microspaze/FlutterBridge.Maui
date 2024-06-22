@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FlutterBinding;
 using FlutterBridge.Maui;
 using FlutterBridge.Maui.Models;
+using FlutterBridge.Sample.Extensions;
 using FlutterBridge.Sample.Services;
 using UIKit;
 
@@ -28,7 +29,7 @@ namespace FlutterBridge.Sample
             try
             {
                 BridgeRuntime.Init();
-                BridgeRuntime.RegisterBridgeService(new BridgeServiceInfo(typeof(CounterService), "counter_service", new CounterService()));
+                BridgeRuntime.RegisterBridgeService(new CounterService().ToBridgeService("counter_service"));
 #if DEBUG
                 _bridge = new BridgeHost(this.Engine, FlutterBridgeMode.PlatformChannel);
 #else

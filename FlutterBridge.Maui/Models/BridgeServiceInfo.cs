@@ -13,6 +13,7 @@ namespace FlutterBridge.Maui.Models
     {
         private readonly Type _type;
         private readonly object? _instance;
+        private readonly HashSet<EventInfo> _eventSet = [];
         private readonly ConcurrentDictionary<string, Delegate> _events = new();
         private readonly ConcurrentDictionary<string, BridgeOperationInfo> _operations = new();
 
@@ -32,6 +33,24 @@ namespace FlutterBridge.Maui.Models
             }
         }
 
+        public BridgeServiceInfo(Type type, string instanceName, MethodInfo[] methodInfos, EventInfo[] eventInfos, object? instance = null)
+        {
+            InstanceName = instanceName;
+            _type = type;
+            _instance = instance;
+
+            foreach(var methodInfo in methodInfos)
+            {
+                var operation = new BridgeOperationInfo(methodInfo, instance);
+                _operations.TryAdd(operation.OperationName, operation);
+            }
+
+            foreach(var eventInfo in eventInfos)
+            {
+                _eventSet.Add(eventInfo);
+            }
+        }
+
         public string InstanceName { get; }
 
         public bool TryGetOperation(string name, out BridgeOperationInfo? operation)
@@ -47,7 +66,8 @@ namespace FlutterBridge.Maui.Models
             // Method on class BridgeEventReceiver that will be used as handler for all the events
             MethodInfo? handleMethod = typeof(BridgeEventReceiver).GetMethod("Handle", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            foreach (EventInfo? eventInfo in _type.GetBridgeEvents())
+            var eventInfos = _eventSet.Count == 0 ? _type.GetBridgeEvents() : _eventSet.ToArray();
+            foreach (EventInfo? eventInfo in eventInfos)
             {
                 if (eventInfo == null) continue;
 
