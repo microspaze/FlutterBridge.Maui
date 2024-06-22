@@ -1,4 +1,5 @@
 ﻿using FlutterBridge.Maui.Attributes;
+using FlutterBridge.Maui.Extensions;
 using FlutterBridge.Maui.Models;
 using System;
 using System.Collections.Generic;
@@ -7,9 +8,13 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FlutterBridge.Maui.Extensions
+namespace FlutterBridge.Maui.Helpers
 {
-    internal static class TypeExtensions
+    /// <summary>
+    /// On iOS platform the type extensions method will not return the correct reflection info, 
+    /// but returns only reflection info of Object, so all those extensions should change to helper methods.
+    /// </summary>
+    internal static class TypeHelper
     {
         #region System.Type global extensions
 
@@ -17,7 +22,7 @@ namespace FlutterBridge.Maui.Extensions
         /// Gets a valute indicating whether this type is a nullable type.
         /// </summary>
         /// <returns>True if nullable, otherwise False</returns>
-        public static bool IsNullable(this Type type, out Type? underlyingType)
+        public static bool IsNullable(Type type, out Type? underlyingType)
         {
             underlyingType = Nullable.GetUnderlyingType(type);
             return underlyingType != null;
@@ -27,7 +32,7 @@ namespace FlutterBridge.Maui.Extensions
         /// Gets a valute indicating whether this type is a generic type.
         /// </summary>
         /// <returns>True if generic, otherwise False</returns>
-        public static bool IsGeneric(this Type type)
+        public static bool IsGeneric(Type type)
         {
             return type.IsGenericType
                    && type.Name.Contains('`'); //TODO: Figure out why IsGenericType isn't good enough and document (or remove) this condition
@@ -39,7 +44,7 @@ namespace FlutterBridge.Maui.Extensions
         /// </summary>
         /// <param name="type"></param>
         /// <returns>The fully qualified name for this type</returns>
-        public static string GetQualifiedTypeName(this Type type)
+        public static string GetQualifiedTypeName(Type type)
         {
             switch (type.Name)
             {
@@ -104,7 +109,7 @@ namespace FlutterBridge.Maui.Extensions
 
         static readonly Type[] FlutterUnsupportedPrimitiveTypes =
         {
-            typeof(ushort), typeof(uint), typeof(ulong), typeof(IntPtr), typeof(UIntPtr)
+            typeof(ushort), typeof(uint), typeof(ulong), typeof(nint), typeof(nuint)
         };
 
         static readonly Type[] FlutterSupportedBuiltinTypes =
@@ -112,7 +117,7 @@ namespace FlutterBridge.Maui.Extensions
             typeof(string), typeof(object)
         };
 
-        public static bool IsFlutterSupportedType(this Type type)
+        public static bool IsFlutterSupportedType(Type type)
         {
             Type t = Nullable.GetUnderlyingType(type) ?? type;
 
@@ -137,7 +142,7 @@ namespace FlutterBridge.Maui.Extensions
                 if (implementsDictionary)
                 {
                     Type[] types = t.GetGenericArguments();
-                    return types[0] == typeof(string) && types[1].IsFlutterSupportedType();
+                    return types[0] == typeof(string) && IsFlutterSupportedType(types[1]);
                 }
 
                 bool implementsEnumerable = t.GetInterfaces()
@@ -148,7 +153,7 @@ namespace FlutterBridge.Maui.Extensions
                 if (implementsEnumerable)
                 {
                     Type[] types = t.GetGenericArguments();
-                    return types[0].IsFlutterSupportedType();
+                    return IsFlutterSupportedType(types[0]);
                 }
 
                 return false;
@@ -161,7 +166,7 @@ namespace FlutterBridge.Maui.Extensions
 
         #region BridgeService + BridgeOperation utilities
 
-        public static bool IsValidBridgeService(this Type type)
+        public static bool IsValidBridgeService(Type type)
         {
             object[] attributes = type.GetCustomAttributes(typeof(BridgeServiceAttribute), true);
             if (attributes.Length == 0)
@@ -182,7 +187,7 @@ namespace FlutterBridge.Maui.Extensions
             return true;
         }
 
-        public static Type[] GetBridgeServiceTypeDefinitions(this Type type)
+        public static Type[] GetBridgeServiceTypeDefinitions(Type type)
         {
             object[] attributes = type.GetCustomAttributes(typeof(BridgeServiceAttribute), true);
             if (attributes.Length == 0)
@@ -204,7 +209,7 @@ namespace FlutterBridge.Maui.Extensions
             return new[] { type };
         }
 
-        public static MethodInfo[] GetBridgeOperations(this Type type)
+        public static MethodInfo[] GetBridgeOperations(Type type)
         {
             if (type.GetCustomAttributes(typeof(BridgeServiceAttribute), true).Length == 0)
                 return new MethodInfo[0];
@@ -217,7 +222,7 @@ namespace FlutterBridge.Maui.Extensions
                         .Where(m => m.GetCustomAttribute(typeof(BridgeOperationAttribute), true) != null));
 
                 foreach (Type inherited in type.GetInterfaces())
-                    methods.AddRange(inherited.GetBridgeOperations());
+                    methods.AddRange(GetBridgeOperations(inherited));
             }
             else
             {
@@ -229,12 +234,9 @@ namespace FlutterBridge.Maui.Extensions
             return methods.ToArray();
         }
 
-        public static MethodInfo[] GetUnsupportedBridgeOperations(this Type type)
+        public static MethodInfo[] GetUnsupportedBridgeOperations(Type type)
         {
-            if (type.GetCustomAttributes(typeof(BridgeServiceAttribute), true).Length == 0)
-                return new MethodInfo[0];
-
-            if (type.IsInterface)
+            if (type.GetCustomAttributes(typeof(BridgeServiceAttribute), true).Length == 0 || type.IsInterface)
                 return new MethodInfo[0];
 
             // right now private methods (including explicit interface methods) are NOT supported
@@ -247,35 +249,35 @@ namespace FlutterBridge.Maui.Extensions
 
         #region BridgeEvent utilities
 
-        public static EventInfo[] GetBridgeEvents(this Type type)
+        public static EventInfo[] GetBridgeEvents(Type type)
         {
             if (type.GetCustomAttributes(typeof(BridgeServiceAttribute), true).Length == 0)
                 return new EventInfo[0];
 
             return type.GetEvents(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
                 .Where(e => e.GetCustomAttribute(typeof(BridgeEventAttribute), false) != null)
-                .Where(e => e.IsSupportedBridgeEvent())
+                .Where(e => IsSupportedBridgeEvent(e))
                 .ToArray();
         }
 
-        public static EventInfo[] GetUnsupportedBridgeEvents(this Type type)
+        public static EventInfo[] GetUnsupportedBridgeEvents(Type type)
         {
             if (type.GetCustomAttributes(typeof(BridgeServiceAttribute), true).Length == 0)
                 return new EventInfo[0];
 
             return type.GetEvents(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
                 .Where(e => e.GetCustomAttribute(typeof(BridgeEventAttribute), false) != null)
-                .Where(e => !e.IsSupportedBridgeEvent())
+                .Where(e => !IsSupportedBridgeEvent(e))
                 .ToArray();
         }
 
-        private static bool IsSupportedBridgeEvent(this EventInfo e)
+        private static bool IsSupportedBridgeEvent(EventInfo e)
         {
             return e.EventHandlerType == typeof(EventHandler) ||
                    e.EventHandlerType.IsGenericType && e.EventHandlerType.GetGenericTypeDefinition() == typeof(EventHandler<>);
         }
 
-        public static Type GetBridgeEventArgs(this EventInfo e)
+        public static Type GetBridgeEventArgs(EventInfo e)
         {
             if (e.EventHandlerType.IsGenericType && e.EventHandlerType.GetGenericTypeDefinition() == typeof(EventHandler<>))
             {
@@ -296,7 +298,7 @@ namespace FlutterBridge.Maui.Extensions
 
         #region BridgeException utilities
 
-        public static bool IsValidBridgeException(this Type type)
+        public static bool IsValidBridgeException(Type type)
         {
             return typeof(BridgeExceptionBase).IsAssignableFrom(type);
         }
@@ -305,40 +307,40 @@ namespace FlutterBridge.Maui.Extensions
 
         #region System.Threading.Tasks.Task global extensions
 
-        public static bool IsTask(this Type type)
+        public static bool IsTask(Type type)
         {
-            return type == typeof(Task) || (type.IsGeneric() && type.GetGenericTypeDefinition() == typeof(Task<>));
+            return type == typeof(Task) || IsGeneric(type) && type.GetGenericTypeDefinition() == typeof(Task<>);
         }
 
-        public static bool IsTaskVoid(this Type type)
+        public static bool IsTaskVoid(Type type)
         {
             return type == typeof(Task);
         }
 
-        public static bool IsTaskT(this Type type)
+        public static bool IsTaskT(Type type)
         {
-            return type.IsGeneric() && type.GetGenericTypeDefinition() == typeof(Task<>);
+            return IsGeneric(type) && type.GetGenericTypeDefinition() == typeof(Task<>);
         }
 
-        public static Type GetResultType(this Task task)
+        public static Type GetResultType(Task task)
         {
             return task.GetType().GetProperty("Result")?.PropertyType ?? typeof(void);
         }
 
-        public static object GetResultValue(this Task task)
+        public static object GetResultValue(Task task)
         {
             return task.GetType().GetProperty("Result")?.GetValue(task);
         }
 
-        public static object TaskResult(this Task task)
+        public static object TaskResult(Task task)
         {
-            if (task.GetResultType() == typeof(void))
+            if (GetResultType(task) == typeof(void))
             {
                 return null;
             }
             else
             {
-                return task.GetResultValue();
+                return GetResultValue(task);
             }
         }
 

@@ -29,7 +29,8 @@ namespace FlutterBridge.Sample
             try
             {
                 BridgeRuntime.Init();
-                BridgeRuntime.RegisterBridgeService(new CounterService().ToBridgeService("counter_service"));
+                BridgeRuntime.RegisterBridgeService(new CounterService(), "counter_service");
+                //BridgeRuntime.RegisterBridgeService(new CounterService().ToBridgeService("counter_service"));
 #if DEBUG
                 _bridge = new BridgeHost(this.Engine, FlutterBridgeMode.PlatformChannel);
 #else

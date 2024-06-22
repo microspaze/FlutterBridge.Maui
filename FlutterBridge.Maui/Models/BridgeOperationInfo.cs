@@ -1,5 +1,4 @@
 ﻿using FlutterBridge.Maui.Attributes;
-using FlutterBridge.Maui.Extensions;
 using FlutterBridge.Maui.Helpers;
 using System;
 using System.Collections.Generic;
@@ -14,12 +13,12 @@ namespace FlutterBridge.Maui.Models
     {
         public BridgeOperationInfo(MethodInfo method, object? serviceInstance = null)
         {
-            OperationName = method.GetCSharpSignature();
+            OperationName = SignatureHelper.GetCSharpSignature(method);
             MethodName = method.Name;
             HasResult = method.ReturnType.Name != "Void";
             Parameters = method.GetParameters();
             OperationAttribute = method.GetCustomAttribute(typeof(BridgeOperationAttribute), true) as BridgeOperationAttribute;
-            IsAsyncTask = method.ReturnType.IsTask();
+            IsAsyncTask = TypeHelper.IsTask(method.ReturnType);
 
             if (method.IsStatic)
             {
