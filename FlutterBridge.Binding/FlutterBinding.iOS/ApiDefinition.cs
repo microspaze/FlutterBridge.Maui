@@ -16,12 +16,12 @@ namespace FlutterBinding
         NSString FlutterSemanticsUpdateNotification { get; }
 
         // extern NSString *const _Nonnull FlutterDefaultDartEntrypoint;
-        [Field("FlutterDefaultDartEntrypoint", "__Internal")]
-        NSString FlutterDefaultDartEntrypoint { get; }
+        //[Field("FlutterDefaultDartEntrypoint", "__Internal")]
+        //NSString FlutterDefaultDartEntrypoint { get; }
 
         // extern NSString *const _Nonnull FlutterDefaultInitialRoute;
-        [Field("FlutterDefaultInitialRoute", "__Internal")]
-        NSString FlutterDefaultInitialRoute { get; }
+        //[Field("FlutterDefaultInitialRoute", "__Internal")]
+        //NSString FlutterDefaultInitialRoute { get; }
 
         // extern const NSObject * _Nonnull FlutterEndOfEventStream;
         [Field("FlutterEndOfEventStream", "__Internal")]

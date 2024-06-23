@@ -10,13 +10,15 @@
   <ItemGroup Condition=" '$(Configuration)' != 'Release' ">
     <NativeReference Include="..\FlutterBinding.Native\iOS\debug\Flutter.xcframework">
       <Kind>Framework</Kind>
-      <SmartLink>False</SmartLink>
+      <Frameworks>Foundation UIKit</Frameworks>
+      <SmartLink>True</SmartLink>
     </NativeReference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Configuration)' == 'Release' ">
     <NativeReference Include="..\FlutterBinding.Native\iOS\release\Flutter.xcframework">
       <Kind>Framework</Kind>
-      <SmartLink>False</SmartLink>
+      <Frameworks>Foundation UIKit</Frameworks>
+      <SmartLink>True</SmartLink>
     </NativeReference>
   </ItemGroup>
   <ItemGroup>
