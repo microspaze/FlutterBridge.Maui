@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using UIKit;
 
 namespace FlutterBridge.Maui
@@ -187,6 +188,14 @@ namespace FlutterBridge.Maui
             try
             {
                 methodInfo = JsonConvert.DeserializeObject<BridgeMethodInfo>(call.Method, FlutterInterop.JsonSerializerSettings);
+                if (methodInfo != null && string.IsNullOrEmpty(methodInfo.Operation))
+                {
+                    var methodObj = JObject.Parse(call.Method);
+                    if (methodObj != null)
+                    {
+                        methodInfo.Operation = methodObj["operation"].ToString();
+                    }
+                }
                 dartReturnValue = FlutterInterop.ToMethodChannelResult(0);
             }
             catch (Exception ex)
@@ -222,8 +231,9 @@ namespace FlutterBridge.Maui
             {
                 operation = BridgeRuntime.GetOperation(methodInfo.Instance, methodInfo.Operation);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 SendError(methodInfo, new BridgeException(BridgeErrorCode.OperationNotImplemented));
                 return;
             }
