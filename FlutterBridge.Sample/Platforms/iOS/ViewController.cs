@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FlutterBinding;
 using FlutterBridge.Maui;
 using FlutterBridge.Maui.Models;
+using FlutterBridge.Sample.Extensions;
 using FlutterBridge.Sample.Services;
 using UIKit;
 
