@@ -1,5 +1,5 @@
 ﻿using FlutterBridge.Maui.Attributes;
-using FlutterBridge.Maui.Helpers;
+using FlutterBridge.Maui.Extensions;
 using FlutterBridge.Maui.Models;
 using System;
 using System.Collections.Concurrent;
@@ -71,7 +71,7 @@ namespace FlutterBridge.Maui
                 throw new ArgumentNullException(nameof(instance));
 
             Type type = instance.GetType();
-            if (!TypeHelper.IsValidBridgeService(type))
+            if (!type.IsValidBridgeService())
                 throw new ArgumentException("Instance does not represent a valid platform service.", nameof(instance));
 
             if (string.IsNullOrEmpty(name))
@@ -206,7 +206,7 @@ namespace FlutterBridge.Maui
                         }
                         else
                         {
-                            operationResult = TypeHelper.TaskResult(t);
+                            operationResult = t.TaskResult();
                         }
                         uiFinishEvent.Set();
                     });
@@ -259,7 +259,7 @@ namespace FlutterBridge.Maui
                     }
                     else
                     {
-                        operationResult = TypeHelper.TaskResult(t);
+                        operationResult = t.TaskResult();
                     }
                     taskFinishEvent.Set();
                 });

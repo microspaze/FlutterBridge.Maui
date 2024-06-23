@@ -1,5 +1,4 @@
 ﻿using FlutterBridge.Maui.Extensions;
-using FlutterBridge.Maui.Helpers;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -24,9 +23,9 @@ namespace FlutterBridge.Maui.Models
             _type = type;
             _instance = instance;
 
-            foreach (Type typedef in TypeHelper.GetBridgeServiceTypeDefinitions(type))
+            foreach (Type typedef in type.GetBridgeServiceTypeDefinitions())
             {
-                foreach (MethodInfo method in TypeHelper.GetBridgeOperations(typedef))
+                foreach (MethodInfo method in typedef.GetBridgeOperations())
                 {
                     var operation = new BridgeOperationInfo(method, instance);
                     _operations.TryAdd(operation.OperationName, operation);
@@ -67,7 +66,7 @@ namespace FlutterBridge.Maui.Models
             // Method on class BridgeEventReceiver that will be used as handler for all the events
             MethodInfo? handleMethod = typeof(BridgeEventReceiver).GetMethod("Handle", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            var eventInfos = _eventSet.Count == 0 ? TypeHelper.GetBridgeEvents(_type) : _eventSet.ToArray();
+            var eventInfos = _eventSet.Count == 0 ? _type.GetBridgeEvents() : _eventSet.ToArray();
             foreach (EventInfo? eventInfo in eventInfos)
             {
                 if (eventInfo == null) continue;
@@ -117,7 +116,7 @@ namespace FlutterBridge.Maui.Models
             if (_instance == null)
                 return;
 
-            foreach (EventInfo eventInfo in TypeHelper.GetBridgeEvents(_type))
+            foreach (EventInfo eventInfo in _type.GetBridgeEvents())
             {
                 bool exists = _events.TryRemove(eventInfo.Name, out Delegate? delegateForEvent);
                 if (exists && delegateForEvent != null)

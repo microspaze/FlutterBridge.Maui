@@ -5,21 +5,21 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FlutterBridge.Maui.Helpers
+namespace FlutterBridge.Maui.Extensions
 {
-    internal static class SignatureHelper
+    internal static class SignatureExtensions
     {
         /// <summary>
         /// Get a fully qualified signature for <paramref name="type"/>
         /// </summary>
         /// <param name="type">Type. May be generic or <see cref="Nullable{T}"/></param>
         /// <returns>Fully qualified signature</returns>
-        public static string GetSignature(Type type)
+        public static string GetSignature(this Type type)
         {
-            var isNullableType = TypeHelper.IsNullable(type, out Type? underlyingNullableType);
-            var signatureType = isNullableType && underlyingNullableType != null ? underlyingNullableType : type;
-            var signature = TypeHelper.GetQualifiedTypeName(signatureType);
-            var isGenericType = TypeHelper.IsGeneric(signatureType);
+            var isNullableType = type.IsNullable(out Type underlyingNullableType);
+            var signatureType = isNullableType ? underlyingNullableType : type;
+            var signature = signatureType.GetQualifiedTypeName();
+            var isGenericType = signatureType.IsGeneric();
             if (isGenericType)
             {
                 // Add the generic arguments
@@ -34,14 +34,14 @@ namespace FlutterBridge.Maui.Helpers
             return signature ?? string.Empty;
         }
 
-        public static string GetSignature(MethodInfo method, bool invokable)
+        public static string GetSignature(this MethodInfo method, bool invokable)
         {
             StringBuilder sb = new();
 
             // Add our method accessors if it's not invokable
             if (!invokable)
             {
-                sb.Append(GetMethodAccessorSignature(method));
+                sb.Append(method.GetMethodAccessorSignature());
                 sb.Append(' ');
             }
 
@@ -51,11 +51,11 @@ namespace FlutterBridge.Maui.Helpers
             // Add method generics
             if (method.IsGenericMethod)
             {
-                sb.Append(GetTypeParametersSignature(method));
+                sb.Append(method.GetTypeParametersSignature());
             }
 
             // Add method parameters
-            sb.Append(GetMethodArgumentsSignature(method, invokable));
+            sb.Append(method.GetMethodArgumentsSignature(invokable));
 
             return sb.ToString();
         }
@@ -69,7 +69,7 @@ namespace FlutterBridge.Maui.Helpers
         /// nor the optional type parameter constraints.
         /// For further reading see: https://stackoverflow.com/a/33712878
         /// </summary>
-        public static string GetCSharpSignature(MethodInfo method)
+        public static string GetCSharpSignature(this MethodInfo method)
         {
             StringBuilder sb = new();
 
@@ -79,16 +79,16 @@ namespace FlutterBridge.Maui.Helpers
             // Add type parameters if it's a generic method (i.e. <string, string>)
             if (method.IsGenericMethod)
             {
-                sb.Append(GetTypeParametersSignature(method));
+                sb.Append(method.GetTypeParametersSignature());
             }
 
             // Add formal parameters (i.e. (int, string, DateTime))
-            sb.Append(GetFormalParametersSignature(method));
+            sb.Append(method.GetFormalParametersSignature());
 
             return sb.ToString();
         }
 
-        public static string GetMethodAccessorSignature(MethodInfo method)
+        public static string GetMethodAccessorSignature(this MethodInfo method)
         {
             StringBuilder sb = new();
 
@@ -129,12 +129,12 @@ namespace FlutterBridge.Maui.Helpers
             }
 
             // Return type
-            sb.Append(GetSignature(method.ReturnType));
+            sb.Append(method.ReturnType.GetSignature());
 
             return sb.ToString();
         }
 
-        public static string GetMethodArgumentsSignature(MethodInfo method, bool invokable)
+        public static string GetMethodArgumentsSignature(this MethodInfo method, bool invokable)
         {
             var isExtensionMethod = method.IsDefined(typeof(System.Runtime.CompilerServices.ExtensionAttribute), false);
             var methodParameters = method.GetParameters().AsEnumerable();
@@ -159,7 +159,7 @@ namespace FlutterBridge.Maui.Helpers
 
                 if (!invokable)
                 {
-                    signature += GetSignature(param.ParameterType) + " ";
+                    signature += param.ParameterType.GetSignature() + " ";
                 }
 
                 signature += param.Name;
@@ -172,7 +172,7 @@ namespace FlutterBridge.Maui.Helpers
             return methodParameterString;
         }
 
-        public static string GetTypeParametersSignature(MethodInfo method)
+        public static string GetTypeParametersSignature(this MethodInfo method)
         {
             ArgumentNullException.ThrowIfNull(method);
 
@@ -182,7 +182,7 @@ namespace FlutterBridge.Maui.Helpers
             return BuildGenericSignature(method.GetGenericArguments());
         }
 
-        public static string GetFormalParametersSignature(MethodInfo method)
+        public static string GetFormalParametersSignature(this MethodInfo method)
         {
             List<string> signatures = [];
             foreach (ParameterInfo parameterInfo in method.GetParameters())
@@ -194,15 +194,15 @@ namespace FlutterBridge.Maui.Helpers
 
                 if (parameterInfo.IsOut)
                 {
-                    signatures.Add("out " + GetSignature(parameterType));
+                    signatures.Add("out " + parameterType.GetSignature());
                 }
                 else if (parameterInfo.ParameterType.IsByRef)
                 {
-                    signatures.Add("ref " + GetSignature(parameterType));
+                    signatures.Add("ref " + parameterType.GetSignature());
                 }
                 else
                 {
-                    signatures.Add(GetSignature(parameterType));
+                    signatures.Add(parameterType.GetSignature());
                 }
             }
 
