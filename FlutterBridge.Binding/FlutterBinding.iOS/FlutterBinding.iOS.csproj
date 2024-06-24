@@ -5,16 +5,18 @@
     <ImplicitUsings>true</ImplicitUsings>
     <IsBindingProject>true</IsBindingProject>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Configurations>Debug;Release</Configurations>
+    <Platforms>AnyCPU;Device</Platforms>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(Configuration)' != 'Release' ">
+  <ItemGroup Condition=" '$(Configuration)' != 'Release' And '$(Platform)' != 'Device' ">
     <NativeReference Include="..\FlutterBinding.Native\iOS\debug\Flutter.xcframework">
       <Kind>Framework</Kind>
       <Frameworks>Foundation UIKit</Frameworks>
       <SmartLink>True</SmartLink>
     </NativeReference>
   </ItemGroup>
-  <ItemGroup Condition=" '$(Configuration)' == 'Release' ">
+  <ItemGroup Condition=" '$(Configuration)' == 'Release' Or '$(Platform)' == 'Device'">
     <NativeReference Include="..\FlutterBinding.Native\iOS\release\Flutter.xcframework">
       <Kind>Framework</Kind>
       <Frameworks>Foundation UIKit</Frameworks>

@@ -22,7 +22,7 @@
 		<EnableAssemblyILStripping>false</EnableAssemblyILStripping>
 
 		<!-- Display name -->
-		<ApplicationTitle>FlutterBridge.Sample</ApplicationTitle>
+		<ApplicationTitle>FlutterBridge</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.i7chi.flutterbridge.sample</ApplicationId>
@@ -36,6 +36,8 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+		<Configurations>Debug;Release</Configurations>
+		<Platforms>AnyCPU;Device</Platforms>
 		<!--<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>-->
 	</PropertyGroup>
 
@@ -91,11 +93,11 @@
 	</ItemGroup>
 
     <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
-        <NativeReference Condition=" '$(Configuration)'=='Debug' " Include="Flutter/flutter_module/build/ios/framework/Debug/App.xcframework">
-            <Kind>Framework</Kind>
+		<NativeReference Condition=" '$(Configuration)' != 'Release' And '$(Platform)' != 'Device' " Include="Flutter/flutter_module/build/ios/framework/Debug/App.xcframework">
+			<Kind>Framework</Kind>
 			<SmartLink>False</SmartLink>
-        </NativeReference>
-        <NativeReference Condition=" '$(Configuration)'=='Release' " Include="Flutter/flutter_module/build/ios/framework/Release/App.xcframework">
+		</NativeReference>
+        <NativeReference Condition=" '$(Configuration)' == 'Release' Or '$(Platform)' == 'Device' " Include="Flutter/flutter_module/build/ios/framework/Release/App.xcframework">
             <Kind>Framework</Kind>
 			<SmartLink>False</SmartLink>
         </NativeReference>
