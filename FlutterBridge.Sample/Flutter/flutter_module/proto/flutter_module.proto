@@ -1,0 +1,9 @@
+// protoc --plugin=protoc-gen-dart=C:\Tools\protoc-gen-dart.bat --dart_out=./lib ./proto/*.proto
+
+syntax = "proto3";
+
+option csharp_namespace="FlutterBridge.Sample.Services";
+
+message CounterValueResult {
+    int32 value = 1;
+}

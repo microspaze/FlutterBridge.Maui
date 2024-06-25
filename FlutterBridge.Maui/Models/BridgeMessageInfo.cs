@@ -20,11 +20,11 @@ namespace FlutterBridge.Maui.Models
 
         [ProtoMember(2)]
         [JsonProperty("arguments")]
-        public Dictionary<string, object>? Arguments { get; set; }
+        public Dictionary<string, byte[]>? Arguments { get; set; }
 
         [ProtoMember(3)]
         [JsonProperty("result")]
-        public Dictionary<string, object?>? Result { get; set; }
+        public byte[]? Result { get; set; }
 
         [ProtoMember(4)]
         [JsonProperty("event")]
@@ -32,7 +32,7 @@ namespace FlutterBridge.Maui.Models
 
         [ProtoMember(5)]
         [JsonProperty("exception")]
-        public BridgeExceptionBase? Exception { get; set; }
+        public BridgeException? Exception { get; set; }
 
         [ProtoMember(6)]
         [JsonProperty("errorCode")]

@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_maui_bridge/service_library/counter_service.dart';
-import 'package:flutter_maui_bridge/service_library/value_changed_event_args.dart';
-import 'package:flutter_maui_bridge/flutnet_bridge.dart';
+import 'package:flutter_module/proto/flutter_module.pb.dart';
+import 'package:flutter_module/service/counter_service.dart';
+import 'package:flutter_maui_bridge/proto/flutter_maui_bridge.pb.dart';
+import 'package:flutter_maui_bridge/flutter_bridge.dart';
 
 void main() {
   // Configure the bridge mode
@@ -11,7 +12,7 @@ void main() {
   // By attaching to Flutter on device, it does not need to set Websocket mode for debugging.
   // VSCode  (ctrl+shift+p: Debug: Attach Flutter on Device or terminal: flutter attach)
   // IntelliJ (click Flutter Attach button)
-  FlutnetBridgeConfig.mode = FlutnetBridgeMode.PlatformChannel;
+  FlutterBridgeConfig.mode = FlutterBridgeMode.PlatformChannel;
   runApp(MyApp());
 }
 
@@ -106,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  StreamSubscription<ValueChangedEventArgs>? _eventSubscription;
+  StreamSubscription<CounterValueResult>? _eventSubscription;
 
   @override
   void initState() {
@@ -117,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // Subscribe to the native (Xamarin) ValueChanged event
     //
     _eventSubscription = _counterService.valueChanged.listen(
-      (ValueChangedEventArgs args) {
+      (CounterValueResult args) {
         setState(() {
           _counterValue = args.value;
         });

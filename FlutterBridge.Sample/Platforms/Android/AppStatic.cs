@@ -47,7 +47,7 @@ namespace FlutterBridge.Sample
             try
             {
                 BridgeRuntime.Init();
-                BridgeRuntime.RegisterPlatformService(new CounterService(), "counter_service");
+                BridgeRuntime.RegisterBridgeService(new CounterService(), "counter_service");
                 Initialized = true;
             }
             catch (Exception e)

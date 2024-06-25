@@ -1,0 +1,41 @@
+// protoc --plugin=protoc-gen-dart=C:\Tools\protoc-gen-dart.bat --dart_out=./lib ./proto/*.proto
+
+syntax = "proto3";
+
+enum BridgeErrorCode {
+    OperationNotImplemented = 0;
+    OperationArgumentsCountMismatch = 1;
+    OperationArgumentsInvalid = 2;
+    OperationArgumentsParsingError = 3;
+    OperationFailed = 4;
+    OperationCanceled = 5;
+    EnvironmentNotInitialized = 6;
+ }
+
+ message BridgeException {
+    BridgeErrorCode code = 1;
+    string message = 2;
+ }
+
+ message BridgeEventInfo {
+   string instanceId = 1;
+   string event = 2;
+   bytes args = 3;
+}
+
+message BridgeMessageInfo {
+   BridgeMethodInfo methodInfo = 1;
+   map<string,bytes> arguments = 2;
+   bytes result = 3;
+   BridgeEventInfo event = 4;
+   BridgeException exception = 5;
+   BridgeErrorCode errorCode = 6;
+   string errorMessage = 7;
+}
+
+message BridgeMethodInfo {
+   int32 requestId = 1;
+   string instance = 2;
+   string service = 3;
+   string operation = 4;
+}

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProtoBuf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -8,8 +9,13 @@ using System.Threading.Tasks;
 namespace FlutterBridge.Maui.Models
 {
     [Obfuscation(Exclude = true)]
-    public class BridgeException : BridgeExceptionBase
+    [ProtoContract]
+    public class BridgeException : Exception
     {
+        public BridgeException()
+        {
+        }
+
         public BridgeException(BridgeErrorCode errorCode)
         {
             Code = errorCode;
@@ -23,6 +29,20 @@ namespace FlutterBridge.Maui.Models
             Code = errorCode;
         }
 
-        public BridgeErrorCode Code { get; }
+        public BridgeException(string message) : base(message)
+        {
+            Message = message;
+        }
+
+        public BridgeException(string message, Exception inner) : base(message, inner)
+        {
+            Message = message;
+        }
+
+        [ProtoMember(1)]
+        public BridgeErrorCode Code { get; set; }
+
+        [ProtoMember(2)]
+        public override string Message { get; } = string.Empty;
     }
 }

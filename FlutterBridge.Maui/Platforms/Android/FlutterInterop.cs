@@ -42,8 +42,9 @@ namespace FlutterBridge.Maui
         /// </summary>
         public static Java.Lang.Object? ToMethodChannelResult(int value)
         {
-            Java.Lang.Object? primitiveObj = JsonConvert.SerializeObject(value, JsonSerializerSettings);
-            return primitiveObj;
+            //Java.Lang.Object? primitiveObj = JsonConvert.SerializeObject(value, JsonSerializerSettings);
+            //return primitiveObj;
+            return value.ToProtoBytes();
         }
 
         /// <summary>
@@ -54,10 +55,11 @@ namespace FlutterBridge.Maui
         public static Java.Lang.Object? ToMethodChannelResult(BridgeMessageInfo message)
         {
             // FIX ISSUES ABOUT DICTIONARY IN FLUTTER
-            JObject jsonObject = JObject.FromObject(message, Serializer);
-            CleanObjectFromInvalidTypes(ref jsonObject);
-            Java.Lang.Object? obj = jsonObject.ToString(Formatting.None);
-            return obj;
+            //JObject jsonObject = JObject.FromObject(message, Serializer);
+            //CleanObjectFromInvalidTypes(ref jsonObject);
+            //Java.Lang.Object? obj = jsonObject.ToString(Formatting.None);
+            //return obj;
+            return message.ToProtoBytes();
         }
 
         /// <summary>
@@ -68,10 +70,11 @@ namespace FlutterBridge.Maui
         public static Java.Lang.Object? ToMethodChannelResult(BridgeEventInfo message)
         {
             // FIX ISSUES ABOUT DICTIONARY IN FLUTTER
-            JObject jsonObject = JObject.FromObject(message, Serializer);
-            CleanObjectFromInvalidTypes(ref jsonObject);
-            Java.Lang.Object? obj = jsonObject.ToString(Formatting.None);
-            return obj;
+            //JObject jsonObject = JObject.FromObject(message, Serializer);
+            //CleanObjectFromInvalidTypes(ref jsonObject);
+            //Java.Lang.Object? obj = jsonObject.ToString(Formatting.None);
+            //return obj;
+            return message.ToProtoBytes();
         }
 
         public static void CleanObjectFromInvalidTypes(ref JObject jobject)

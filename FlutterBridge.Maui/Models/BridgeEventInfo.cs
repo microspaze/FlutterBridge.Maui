@@ -23,6 +23,6 @@ namespace FlutterBridge.Maui.Models
 
         [ProtoMember(3)]
         [JsonProperty("args")]
-        public EventArgs EventData { get; set; } = EventArgs.Empty;
+        public byte[]? EventData { get; set; }
     }
 }

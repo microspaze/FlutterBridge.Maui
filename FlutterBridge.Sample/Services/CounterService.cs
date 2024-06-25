@@ -11,7 +11,7 @@ namespace FlutterBridge.Sample.Services
     public class CounterService
     {
         [BridgeEvent]
-        public event EventHandler<ValueChangedEventArgs>? ValueChanged;
+        public event EventHandler<CounterValueResult>? ValueChanged;
 
         private int _value = 0;
 
@@ -41,7 +41,7 @@ namespace FlutterBridge.Sample.Services
             });
         }
 
-        protected virtual void OnValueChanged(ValueChangedEventArgs e)
+        protected virtual void OnValueChanged(CounterValueResult e)
         {
             ValueChanged?.Invoke(this, e);
         }

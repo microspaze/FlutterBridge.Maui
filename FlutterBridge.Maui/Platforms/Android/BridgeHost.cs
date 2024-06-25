@@ -167,17 +167,17 @@ namespace FlutterBridge.Maui
         {
             // Create the named channel for communicating with Flutter module using asynchronous method calls
             // NOTE: This channel is used to RECEIVE messages/requests FROM Flutter
-            _messageChannel = new BasicMessageChannel(engine.DartExecutor.BinaryMessenger, "flutnetbridge.bytes", BinaryCodec.InstanceDirect!);
+            _messageChannel = new BasicMessageChannel(engine.DartExecutor.BinaryMessenger, "flutterbridge.bytes", BinaryCodec.InstanceDirect!);
             _messageHandler = new MessageHandler(HandleMessageCall);
             _messageChannel.SetMessageHandler(_messageHandler);
-            _methodChannelIncoming = new MethodChannel(engine.DartExecutor.BinaryMessenger, "flutnetbridge.incoming");
+            _methodChannelIncoming = new MethodChannel(engine.DartExecutor.BinaryMessenger, "flutterbridge.incoming");
             _methodCallHandlerIncoming = new MethodCallHandler(HandleMethodCall);
             _methodChannelIncoming.SetMethodCallHandler(_methodCallHandlerIncoming);
 
             // Create a second named channel for diagnostic use only.
             // This channel is used, for example, to test if Flutter module is running
             // embedded into a native Xamarin app or as a standalone app
-            _methodChannelTest = new MethodChannel(engine.DartExecutor.BinaryMessenger, "flutnetbridge.support");
+            _methodChannelTest = new MethodChannel(engine.DartExecutor.BinaryMessenger, "flutterbridge.support");
             _methodCallHandlerTest = new MethodCallHandler(HandleMethodCallTest);
             _methodChannelTest.SetMethodCallHandler(_methodCallHandlerTest);
 
@@ -189,7 +189,7 @@ namespace FlutterBridge.Maui
             // see: https://medium.com/flutter/flutter-platform-channels-ce7f540a104e
 
             _streamHandler = new StreamHandler(this);
-            _eventChannel = new EventChannel(engine.DartExecutor.BinaryMessenger, "flutnetbridge.outgoing");
+            _eventChannel = new EventChannel(engine.DartExecutor.BinaryMessenger, "flutterbridge.outgoing");
             _eventChannel.SetStreamHandler(_streamHandler);
 
             _context = context;
@@ -269,7 +269,8 @@ namespace FlutterBridge.Maui
             Object? dartReturnValue;
             try
             {
-                methodInfo = JsonConvert.DeserializeObject<BridgeMethodInfo>(method, FlutterInterop.JsonSerializerSettings);
+                var methodArgument = (byte[]?)call.Argument("methodInfo");
+                methodInfo = methodArgument.ToProtoModel<BridgeMethodInfo>();
                 dartReturnValue = FlutterInterop.ToMethodChannelResult(0);
             }
             catch (Exception ex)
@@ -318,7 +319,7 @@ namespace FlutterBridge.Maui
                 {
                     ParameterInfo param = operation.Parameters![i];
                     var paramType = param.IsOut || param.ParameterType.IsByRef
-                        ? param.ParameterType.GetElementType()
+                        ? param.ParameterType.GetElementType()!
                         : param.ParameterType;
                     string paramName = param.Name!.FirstCharUpper();
 
@@ -326,11 +327,10 @@ namespace FlutterBridge.Maui
                     if (call.HasArgument(paramName))
                     {
                         var argumentValue = call.Argument(paramName);
-                        var serializedArg = argumentValue?.ToString();
-                        if (!string.IsNullOrEmpty(serializedArg))
+                        if (argumentValue != null)
                         {
-                            // Deserialize the argument
-                            value = JsonConvert.DeserializeObject(serializedArg, paramType, FlutterInterop.JsonSerializerSettings);
+                            var argumentBytes = (byte[]?)argumentValue;
+                            value = argumentBytes.ToProtoObject(paramType);
                         }
                     }
                     else if (param.HasDefaultValue)
@@ -355,7 +355,7 @@ namespace FlutterBridge.Maui
             var result = BridgeRuntime.Run(operation, arguments);
             if (result.Error != null)
             {
-                if (result.Error is BridgeExceptionBase flutterException)
+                if (result.Error is BridgeException flutterException)
                 {
                     SendError(methodInfo, flutterException);
                 }
@@ -383,7 +383,7 @@ namespace FlutterBridge.Maui
             {
                 InstanceId = e.ServiceName,
                 EventName = e.EventName.FirstCharLower(),
-                EventData = e.EventData
+                EventData = e.EventData.ToProtoBytes(),
             };
 
             Object? eventValue = FlutterInterop.ToMethodChannelResult(eventInfo);
@@ -420,14 +420,10 @@ namespace FlutterBridge.Maui
 
         private void SendResult(BridgeMethodInfo methodInfo, object? result)
         {
-            var resultValue = new Dictionary<string, object?>
-            {
-                { "ReturnValue", result }
-            };
             var message = new BridgeMessageInfo
             {
                 MethodInfo = methodInfo,
-                Result = resultValue
+                Result = result.ToProtoBytes(),
             };
 
             var dartReturnValue = FlutterInterop.ToMethodChannelResult(message);
@@ -435,7 +431,7 @@ namespace FlutterBridge.Maui
             MainThread.BeginInvokeOnMainThread(() => _methodChannelIncoming.InvokeMethod("result", dartReturnValue));
         }
 
-        private void SendError(BridgeMethodInfo methodInfo, BridgeExceptionBase exception)
+        private void SendError(BridgeMethodInfo methodInfo, BridgeException exception)
         {
             var message = new BridgeMessageInfo
             {

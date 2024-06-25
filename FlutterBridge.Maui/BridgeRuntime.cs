@@ -160,7 +160,7 @@ namespace FlutterBridge.Maui
         /// This method propagates the event through <see cref="OnBridgeEvent"/>
         /// so that <see cref="BridgeHost"/> can subscribe and send data to Flutter.
         /// </summary>
-        internal static void PropagateBridgeEvent(string serviceName, string eventName, object sender, EventArgs eventArgs)
+        internal static void PropagateBridgeEvent(string serviceName, string eventName, object sender, object? eventArgs)
         {
             var args = new BridgeEventArgs
             {

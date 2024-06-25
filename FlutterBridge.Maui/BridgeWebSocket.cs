@@ -44,16 +44,16 @@ namespace FlutterBridge.Maui
 
         public BridgeWebSocketBehavior()
         {
-            BridgeRuntime.OnBridgeEvent += BridgeRuntimeOnPlatformEvent;
+            BridgeRuntime.OnBridgeEvent += BridgeRuntimeOnBridgeEvent;
         }
 
-        private void BridgeRuntimeOnPlatformEvent(object sender, BridgeEventArgs e)
+        private void BridgeRuntimeOnBridgeEvent(object? sender, BridgeEventArgs e)
         {
             BridgeEventInfo eventInfo = new BridgeEventInfo
             {
                 InstanceId = e.ServiceName,
                 EventName = e.EventName.FirstCharLower(),
-                EventData = e.EventData
+                EventData = e.EventData.ToProtoBytes(),
             };
 
             BridgeMessageInfo message = new BridgeMessageInfo()
@@ -74,7 +74,7 @@ namespace FlutterBridge.Maui
         {
             lock (_responseBufferLock)
             {
-                BridgeMessageInfo found = _responseBufferQueue.FirstOrDefault(r => r.MethodInfo.RequestId == message.MethodInfo.RequestId);
+                BridgeMessageInfo? found = _responseBufferQueue.FirstOrDefault(r => r.MethodInfo != null && r.MethodInfo.RequestId == message.MethodInfo?.RequestId);
                 if (found == null)
                 {
                     _responseBufferQueue.Enqueue(message);
@@ -87,30 +87,35 @@ namespace FlutterBridge.Maui
             }
         }
 
-        private BridgeMessageInfo GetFromBuffer(int requestId)
+        private BridgeMessageInfo? GetFromBuffer(int requestId)
         {
             lock (_responseBufferLock)
             {
-                BridgeMessageInfo response = _responseBufferQueue.FirstOrDefault(r => r.MethodInfo.RequestId == requestId);
+                BridgeMessageInfo? response = _responseBufferQueue.FirstOrDefault(r => r.MethodInfo != null && r.MethodInfo.RequestId == requestId);
                 return response;
             }
         }
 
         protected override void OnMessage(MessageEventArgs e)
         {
-            if (e.Data == null)
+            if (e.RawData == null)
                 return;
 
-            if (e.Data != null)
+            if (e.RawData != null)
             {
-                BridgeMessageInfo request;
+                BridgeMessageInfo? request;
                 try
                 {
-                    request = JsonConvert.DeserializeObject<BridgeMessageInfo>(e.Data, FlutterInterop.JsonSerializerSettings);
+                    request = e.RawData.ToProtoModel<BridgeMessageInfo>();
                 }
                 catch (Exception)
                 {
                     // ignore invalid messages
+                    return;
+                }
+
+                if (request == null || request.MethodInfo == null)
+                {
                     return;
                 }
 
@@ -126,28 +131,30 @@ namespace FlutterBridge.Maui
                     return;
                 }
 
-                if (operation.Parameters.Length != request.Arguments.Count)
+                var requestArgsCount = request.Arguments?.Count ?? 0;
+                var operationParamsCount = operation.Parameters?.Length ?? 0;
+                if (operationParamsCount != requestArgsCount)
                 {
                     BridgeException error = new BridgeException(BridgeErrorCode.OperationArgumentsCountMismatch);
                     SendError(request.MethodInfo, error);
                     return;
                 }
 
-                object[] arguments = new object[operation.Parameters.Length];
+                var arguments = new object?[operationParamsCount];
                 try
                 {
-                    for (int i = 0; i < operation.Parameters.Length; i++)
+                    for (int i = 0; i < operationParamsCount; i++)
                     {
-                        ParameterInfo param = operation.Parameters[i];
+                        ParameterInfo param = operation.Parameters![i];
                         Type paramType = param.IsOut || param.ParameterType.IsByRef
-                            ? param.ParameterType.GetElementType()
+                            ? param.ParameterType.GetElementType()!
                             : param.ParameterType;
-                        string paramName = param.Name.FirstCharUpper();
+                        string paramName = param.Name!.FirstCharUpper();
 
-                        object value;
-                        if (request.Arguments.ContainsKey(paramName))
+                        object? value;
+                        if (request.Arguments!.ContainsKey(paramName))
                         {
-                            object argumentValue = request.Arguments[paramName];
+                            byte[]? argumentValue = request.Arguments[paramName];
                             if (argumentValue == null)
                             {
                                 value = null;
@@ -156,20 +163,9 @@ namespace FlutterBridge.Maui
                             {
                                 value = argumentValue;
                             }
-                            else if (argumentValue is string && paramType != null && paramType.IsEnum)
-                            {
-                                // Handle enums: remove double quotes from "enumName"
-                                string enumString = (argumentValue as string);
-                                value = Enum.Parse(paramType, enumString);
-                            }
-                            else if (paramType != null && argumentValue.GetType().IsPrimitive && paramType.IsPrimitive)
-                            {
-                                value = Convert.ChangeType(argumentValue, paramType);
-                            }
                             else
                             {
-                                JObject jobj = JObject.FromObject(argumentValue);
-                                value = jobj.ToObject(paramType);
+                                value = argumentValue.ToProtoObject(paramType);
                             }
                         }
                         else if (param.HasDefaultValue)
@@ -196,7 +192,7 @@ namespace FlutterBridge.Maui
                 var result = BridgeRuntime.Run(operation, arguments);
                 if (result.Error != null)
                 {
-                    if (result.Error is BridgeExceptionBase flutterException)
+                    if (result.Error is BridgeException flutterException)
                     {
                         SendError(request.MethodInfo, flutterException);
                     }
@@ -214,7 +210,7 @@ namespace FlutterBridge.Maui
             }
         }
 
-        private void SendError(BridgeMethodInfo methodInfo, BridgeExceptionBase exception)
+        private void SendError(BridgeMethodInfo methodInfo, BridgeException exception)
         {
             var message = new BridgeMessageInfo
             {
@@ -228,15 +224,12 @@ namespace FlutterBridge.Maui
             Send(message);
         }
 
-        private void SendResult(BridgeMethodInfo methodInfo, object result)
+        private void SendResult(BridgeMethodInfo methodInfo, object? result)
         {
-            Dictionary<string, object> resultValue = new Dictionary<string, object>();
-            resultValue.Add("ReturnValue", result);
-
             var message = new BridgeMessageInfo
             {
                 MethodInfo = methodInfo,
-                Result = resultValue
+                Result = result.ToProtoBytes(),
             };
 
             Send(message);
@@ -246,14 +239,7 @@ namespace FlutterBridge.Maui
         {
             try
             {
-                // OLD VERSION
-                //string json = JsonConvert.SerializeObject(message, FlutterInterop.JsonSerializerSettings);
-
-                // NEW - FIX ISSUES ABOUT DICTIONARY IN FLUTTER
-                JObject jsonObject = JObject.FromObject(message, FlutterInterop.Serializer);
-                FlutterInterop.CleanObjectFromInvalidTypes(ref jsonObject);
-                string json = jsonObject.ToString(Formatting.None);
-                Send(json);
+                Send(message.ToProtoBytes());
             }
             catch (Exception)
             {

@@ -298,7 +298,7 @@ namespace FlutterBridge.Maui.Extensions
 
         public static bool IsValidBridgeException(this Type type)
         {
-            return typeof(BridgeExceptionBase).IsAssignableFrom(type);
+            return typeof(BridgeException).IsAssignableFrom(type);
         }
 
         #endregion
