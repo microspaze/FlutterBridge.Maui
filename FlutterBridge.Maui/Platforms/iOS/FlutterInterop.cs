@@ -42,8 +42,9 @@ namespace FlutterBridge.Maui
         /// </summary>
         public static NSObject ToMethodChannelResult(int value)
         {
-            string json = JsonConvert.SerializeObject(value, JsonSerializerSettings);
-            return NSObject.FromObject(json);
+            //string json = JsonConvert.SerializeObject(value, JsonSerializerSettings);
+            //return NSObject.FromObject(json);
+            return NSObject.FromObject(value.ToProtoBytes());
         }
 
         /// <summary>
@@ -54,9 +55,10 @@ namespace FlutterBridge.Maui
         public static NSObject ToMethodChannelResult(BridgeMessageInfo message)
         {
             // FIX ISSUES ABOUT DICTIONARY
-            JObject jsonObject = JObject.FromObject(message, Serializer);
-            CleanObjectFromInvalidTypes(ref jsonObject);
-            return NSObject.FromObject(jsonObject.ToString(Formatting.None));
+            //JObject jsonObject = JObject.FromObject(message, Serializer);
+            //CleanObjectFromInvalidTypes(ref jsonObject);
+            //return NSObject.FromObject(jsonObject.ToString(Formatting.None));
+            return NSObject.FromObject(message.ToProtoBytes());
         }
 
         /// <summary>
@@ -67,9 +69,10 @@ namespace FlutterBridge.Maui
         public static NSObject ToMethodChannelResult(BridgeEventInfo message)
         {
             // FIX ISSUES ABOUT DICTIONARY
-            JObject jsonObject = JObject.FromObject(message, Serializer);
-            CleanObjectFromInvalidTypes(ref jsonObject);
-            return NSObject.FromObject(jsonObject.ToString(Formatting.None));
+            //JObject jsonObject = JObject.FromObject(message, Serializer);
+            //CleanObjectFromInvalidTypes(ref jsonObject);
+            //return NSObject.FromObject(jsonObject.ToString(Formatting.None));
+            return NSObject.FromObject(message.ToProtoBytes());
         }
 
         public static void CleanObjectFromInvalidTypes(ref JObject jobject)

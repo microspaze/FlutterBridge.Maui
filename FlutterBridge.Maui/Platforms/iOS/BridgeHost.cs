@@ -90,13 +90,13 @@ namespace FlutterBridge.Maui
         {
             // Create the named channel for communicating with Flutter module using asynchronous method calls
             // NOTE: This channel is used to RECEIVE messages/requests FROM Flutter
-            _methodChannelIncoming = FlutterMethodChannel.Create("flutnetbridge.incoming", engine.BinaryMessenger);
+            _methodChannelIncoming = FlutterMethodChannel.Create("flutterbridge.incoming", engine.BinaryMessenger);
             _methodChannelIncoming.SetMethodCallHandler(HandleMethodCall);
 
             // Create a second named channel for diagnostic use only.
             // This channel is used, for example, to test if Flutter module is running
             // embedded into a native Xamarin app or as a standalone app
-            _methodChannelTest = FlutterMethodChannel.Create("flutnetbridge.support", engine.BinaryMessenger);
+            _methodChannelTest = FlutterMethodChannel.Create("flutterbridge.support", engine.BinaryMessenger);
             _methodChannelTest.SetMethodCallHandler(HandleMethodCallTest);
 
             // Create the named channel for communicating with Flutter module using event streams
@@ -107,12 +107,12 @@ namespace FlutterBridge.Maui
             // see: https://medium.com/flutter/flutter-platform-channels-ce7f540a104e
 
             _streamHandler = new StreamHandler(this);
-            _eventChannel = FlutterEventChannel.Create("flutnetbridge.outgoing", engine.BinaryMessenger);
+            _eventChannel = FlutterEventChannel.Create("flutterbridge.outgoing", engine.BinaryMessenger);
             _eventChannel.SetStreamHandler(_streamHandler);
 
             Mode = mode;
 
-            BridgeRuntime.OnBridgeEvent += OnBridgeEvent;
+            BridgeRuntime.OnBridgeEvent += OnHostBridgeEvent;
 
             if (Mode == FlutterBridgeMode.WebSocket)
             {
@@ -128,7 +128,7 @@ namespace FlutterBridge.Maui
             if (_disposed)
                 return;
 
-            BridgeRuntime.OnBridgeEvent -= OnBridgeEvent;
+            BridgeRuntime.OnBridgeEvent -= OnHostBridgeEvent;
 
             _methodChannelIncoming.Dispose();
             _methodChannelTest.Dispose();
@@ -231,32 +231,32 @@ namespace FlutterBridge.Maui
             }
 
             NSDictionary dartArguments = call.Arguments as NSDictionary;
-            if (operation.Parameters.Length > 0 && dartArguments == null)
+            var parametersCount = operation.ParametersCount;
+            if (parametersCount > 0 && dartArguments == null)
             {
                 SendError(methodInfo, new BridgeException(BridgeErrorCode.OperationArgumentsCountMismatch));
                 return;
             }
 
-            object[] arguments = new object[operation.Parameters.Length];
+            var arguments = new object?[parametersCount];
             try
             {
-                for (int i = 0; i < operation.Parameters.Length; i++)
+                for (int i = 0; i < parametersCount; i++)
                 {
-                    ParameterInfo param = operation.Parameters[i];
+                    ParameterInfo param = operation.Parameters![i];
                     Type paramType = param.IsOut || param.ParameterType.IsByRef
-                        ? param.ParameterType.GetElementType()
+                        ? param.ParameterType.GetElementType()!
                         : param.ParameterType;
-                    NSString paramName = new NSString(param.Name.FirstCharUpper());
+                    NSString paramName = new NSString(param.Name!.FirstCharUpper());
 
-                    object value;
+                    object? value = null;
                     if (dartArguments.ContainsKey(paramName))
                     {
-                        NSObject argumentValue = dartArguments[paramName];
-
-                        NSString serializedArg = (NSString)argumentValue;
-
-                        // Deserialize the arg value
-                        value = JsonConvert.DeserializeObject(serializedArg, paramType, FlutterInterop.JsonSerializerSettings);
+                        var argumentValue = dartArguments[paramName];
+                        if (argumentValue != null && argumentValue is NSData argumentBytes)
+                        {
+                            value = argumentBytes.ToByteArray().ToProtoObject(paramType);
+                        }
                     }
                     else if (param.HasDefaultValue)
                     {
@@ -297,7 +297,7 @@ namespace FlutterBridge.Maui
             }
         }
 
-        private void OnBridgeEvent(object sender, BridgeEventArgs e)
+        private void OnHostBridgeEvent(object? sender, BridgeEventArgs e)
         {
             // Prevent dispatching events to Flutter through event channel
             // if bridge is configured for WebSocket communication
@@ -308,7 +308,7 @@ namespace FlutterBridge.Maui
             {
                 InstanceId = e.ServiceName,
                 EventName = e.EventName.FirstCharLower(),
-                EventData = e.EventData
+                EventData = e.EventData.ToProtoBytes(),
             };
 
             NSObject eventValue = FlutterInterop.ToMethodChannelResult(eventInfo);
@@ -346,16 +346,12 @@ namespace FlutterBridge.Maui
             }
         }
 
-        private void SendResult(BridgeMethodInfo methodInfo, object result)
+        private void SendResult(BridgeMethodInfo methodInfo, object? result)
         {
-            var resultValue = new Dictionary<string, object?>
-            {
-                { "ReturnValue", result }
-            };
             var message = new BridgeMessageInfo
             {
                 MethodInfo = methodInfo,
-                Result = resultValue
+                Result = result.ToProtoBytes(),
             };
 
             NSObject dartReturnValue = FlutterInterop.ToMethodChannelResult(message);

@@ -80,5 +80,12 @@ namespace FlutterBridge.Maui.Extensions
         }
 
         #endregion
+
+        public static byte[] ToByteArray(this NSData data)
+        {
+            var dataBytes = new byte[data.Length];
+            System.Runtime.InteropServices.Marshal.Copy(data.Bytes, dataBytes, 0, Convert.ToInt32(data.Length));
+            return dataBytes;
+        }
     }
 }

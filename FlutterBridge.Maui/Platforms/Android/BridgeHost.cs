@@ -372,7 +372,7 @@ namespace FlutterBridge.Maui
             }
         }
 
-        private void BridgeRuntimeOnBridgeEvent(object? sender, BridgeEventArgs e)
+        private void OnHostBridgeEvent(object? sender, BridgeEventArgs e)
         {
             // Prevent dispatching events to Flutter through event channel
             // if bridge is configured for WebSocket communication
