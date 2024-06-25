@@ -44,7 +44,7 @@ namespace FlutterBridge.Maui
         {
             //string json = JsonConvert.SerializeObject(value, JsonSerializerSettings);
             //return NSObject.FromObject(json);
-            return NSObject.FromObject(value.ToProtoBytes());
+            return value.ToProtoBytes().ToByteData();
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace FlutterBridge.Maui
             //JObject jsonObject = JObject.FromObject(message, Serializer);
             //CleanObjectFromInvalidTypes(ref jsonObject);
             //return NSObject.FromObject(jsonObject.ToString(Formatting.None));
-            return NSObject.FromObject(message.ToProtoBytes());
+            return message.ToProtoBytes().ToByteData();
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace FlutterBridge.Maui
             //JObject jsonObject = JObject.FromObject(message, Serializer);
             //CleanObjectFromInvalidTypes(ref jsonObject);
             //return NSObject.FromObject(jsonObject.ToString(Formatting.None));
-            return NSObject.FromObject(message.ToProtoBytes());
+            return message.ToProtoBytes().ToByteData();
         }
 
         public static void CleanObjectFromInvalidTypes(ref JObject jobject)

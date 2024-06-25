@@ -183,11 +183,16 @@ namespace FlutterBridge.Maui
             }
 
             // Extract target method information from MethodCall.Method
-            BridgeMethodInfo methodInfo;
+            BridgeMethodInfo? methodInfo = null;
             NSObject dartReturnValue;
             try
             {
-                methodInfo = JsonConvert.DeserializeObject<BridgeMethodInfo>(call.Method, FlutterInterop.JsonSerializerSettings);
+                var dartArguments = call.Arguments as NSDictionary;
+                var methodArgument = dartArguments["methodInfo"];
+                if (methodArgument is FlutterStandardTypedData methodData && methodData.Data != null)
+                {
+                    methodInfo = methodData.Data.ToByteArray().ToProtoModel<BridgeMethodInfo>();
+                }
                 dartReturnValue = FlutterInterop.ToMethodChannelResult(0);
             }
             catch (Exception ex)
@@ -359,7 +364,7 @@ namespace FlutterBridge.Maui
             MainThread.BeginInvokeOnMainThread(() => _methodChannelIncoming.InvokeMethod("result", dartReturnValue));
         }
 
-        private void SendError(BridgeMethodInfo methodInfo, BridgeException exception)
+        private void SendError(BridgeMethodInfo? methodInfo, BridgeException exception)
         {
             var message = new BridgeMessageInfo
             {
