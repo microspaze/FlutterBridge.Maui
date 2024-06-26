@@ -195,7 +195,7 @@ namespace FlutterBridge.Maui
             _context = context;
             Mode = mode;
 
-            BridgeRuntime.OnBridgeEvent += BridgeRuntimeOnBridgeEvent;
+            BridgeRuntime.OnBridgeEvent += OnHostBridgeEvent;
 
             if (Mode == FlutterBridgeMode.WebSocket)
                 _context.StartService(new Android.Content.Intent(_context, typeof(WebSocketService)));
@@ -209,7 +209,7 @@ namespace FlutterBridge.Maui
             if (_disposed)
                 return;
 
-            BridgeRuntime.OnBridgeEvent -= BridgeRuntimeOnBridgeEvent;
+            BridgeRuntime.OnBridgeEvent -= OnHostBridgeEvent;
 
             _methodChannelIncoming.Dispose();
             _methodCallHandlerIncoming.Dispose();

@@ -14,9 +14,6 @@
         <EmbeddedNativeLibrary Include="..\FlutterBinding.Native\Android\debug\lib\armeabi-v7a\libflutter.so">
             <Link>lib\armeabi-v7a\libflutter.so</Link>
         </EmbeddedNativeLibrary>
-        <EmbeddedNativeLibrary Include="..\FlutterBinding.Native\Android\debug\lib\x86\libflutter.so">
-            <Link>lib\x86\libflutter.so</Link>
-        </EmbeddedNativeLibrary>
         <EmbeddedNativeLibrary Include="..\FlutterBinding.Native\Android\debug\lib\x86_64\libflutter.so">
             <Link>lib\x86_64\libflutter.so</Link>
         </EmbeddedNativeLibrary>
