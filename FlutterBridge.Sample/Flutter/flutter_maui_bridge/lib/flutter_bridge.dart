@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
-import 'dart:ffi';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:synchronized/synchronized.dart';
@@ -10,7 +8,6 @@ import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'package:flutter_maui_bridge/proto/flutter_maui_bridge.pb.dart';
-import 'package:flutter_maui_bridge/proto/flutter_maui_bridge.pbenum.dart';
 
 ///
 /// The bridge communication type with native side.
@@ -30,7 +27,7 @@ class FlutterBridgeConfig {
 }
 
 class FlutterBridge {
-  // Events from native side (Xamarin)
+  // Events from native side (MAUI)
   static const EventChannel _events = EventChannel('flutterbridge.outgoing');
 
   // The real event stream from navive side
@@ -46,13 +43,13 @@ class FlutterBridge {
   // using a specific instanceId, event
   //
   Stream<List<int>> events({
-    required String instanceId,
-    required String event,
+    required String serviceName,
+    required String eventName,
   }) {
     // Filter the stream by instanceId and event name.
     return _netEvent
-        .where((e) => e!.instanceId == instanceId && e.event == event)
-        .map((e) => e!.args);
+        .where((e) => e!.serviceName == serviceName && e.eventName == eventName)
+        .map((e) => e!.eventData);
   }
 
   static final FlutterBridge _instance =
@@ -74,23 +71,20 @@ class FlutterBridge {
 
   /// Invoke the message on the channel
   final Future<Map<String, dynamic>> Function({
-    required String? instanceId,
     required String? service,
     required String? operation,
     required Map<String, dynamic>? arguments,
   }) invokeMethod;
 
   static Future<Map<String, dynamic>> _invokeOnChannel({
-    required String? instanceId,
     required String? service,
     required String? operation,
     required Map<String, dynamic>? arguments,
   }) {
     print(
-      "Invoking on platform channel $operation on $service :$instanceId: build mode:$buildMode",
+      "Invoking on platform channel $operation on $service: build mode:$buildMode",
     );
     return _PlatformChannel().invokeMethod(
-      instanceId: instanceId,
       service: service,
       operation: operation,
       arguments: arguments,
@@ -98,16 +92,14 @@ class FlutterBridge {
   }
 
   static Future<Map<String, dynamic>> _invokeOnSocket({
-    required String? instanceId,
     required String? service,
     required String? operation,
     required Map<String, dynamic>? arguments,
   }) {
     print(
-      "Invoking on socket $operation on $service :$instanceId: build mode:$buildMode",
+      "Invoking on socket $operation on $service: build mode:$buildMode",
     );
     return _WebSocketChannel().invokeMethod(
-      instanceId: instanceId,
       service: service,
       operation: operation,
       arguments: arguments,
@@ -142,22 +134,22 @@ class _PlatformChannel {
 
   // Send request id
   int _uniqueId = 0;
-
+  bool? _appEmbedded = null;
   Lock _sendLock = new Lock();
 
-  /// All the request to be satisfied by channel.
+  // All the request to be satisfied by channel.
   Map<int, Completer<Map<String, dynamic>>> _sendRequestMap = {};
 
   // The real communication channel with native platform
   final _platformChannel = MethodChannel('flutterbridge.incoming');
 
-  // Native channel used to verify if flutter is embedded or not
-  final _supportChannel = MethodChannel('flutterbridge.support');
-
   Future<bool> _isAppEmbedded() async {
     try {
-      var value = await _supportChannel.invokeMethod("test", "test");
-      return true;
+      if (_appEmbedded != null) {
+        return _appEmbedded!;
+      }
+      _appEmbedded = await _platformChannel.invokeMethod<bool>("checkEmbedded");
+      return _appEmbedded == true;
     } catch (ex) {
       return false;
     }
@@ -184,7 +176,7 @@ class _PlatformChannel {
 
       // Insert the response the the map
       await _sendLock.synchronized(() {
-        var requestId = msg.methodInfo.requestId;
+        var requestId = msg.requestId;
         if (_sendRequestMap.containsKey(requestId)) {
           // Invoke the task completion
           // var isFailed = msg.errorCode != null && msg.errorCode.isNotEmpty;
@@ -202,7 +194,7 @@ class _PlatformChannel {
     } catch (e) {
       // Error during deserialization
       print(
-        "flutter_xamarin_debug1: error during _onMessageReceived deserialization." +
+        "flutter_MAUI_debug1: error during _onMessageReceived deserialization." +
             e.toString(),
       );
     }
@@ -211,7 +203,6 @@ class _PlatformChannel {
   }
 
   Future<Map<String, dynamic>> invokeMethod({
-    required String? instanceId,
     required String? service,
     required String? operation,
     required Map<String, dynamic>? arguments,
@@ -222,57 +213,45 @@ class _PlatformChannel {
     _sendLock.synchronized(
       () async {
         int sendRequestId = ++_uniqueId;
+        String operationKey = "$service.$operation";
 
         try {
-          final BridgeMethodInfo methodInfo = BridgeMethodInfo(
-            requestId: sendRequestId,
-            instance: instanceId,
-            service: service,
-            operation: operation,
-          );
-
           // Save the request
           _sendRequestMap.putIfAbsent(
-            methodInfo.requestId,
+            sendRequestId,
             () => completer,
           );
 
-          // Seriliaze all the method info as Json String
-          if (arguments == null) {
-            arguments = Map<String, dynamic>();
-          }
-          arguments!["methodInfo"] = methodInfo;
-
-          // Serialize all the args as Json string
-          final Map<String, Uint8List>? args = arguments != null
+          // Serialize all the args as protobuf bytes
+          final Map<String, dynamic>? args = arguments != null
               ? arguments!.map(
                   (argName, value) => MapEntry(argName, value.writeToBuffer()))
-              : null;
+              : Map<String, dynamic>();
+          args!["requestId"] = sendRequestId;
 
           // Send to platform channel
           await _platformChannel.invokeMethod(
-            "flutter_maui_bridge",
+            operationKey,
             args,
           );
         } on MissingPluginException {
           _sendRequestMap.remove(sendRequestId);
 
           bool isAppEmbedded = await _isAppEmbedded();
-
           if (isAppEmbedded) {
             // Invalid call in embedded app
             completer.completeError(Exception(
-              "Flutter is running as an EMBEDDED module inside your Xamarin app, but your Xamarin project have the FlutnetBrigde configuration set to ${FlutterBridgeMode.WebSocket}.\n"
+              "Flutter is running as an EMBEDDED module inside your MAUI app, but your MAUI project have the FlutnetBrigde configuration set to ${FlutterBridgeMode.WebSocket}.\n"
               "If you want to run your Flutter project as a STANDALONE application, use your preferred Flutter IDE (like Visual Studio Code).\n"
-              "Otherwise configure your Xamarin project to use ${FlutterBridgeMode.PlatformChannel}.\n"
-              "Ensure to have the same FlutnetBrigde configuration for both Flutter and Xamarin project.",
+              "Otherwise configure your MAUI project to use ${FlutterBridgeMode.PlatformChannel}.\n"
+              "Ensure to have the same FlutnetBrigde configuration for both Flutter and MAUI project.",
             ));
           } else {
             // The user have run flutter using visual studio code, but the configuration cannot be BridgeMode.PlatformChannel
             completer.completeError(Exception(
               "Flutter is running as a STANDALONE application, so the FlutnetBrigde configuration must be ${FlutterBridgeMode.WebSocket}.\n"
               "Set 'FlutterBridgeConfig.mode = ${FlutterBridgeMode.WebSocket}' in your Flutter project.\n"
-              "Remember to start your Xamarin project with the same FlutterBridgeMode configuration.",
+              "Remember to start your MAUI project with the same FlutterBridgeMode configuration.",
             ));
           }
         } on Exception catch (ex) {
@@ -304,42 +283,9 @@ class _WebSocketChannel {
 
   Stream<BridgeEventInfo> get events => _eventsOut;
 
-  // Native channel used to verify if flutter is embedded or not
-  final _supportChannel = MethodChannel('FlutterBridge.support');
-
-  Future<bool> _isAppEmbedded() async {
-    try {
-      var value = await _supportChannel.invokeMethod("test", "test");
-      return true;
-    } catch (ex) {
-      return false;
-    }
-  }
-
-  Future<FlutterBridgeMode?> _getXamarinBridgeMode() async {
-    try {
-      String value = await _supportChannel.invokeMethod("FlutterBridgeMode");
-      switch (value) {
-        case "PlatformChannel":
-          return FlutterBridgeMode.PlatformChannel;
-        case "WebSocket":
-          return FlutterBridgeMode.WebSocket;
-        default:
-          return null;
-      }
-    } catch (ex) {
-      return null;
-    }
-  }
-
   _WebSocketChannel._internal(
       this._eventsController, this._eventsIn, this._eventsOut) {
     _sendLock.synchronized(() async {
-      // Check if the app is embedded
-      bool isAppEmbedded = await _isAppEmbedded();
-
-      if (isAppEmbedded) return;
-
       // Wait until the connection open
       while (_socketChannelConnected == false) {
         try {
@@ -547,7 +493,7 @@ class _WebSocketChannel {
 
         // Insert the response the the map
         await _sendLock.synchronized(() {
-          var requestId = msg.methodInfo?.requestId;
+          var requestId = msg.requestId;
           if (_outboxMessages.containsKey(requestId)) {
             _outboxMessages.remove(requestId);
           }
@@ -569,7 +515,7 @@ class _WebSocketChannel {
       } catch (e) {
         // Error during deserialization
         print(
-          "flutter_xamarin_debug2: error during _onMessageReceived deserialization." +
+          "flutter_MAUI_debug2: error during _onMessageReceived deserialization." +
               e.toString(),
         );
       }
@@ -579,7 +525,6 @@ class _WebSocketChannel {
   }
 
   Future<Map<String, dynamic>> invokeMethod({
-    required String? instanceId,
     required String? service,
     required String? operation,
     required Map<String, dynamic>? arguments,
@@ -589,60 +534,29 @@ class _WebSocketChannel {
 
     _sendLock.synchronized(
       () async {
-        // Check if the app is embedded
-        bool isAppEmbedded = await _isAppEmbedded();
-
-        if (isAppEmbedded) {
-          var xamarinBridgeMode = await _getXamarinBridgeMode();
-
-          bool isWebSocket = xamarinBridgeMode == FlutterBridgeMode.WebSocket;
-
-          if (isWebSocket) {
-            // Invalid call
-            completer.completeError(Exception(
-              "Your Xamarin project is configured in ${FlutterBridgeMode.WebSocket} mode.\n"
-              "You probably want run Flutter project as a STANDALONE application, using your preferred Flutter IDE (like Visual Studio Code).",
-            ));
-          } else {
-            // Invalid call
-            completer.completeError(Exception(
-              "Flutter is running as an EMBEDDED module inside your Xamarin app, so the FlutnetBrigde configuration must be ${FlutterBridgeMode.PlatformChannel}.\n"
-              "Set 'FlutterBridgeConfig.mode = ${FlutterBridgeMode.PlatformChannel}' and recompile both Flutter and Xamarin projects.",
-            ));
-          }
-          return;
-        }
-
         int sendRequestId = ++_uniqueId;
+        String operationKey = "$service.$operation";
 
         try {
-          final BridgeMethodInfo methodInfo = BridgeMethodInfo(
-              requestId: sendRequestId,
-              instance: instanceId,
-              service: service,
-              operation: operation);
-
           final Map<String, Uint8List>? args = arguments != null
               ? arguments!.map(
                   (argName, value) => MapEntry(argName, value.writeToBuffer()))
               : null;
 
           final BridgeMessageInfo debugMessage = BridgeMessageInfo(
-            methodInfo: methodInfo,
+            requestId: sendRequestId,
+            operationKey: operationKey,
             arguments: args,
           );
 
-          // Encode the message
-          //final String jsonDegubMessage = jsonEncode(debugMessage);
-
           // Save the request
           _sendRequestMap.putIfAbsent(
-            methodInfo.requestId,
+            sendRequestId,
             () => completer,
           );
           _outboxMessages.putIfAbsent(
-            methodInfo.requestId,
-            () => "jsonDegubMessage",
+            sendRequestId,
+            () => "protoDegubMessage",
           );
 
           // Wait until the connection open
@@ -663,10 +577,8 @@ class _WebSocketChannel {
         } catch (ex) {
           if (ex is WebSocketChannelException) {}
           debugPrint("Error during invokeMethod on debug channel");
-          //
           // Error during send
-          //
-          //completer.completeError(ex);
+          completer.completeError(ex);
         }
       },
     );

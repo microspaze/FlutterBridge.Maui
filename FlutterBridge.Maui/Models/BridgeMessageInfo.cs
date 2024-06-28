@@ -10,37 +10,31 @@ using System.Threading.Tasks;
 
 namespace FlutterBridge.Maui.Models
 {
-    [Obfuscation(Exclude = true)]
     [ProtoContract]
     public class BridgeMessageInfo
     {
         [ProtoMember(1)]
-        [JsonProperty("methodInfo")]
-        public BridgeMethodInfo? MethodInfo { get; set; }
+        public long RequestId { get; set; }
 
         [ProtoMember(2)]
-        [JsonProperty("arguments")]
-        public Dictionary<string, byte[]>? Arguments { get; set; }
+        public string? OperationKey { get; set; }
 
         [ProtoMember(3)]
-        [JsonProperty("result")]
-        public byte[]? Result { get; set; }
+        public Dictionary<string, byte[]>? Arguments { get; set; }
 
         [ProtoMember(4)]
-        [JsonProperty("event")]
-        public BridgeEventInfo? EventInfo { get; set; }
+        public byte[]? Result { get; set; }
 
         [ProtoMember(5)]
-        [JsonProperty("exception")]
-        public BridgeException? Exception { get; set; }
+        public BridgeEventInfo? EventInfo { get; set; }
 
         [ProtoMember(6)]
-        [JsonProperty("errorCode")]
-        [JsonConverter(typeof(StringEnumConverter))]
-        public BridgeErrorCode? ErrorCode { get; set; }
+        public BridgeException? Exception { get; set; }
 
         [ProtoMember(7)]
-        [JsonProperty("errorMessage")]
+        public BridgeErrorCode? ErrorCode { get; set; }
+
+        [ProtoMember(8)]
         public string ErrorMessage { get; set; } = string.Empty;
     }
 }

@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_maui_bridge/flutter_bridge.dart';
 import 'package:flutter_module/proto/flutter_module.pb.dart';
 import 'package:flutter_module/service/counter_service.dart';
-import 'package:flutter_maui_bridge/proto/flutter_maui_bridge.pb.dart';
-import 'package:flutter_maui_bridge/flutter_bridge.dart';
 
 void main() {
   // Configure the bridge mode
@@ -57,15 +56,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Reference to the native (Xamarin) component that holds the business logic
-  final CounterService _counterService = CounterService("counter_service");
+  // Reference to the native (MAUI) component that holds the business logic
+  final CounterService _counterService = CounterService();
 
   // The current counter value
   int _counterValue = 0;
   String _counterError = "";
 
   void _load() async {
-    // Get the value from xamarin
+    // Get the value from MAUI
     try {
       int value = await _counterService.getValue();
       setState(() {
@@ -80,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _increment() async {
-    // Increment the value by calling the proper native (Xamarin) method
+    // Increment the value by calling the proper native (MAUI) method
     try {
       await _counterService.increment();
       setState(() {
@@ -94,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _decrement() async {
-    // Decrement the value by calling the proper native (Xamarin) method
+    // Decrement the value by calling the proper native (MAUI) method
     try {
       await _counterService.decrement();
       setState(() {
@@ -114,9 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _load();
 
-    //
-    // Subscribe to the native (Xamarin) ValueChanged event
-    //
+    // Subscribe to the native (MAUI) ValueChanged event
     _eventSubscription = _counterService.valueChanged.listen(
       (CounterValueResult args) {
         setState(() {
@@ -129,9 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    //
     // IMPORTANT: Cancel the subscription from the event to avoid memory leaks!
-    //
     _eventSubscription?.cancel();
     super.dispose();
   }
@@ -147,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              // Welcome message from xamarin
+              // Welcome message from MAUI
               "The current value is $_counterError",
               style: TextStyle(
                 fontSize: 20,
@@ -156,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                // Welcome message from xamarin
+                // Welcome message from MAUI
                 "$_counterValue",
                 style: TextStyle(
                   fontSize: 30,

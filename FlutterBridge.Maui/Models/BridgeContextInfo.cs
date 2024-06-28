@@ -10,6 +10,7 @@ namespace FlutterBridge.Maui.Models
     public class BridgeContextInfo
     {
         private readonly ConcurrentDictionary<string, BridgeServiceInfo> _services = new();
+        private readonly ConcurrentDictionary<string, BridgeOperationInfo> _operations = new();
 
         public BridgeContextInfo(string name)
         {
@@ -20,17 +21,42 @@ namespace FlutterBridge.Maui.Models
 
         public bool TryAddService(BridgeServiceInfo service)
         {
-            return _services.TryAdd(service.InstanceName, service);
+            var serviceName = service.ServiceName;
+            var added = _services.TryAdd(serviceName, service);
+            if (added)
+            {
+                foreach(var operation in service.Operations)
+                {
+                    var operationKey = $"{serviceName}.{operation.Key}";
+                    _operations.TryAdd(operationKey, operation.Value);
+                }
+            }
+
+            return added;
         }
 
         public bool TryRemoveService(string serviceName)
         {
-            return _services.TryRemove(serviceName, out _);
+            var removed = _services.TryRemove(serviceName, out var serviceInfo);
+            if (removed && serviceInfo != null)
+            {
+                foreach (var operation in serviceInfo.Operations)
+                {
+                    var operationKey = $"{serviceName}.{operation.Key}";
+                    _operations.TryRemove(operationKey, out _);
+                }
+            }
+            return removed;
         }
 
-        public bool TryGetService(string name, out BridgeServiceInfo? service)
+        public bool TryGetService(string serviceName, out BridgeServiceInfo? service)
         {
-            return _services.TryGetValue(name, out service);
+            return _services.TryGetValue(serviceName, out service);
+        }
+
+        public bool TryGetOperation(string operationKey, out BridgeOperationInfo? operation)
+        {
+            return _operations.TryGetValue(operationKey, out operation);
         }
     }
 }

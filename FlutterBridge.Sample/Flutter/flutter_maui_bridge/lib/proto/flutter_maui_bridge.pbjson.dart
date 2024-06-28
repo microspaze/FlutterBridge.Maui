@@ -53,28 +53,29 @@ final $typed_data.Uint8List bridgeExceptionDescriptor = $convert.base64Decode(
 const BridgeEventInfo$json = {
   '1': 'BridgeEventInfo',
   '2': [
-    {'1': 'instanceId', '3': 1, '4': 1, '5': 9, '10': 'instanceId'},
-    {'1': 'event', '3': 2, '4': 1, '5': 9, '10': 'event'},
-    {'1': 'args', '3': 3, '4': 1, '5': 12, '10': 'args'},
+    {'1': 'serviceName', '3': 1, '4': 1, '5': 9, '10': 'serviceName'},
+    {'1': 'eventName', '3': 2, '4': 1, '5': 9, '10': 'eventName'},
+    {'1': 'eventData', '3': 3, '4': 1, '5': 12, '10': 'eventData'},
   ],
 };
 
 /// Descriptor for `BridgeEventInfo`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List bridgeEventInfoDescriptor = $convert.base64Decode(
-    'Cg9CcmlkZ2VFdmVudEluZm8SHgoKaW5zdGFuY2VJZBgBIAEoCVIKaW5zdGFuY2VJZBIUCgVldm'
-    'VudBgCIAEoCVIFZXZlbnQSEgoEYXJncxgDIAEoDFIEYXJncw==');
+    'Cg9CcmlkZ2VFdmVudEluZm8SIAoLc2VydmljZU5hbWUYASABKAlSC3NlcnZpY2VOYW1lEhwKCW'
+    'V2ZW50TmFtZRgCIAEoCVIJZXZlbnROYW1lEhwKCWV2ZW50RGF0YRgDIAEoDFIJZXZlbnREYXRh');
 
 @$core.Deprecated('Use bridgeMessageInfoDescriptor instead')
 const BridgeMessageInfo$json = {
   '1': 'BridgeMessageInfo',
   '2': [
-    {'1': 'methodInfo', '3': 1, '4': 1, '5': 11, '6': '.BridgeMethodInfo', '10': 'methodInfo'},
-    {'1': 'arguments', '3': 2, '4': 3, '5': 11, '6': '.BridgeMessageInfo.ArgumentsEntry', '10': 'arguments'},
-    {'1': 'result', '3': 3, '4': 1, '5': 12, '10': 'result'},
-    {'1': 'event', '3': 4, '4': 1, '5': 11, '6': '.BridgeEventInfo', '10': 'event'},
-    {'1': 'exception', '3': 5, '4': 1, '5': 11, '6': '.BridgeException', '10': 'exception'},
-    {'1': 'errorCode', '3': 6, '4': 1, '5': 14, '6': '.BridgeErrorCode', '10': 'errorCode'},
-    {'1': 'errorMessage', '3': 7, '4': 1, '5': 9, '10': 'errorMessage'},
+    {'1': 'requestId', '3': 1, '4': 1, '5': 5, '10': 'requestId'},
+    {'1': 'operationKey', '3': 2, '4': 1, '5': 9, '10': 'operationKey'},
+    {'1': 'arguments', '3': 3, '4': 3, '5': 11, '6': '.BridgeMessageInfo.ArgumentsEntry', '10': 'arguments'},
+    {'1': 'result', '3': 4, '4': 1, '5': 12, '10': 'result'},
+    {'1': 'event', '3': 5, '4': 1, '5': 11, '6': '.BridgeEventInfo', '10': 'event'},
+    {'1': 'exception', '3': 6, '4': 1, '5': 11, '6': '.BridgeException', '10': 'exception'},
+    {'1': 'errorCode', '3': 7, '4': 1, '5': 14, '6': '.BridgeErrorCode', '10': 'errorCode'},
+    {'1': 'errorMessage', '3': 8, '4': 1, '5': 9, '10': 'errorMessage'},
   ],
   '3': [BridgeMessageInfo_ArgumentsEntry$json],
 };
@@ -91,29 +92,12 @@ const BridgeMessageInfo_ArgumentsEntry$json = {
 
 /// Descriptor for `BridgeMessageInfo`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List bridgeMessageInfoDescriptor = $convert.base64Decode(
-    'ChFCcmlkZ2VNZXNzYWdlSW5mbxIxCgptZXRob2RJbmZvGAEgASgLMhEuQnJpZGdlTWV0aG9kSW'
-    '5mb1IKbWV0aG9kSW5mbxI/Cglhcmd1bWVudHMYAiADKAsyIS5CcmlkZ2VNZXNzYWdlSW5mby5B'
-    'cmd1bWVudHNFbnRyeVIJYXJndW1lbnRzEhYKBnJlc3VsdBgDIAEoDFIGcmVzdWx0EiYKBWV2ZW'
-    '50GAQgASgLMhAuQnJpZGdlRXZlbnRJbmZvUgVldmVudBIuCglleGNlcHRpb24YBSABKAsyEC5C'
-    'cmlkZ2VFeGNlcHRpb25SCWV4Y2VwdGlvbhIuCgllcnJvckNvZGUYBiABKA4yEC5CcmlkZ2VFcn'
-    'JvckNvZGVSCWVycm9yQ29kZRIiCgxlcnJvck1lc3NhZ2UYByABKAlSDGVycm9yTWVzc2FnZRo8'
-    'Cg5Bcmd1bWVudHNFbnRyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2YWx1ZRgCIAEoDFIFdmFsdW'
-    'U6AjgB');
-
-@$core.Deprecated('Use bridgeMethodInfoDescriptor instead')
-const BridgeMethodInfo$json = {
-  '1': 'BridgeMethodInfo',
-  '2': [
-    {'1': 'requestId', '3': 1, '4': 1, '5': 5, '10': 'requestId'},
-    {'1': 'instance', '3': 2, '4': 1, '5': 9, '10': 'instance'},
-    {'1': 'service', '3': 3, '4': 1, '5': 9, '10': 'service'},
-    {'1': 'operation', '3': 4, '4': 1, '5': 9, '10': 'operation'},
-  ],
-};
-
-/// Descriptor for `BridgeMethodInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List bridgeMethodInfoDescriptor = $convert.base64Decode(
-    'ChBCcmlkZ2VNZXRob2RJbmZvEhwKCXJlcXVlc3RJZBgBIAEoBVIJcmVxdWVzdElkEhoKCGluc3'
-    'RhbmNlGAIgASgJUghpbnN0YW5jZRIYCgdzZXJ2aWNlGAMgASgJUgdzZXJ2aWNlEhwKCW9wZXJh'
-    'dGlvbhgEIAEoCVIJb3BlcmF0aW9u');
+    'ChFCcmlkZ2VNZXNzYWdlSW5mbxIcCglyZXF1ZXN0SWQYASABKAVSCXJlcXVlc3RJZBIiCgxvcG'
+    'VyYXRpb25LZXkYAiABKAlSDG9wZXJhdGlvbktleRI/Cglhcmd1bWVudHMYAyADKAsyIS5Ccmlk'
+    'Z2VNZXNzYWdlSW5mby5Bcmd1bWVudHNFbnRyeVIJYXJndW1lbnRzEhYKBnJlc3VsdBgEIAEoDF'
+    'IGcmVzdWx0EiYKBWV2ZW50GAUgASgLMhAuQnJpZGdlRXZlbnRJbmZvUgVldmVudBIuCglleGNl'
+    'cHRpb24YBiABKAsyEC5CcmlkZ2VFeGNlcHRpb25SCWV4Y2VwdGlvbhIuCgllcnJvckNvZGUYBy'
+    'ABKA4yEC5CcmlkZ2VFcnJvckNvZGVSCWVycm9yQ29kZRIiCgxlcnJvck1lc3NhZ2UYCCABKAlS'
+    'DGVycm9yTWVzc2FnZRo8Cg5Bcmd1bWVudHNFbnRyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2YW'
+    'x1ZRgCIAEoDFIFdmFsdWU6AjgB');
 

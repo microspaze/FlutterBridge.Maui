@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace FlutterBridge.Maui
 {
     /// <summary>
-    /// Runtime where you can store your PlatformService.
+    /// Runtime where you can store your BridgeService.
     /// </summary>
     public static class BridgeRuntime
     {
@@ -40,52 +40,40 @@ namespace FlutterBridge.Maui
 
         #region Registry
 
-        static readonly ConcurrentDictionary<string, BridgeContextInfo> _contexts = new();
+        private static readonly BridgeContextInfo _context = new(string.Empty);
 
         /// <summary>
-        /// Creates a named class registration of a platform service instance.
+        /// Creates a named class registration of a bridge service instance.
         /// </summary>
-        /// <param name="service"></param>
-        public static void RegisterBridgeService(BridgeServiceInfo service)
+        /// <param name="instance">Instance to register</param>
+        /// <param name="name">Name of registration</param>
+        public static void RegisterBridgeService(object instance, string? name = null)
         {
+            ArgumentNullException.ThrowIfNull(instance);
+
             EnsureInitialized();
 
-            // Right now use the default context
-            string contextName = string.Empty;
-            BridgeContextInfo contextObj = _contexts.GetOrAdd(contextName, s => new BridgeContextInfo(s));
+            Type type = instance.GetType();
+            if (!type.IsValidBridgeService())
+                throw new ArgumentException("Instance does not represent a valid bridge service.", nameof(instance));
 
-            if (!contextObj.TryAddService(service))
-                throw new ArgumentException("A service has already been registered with the same name.", nameof(service.InstanceName));
+            if (string.IsNullOrEmpty(name))
+            {
+                name = type.Name.FirstCharLower();
+            }
+
+            var service = new BridgeServiceInfo(type, name, instance);
+            if (!_context.TryAddService(service))
+                throw new ArgumentException("A service has already been registered with the same name.", nameof(service.ServiceName));
 
             service.SubscribeToEvents();
         }
 
         /// <summary>
-        /// Creates a named class registration of a platform service instance.
-        /// </summary>
-        /// <param name="instance">Instance to register</param>
-        /// <param name="name">Name of registration</param>
-        public static void RegisterBridgeService(object instance, string name)
-        {
-            if (instance == null)
-                throw new ArgumentNullException(nameof(instance));
-
-            Type type = instance.GetType();
-            if (!type.IsValidBridgeService())
-                throw new ArgumentException("Instance does not represent a valid platform service.", nameof(instance));
-
-            if (string.IsNullOrEmpty(name))
-                throw new ArgumentException("Registration name cannot be null or empty.", nameof(name));
-
-            RegisterBridgeService(new BridgeServiceInfo(type, name, instance));
-        }
-
-        /// <summary>
-        /// Creates a named class registration of a static platform service.
+        /// Creates a named class registration of a static bridge service.
         /// </summary>
         /// <param name="type">Type to register</param>
-        /// <param name="name">Name of registration</param>
-        public static void RegisterStaticBridgeService(Type type, string name)
+        public static void RegisterStaticBridgeService(Type type, string? name = null)
         {
             EnsureInitialized();
 
@@ -98,54 +86,48 @@ namespace FlutterBridge.Maui
                 throw new ArgumentException("Service class must be decorated with PlatformService attribute.", nameof(type));
 
             if (string.IsNullOrEmpty(name))
-                throw new ArgumentException("Registration name cannot be null or empty.", nameof(name));
+            {
+                name = type.Name.FirstCharLower();
+            }
 
-            // Right now use the default context
-            string contextName = string.Empty;
-            BridgeContextInfo contextObj = _contexts.GetOrAdd(contextName, s => new BridgeContextInfo(s));
-
-            BridgeServiceInfo service = new BridgeServiceInfo(type, name);
-            if (!contextObj.TryAddService(service))
+            var service = new BridgeServiceInfo(type, name);
+            if (!_context.TryAddService(service))
                 throw new ArgumentException("A service has already been registered with the same name.", nameof(name));
         }
 
         /// <summary>
-        /// Removes a named class registration of a platform service.
+        /// Removes a named class registration of a bridge service.
         /// </summary>
         /// <param name="name">Name of registration</param>
         /// <returns>true if the registration is successfully found and removed; otherwise, false.</returns>
-        public static bool UnregisterPlatformService(string name)
+        public static bool UnregisterBridgeService(string name)
         {
             EnsureInitialized();
 
             if (string.IsNullOrEmpty(name))
                 return false;
 
-            // Right now use the default context
-            string contextName = string.Empty;
-            if (!_contexts.TryGetValue(contextName, out BridgeContextInfo? contextObj))
-                return false;
-
-            bool serviceExists = contextObj.TryGetService(name, out BridgeServiceInfo service);
-
+            bool serviceExists = _context.TryGetService(name, out BridgeServiceInfo? service);
             if (serviceExists)
             {
                 service?.UnsubscribeFromEvents();
             }
 
-            return contextObj.TryRemoveService(name);
+            return _context.TryRemoveService(name);
         }
 
-        internal static BridgeOperationInfo GetOperation(string serviceName, string operation)
+        internal static BridgeOperationInfo? GetOperation(string operationKey)
         {
-            // Right now use the default context
-            string contextName = string.Empty;
-            if (!_contexts.TryGetValue(contextName, out BridgeContextInfo? contextObj) ||
-                !contextObj.TryGetService(serviceName, out BridgeServiceInfo serviceObj))
-                throw new ArgumentException("No service registered with the specified name.", nameof(serviceName));
-
-            if (!serviceObj.TryGetOperation(operation, out BridgeOperationInfo operationObj))
-                throw new ArgumentException("Operation not found on the specified service.", nameof(operation));
+            BridgeOperationInfo? operationObj = null;
+            try
+            {
+                if (!_context.TryGetOperation(operationKey, out operationObj))
+                    throw new ArgumentException($"Operation not found by key {operationKey}.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
 
             return operationObj;
         }

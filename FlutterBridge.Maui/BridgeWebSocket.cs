@@ -49,20 +49,17 @@ namespace FlutterBridge.Maui
 
         private void BridgeRuntimeOnBridgeEvent(object? sender, BridgeEventArgs e)
         {
-            BridgeEventInfo eventInfo = new BridgeEventInfo
+            var eventInfo = new BridgeEventInfo
             {
-                InstanceId = e.ServiceName,
+                ServiceName = e.ServiceName,
                 EventName = e.EventName.FirstCharLower(),
                 EventData = e.EventData.ToProtoBytes(),
             };
 
-            BridgeMessageInfo message = new BridgeMessageInfo()
+            var message = new BridgeMessageInfo()
             {
-                MethodInfo = new BridgeMethodInfo
-                {
-                    RequestId = -1,
-                    Instance = e.ServiceName
-                },
+                RequestId = -1,
+                OperationKey = $"{e.ServiceName}.{e.EventName}",
                 Result = null,
                 EventInfo = eventInfo
             };
@@ -74,7 +71,7 @@ namespace FlutterBridge.Maui
         {
             lock (_responseBufferLock)
             {
-                BridgeMessageInfo? found = _responseBufferQueue.FirstOrDefault(r => r.MethodInfo != null && r.MethodInfo.RequestId == message.MethodInfo?.RequestId);
+                BridgeMessageInfo? found = _responseBufferQueue.FirstOrDefault(r => r.RequestId == message.RequestId);
                 if (found == null)
                 {
                     _responseBufferQueue.Enqueue(message);
@@ -87,11 +84,11 @@ namespace FlutterBridge.Maui
             }
         }
 
-        private BridgeMessageInfo? GetFromBuffer(int requestId)
+        private BridgeMessageInfo? GetFromBuffer(long requestId)
         {
             lock (_responseBufferLock)
             {
-                BridgeMessageInfo? response = _responseBufferQueue.FirstOrDefault(r => r.MethodInfo != null && r.MethodInfo.RequestId == requestId);
+                BridgeMessageInfo? response = _responseBufferQueue.FirstOrDefault(r => r.RequestId == requestId);
                 return response;
             }
         }
@@ -104,9 +101,16 @@ namespace FlutterBridge.Maui
             if (e.RawData != null)
             {
                 BridgeMessageInfo? request;
+                long requestId = 0;
+                string? operationKey = null;
                 try
                 {
                     request = e.RawData.ToProtoModel<BridgeMessageInfo>();
+                    if (request != null)
+                    {
+                        requestId = request.RequestId;
+                        operationKey = request.OperationKey;
+                    }
                 }
                 catch (Exception)
                 {
@@ -114,20 +118,16 @@ namespace FlutterBridge.Maui
                     return;
                 }
 
-                if (request == null || request.MethodInfo == null)
+                if (request == null || string.IsNullOrEmpty(operationKey))
                 {
                     return;
                 }
 
-                BridgeOperationInfo operation;
-                try
+                var operation = BridgeRuntime.GetOperation(operationKey);
+                if (operation == null)
                 {
-                    operation = BridgeRuntime.GetOperation(request.MethodInfo.Instance, request.MethodInfo.Operation);
-                }
-                catch (Exception)
-                {
-                    BridgeException error = new BridgeException(BridgeErrorCode.OperationNotImplemented);
-                    SendError(request.MethodInfo, error);
+                    var error = new BridgeException(BridgeErrorCode.OperationNotImplemented);
+                    SendError(requestId, operationKey, error);
                     return;
                 }
 
@@ -135,8 +135,8 @@ namespace FlutterBridge.Maui
                 var operationParamsCount = operation.Parameters?.Length ?? 0;
                 if (operationParamsCount != requestArgsCount)
                 {
-                    BridgeException error = new BridgeException(BridgeErrorCode.OperationArgumentsCountMismatch);
-                    SendError(request.MethodInfo, error);
+                    var error = new BridgeException(BridgeErrorCode.OperationArgumentsCountMismatch);
+                    SendError(requestId, operationKey, error);
                     return;
                 }
 
@@ -174,8 +174,8 @@ namespace FlutterBridge.Maui
                         }
                         else
                         {
-                            BridgeException error = new BridgeException(BridgeErrorCode.OperationArgumentsInvalid);
-                            SendError(request.MethodInfo, error);
+                            var error = new BridgeException(BridgeErrorCode.OperationArgumentsInvalid);
+                            SendError(requestId, operationKey, error);
                             return;
                         }
 
@@ -184,8 +184,8 @@ namespace FlutterBridge.Maui
                 }
                 catch (Exception)
                 {
-                    BridgeException error = new BridgeException(BridgeErrorCode.OperationArgumentsParsingError);
-                    SendError(request.MethodInfo, error);
+                    var error = new BridgeException(BridgeErrorCode.OperationArgumentsParsingError);
+                    SendError(requestId, operationKey, error);
                     return;
                 }
 
@@ -194,29 +194,29 @@ namespace FlutterBridge.Maui
                 {
                     if (result.Error is BridgeException flutterException)
                     {
-                        SendError(request.MethodInfo, flutterException);
+                        SendError(requestId, operationKey, flutterException);
                     }
                     else
                     {
                         //In case of an unhandled exception, send to Flutter a verbose error message for better diagnostic
                         BridgeException error = new BridgeException(BridgeErrorCode.OperationFailed, result.Error.ToStringCleared(), result.Error);
-                        SendError(request.MethodInfo, error);
+                        SendError(requestId, operationKey, error);
                     }
                 }
                 else
                 {
-                    SendResult(request.MethodInfo, result.Result);
+                    SendResult(requestId, operationKey, result.Result);
                 }
             }
         }
 
-        private void SendError(BridgeMethodInfo methodInfo, BridgeException exception)
+        private void SendError(long requestId, string operationKey, BridgeException exception)
         {
             var message = new BridgeMessageInfo
             {
-                MethodInfo = methodInfo,
-                // NOTE: Please consider remove ErrorCode and ErrorMessage
-                ErrorCode = BridgeErrorCode.OperationFailed,
+                RequestId = requestId,
+                OperationKey = operationKey,
+                ErrorCode = exception.Code,
                 ErrorMessage = exception.Message,
                 Exception = exception
             };
@@ -224,11 +224,12 @@ namespace FlutterBridge.Maui
             Send(message);
         }
 
-        private void SendResult(BridgeMethodInfo methodInfo, object? result)
+        private void SendResult(long requestId, string operationKey, object? result)
         {
             var message = new BridgeMessageInfo
             {
-                MethodInfo = methodInfo,
+                RequestId = requestId,
+                OperationKey = operationKey,
                 Result = result.ToProtoBytes(),
             };
 

@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace FlutterBridge.Maui.Models
 {
-    [Obfuscation(Exclude = true)]
     [ProtoContract]
     public class BridgeException : Exception
     {
@@ -40,7 +39,7 @@ namespace FlutterBridge.Maui.Models
         }
 
         [ProtoMember(1)]
-        public BridgeErrorCode Code { get; set; }
+        public BridgeErrorCode Code { get; set; } = BridgeErrorCode.OperationFailed;
 
         [ProtoMember(2)]
         public override string Message { get; } = string.Empty;

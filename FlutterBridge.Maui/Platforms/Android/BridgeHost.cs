@@ -52,27 +52,6 @@ namespace FlutterBridge.Maui
         }
 
         /// <summary>
-        /// A handler for incoming message calls.
-        /// </summary>
-        internal class MessageHandler : Object, BasicMessageChannel.IMessageHandler
-        {
-            readonly Action<ByteBuffer, BasicMessageChannel.IReply> _onMessageCall;
-
-            public MessageHandler(Action<ByteBuffer, BasicMessageChannel.IReply> onMessageCall)
-            {
-                _onMessageCall = onMessageCall;
-            }
-
-            public void OnMessage(Object? message, BasicMessageChannel.IReply reply)
-            {
-                if (message is ByteBuffer messageBytes)
-                {
-                    _onMessageCall?.Invoke(messageBytes, reply);
-                }
-            }
-        }
-
-        /// <summary>
         /// The platform side stream handler has two methods, <see cref="OnListen"/> and <see cref="OnCancel"/>, which are invoked
         /// whenever the number of listeners to the Dart stream goes from zero to one and back, respectively.
         /// This can happen multiple times. The stream handler implementation is supposed to start pouring events into the event sink
@@ -142,10 +121,6 @@ namespace FlutterBridge.Maui
 
         readonly MethodChannel _methodChannelIncoming;
         readonly MethodCallHandler _methodCallHandlerIncoming;
-        readonly MethodChannel _methodChannelTest;
-        readonly MethodCallHandler _methodCallHandlerTest;
-        readonly BasicMessageChannel _messageChannel;
-        readonly MessageHandler _messageHandler;
         readonly EventChannel _eventChannel;
         readonly StreamHandler _streamHandler;
 
@@ -167,27 +142,15 @@ namespace FlutterBridge.Maui
         {
             // Create the named channel for communicating with Flutter module using asynchronous method calls
             // NOTE: This channel is used to RECEIVE messages/requests FROM Flutter
-            _messageChannel = new BasicMessageChannel(engine.DartExecutor.BinaryMessenger, "flutterbridge.bytes", BinaryCodec.InstanceDirect!);
-            _messageHandler = new MessageHandler(HandleMessageCall);
-            _messageChannel.SetMessageHandler(_messageHandler);
             _methodChannelIncoming = new MethodChannel(engine.DartExecutor.BinaryMessenger, "flutterbridge.incoming");
             _methodCallHandlerIncoming = new MethodCallHandler(HandleMethodCall);
             _methodChannelIncoming.SetMethodCallHandler(_methodCallHandlerIncoming);
 
-            // Create a second named channel for diagnostic use only.
-            // This channel is used, for example, to test if Flutter module is running
-            // embedded into a native Xamarin app or as a standalone app
-            _methodChannelTest = new MethodChannel(engine.DartExecutor.BinaryMessenger, "flutterbridge.support");
-            _methodCallHandlerTest = new MethodCallHandler(HandleMethodCallTest);
-            _methodChannelTest.SetMethodCallHandler(_methodCallHandlerTest);
-
             // Create the named channel for communicating with Flutter module using event streams
             // NOTE: This channel is used to SEND messages/notifications TO Flutter
-
             // An event channel is a specialized platform channel intended for the use case of exposing platform events to Flutter as a Dart stream.
             // The Flutter SDK currently has no support for the symmetrical case of exposing Dart streams to platform code, though that could be built, if the need arises.
             // see: https://medium.com/flutter/flutter-platform-channels-ce7f540a104e
-
             _streamHandler = new StreamHandler(this);
             _eventChannel = new EventChannel(engine.DartExecutor.BinaryMessenger, "flutterbridge.outgoing");
             _eventChannel.SetStreamHandler(_streamHandler);
@@ -213,8 +176,6 @@ namespace FlutterBridge.Maui
 
             _methodChannelIncoming.Dispose();
             _methodCallHandlerIncoming.Dispose();
-            _methodChannelTest.Dispose();
-            _methodCallHandlerTest.Dispose();
             _eventChannel.Dispose();
             _streamHandler.Dispose();
 
@@ -230,47 +191,33 @@ namespace FlutterBridge.Maui
         /// </summary>
         public FlutterBridgeMode Mode { get; }
 
-        private void HandleMethodCallTest(MethodCall call, MethodChannel.IResult result)
-        {
-            if (call.Method == "FlutterBridgeMode")
-            {
-                switch (Mode)
-                {
-                    case FlutterBridgeMode.PlatformChannel:
-                        result.Success("PlatformChannel");
-                        break;
-                    case FlutterBridgeMode.WebSocket:
-                        result.Success("WebSocket");
-                        break;
-                }
-            }
-            else
-            {
-                // Right now this handler is called just once at application startup
-                // when Flutter module tries to detect if it's running
-                // embedded into a native Xamarin app or as a standalone app
-                result.Success("ok");
-            }
-        }
-
         private void HandleMethodCall(MethodCall call, MethodChannel.IResult result)
         {
-            // Return an error if Flutter is invoking method calls through method channel
-            // when bridge is configured for WebSocket communication
-            var method = call.Method;
-            if (string.IsNullOrEmpty(method) || Mode == FlutterBridgeMode.WebSocket)
+            // Method format: serviceName.operationName eg. counterService.GetValue()
+            var operationKey = call.Method;
+            if (string.IsNullOrEmpty(operationKey) || Mode == FlutterBridgeMode.WebSocket)
             {
+                // Return an error if Flutter is invoking method calls through method channel
+                // when bridge is configured for WebSocket communication
                 result.NotImplemented();
                 return;
             }
 
+            // Right now this handler is called just once at application startup
+            // when Flutter module tries to detect if it's running
+            // embedded into a native Xamarin app or as a standalone app
+            if (operationKey == "checkEmbedded")
+            {
+                result.Success(true);
+                return;
+            }
+
             // Extract target method information from MethodCall.Method
-            BridgeMethodInfo? methodInfo;
+            long requestId = 0;
             Object? dartReturnValue;
             try
             {
-                var methodArgument = (byte[]?)call.Argument("methodInfo");
-                methodInfo = methodArgument.ToProtoModel<BridgeMethodInfo>();
+                requestId = (long)call.Argument("requestId")!;
                 dartReturnValue = FlutterInterop.ToMethodChannelResult(0);
             }
             catch (Exception ex)
@@ -281,34 +228,25 @@ namespace FlutterBridge.Maui
 
             // Send an empty - successful - response to immediately free Flutter thread
             result.Success(dartReturnValue);
-            if (methodInfo != null)
+            if (requestId > 0 && !string.IsNullOrEmpty(operationKey))
             {
-                Task.Run(() => { BackgroundHandleMethodCall(methodInfo, call); });
+                Task.Run(() => { BackgroundHandleMethodCall(requestId, operationKey, call); });
             }
         }
 
-        private void HandleMessageCall(ByteBuffer message, BasicMessageChannel.IReply reply)
+        private void BackgroundHandleMethodCall(long requestId, string operationKey, MethodCall call)
         {
-
-        }
-
-        private void BackgroundHandleMethodCall(BridgeMethodInfo methodInfo, MethodCall call)
-        {
-            BridgeOperationInfo operation;
-            try
+            var operation = BridgeRuntime.GetOperation(operationKey);
+            if (operation == null)
             {
-                operation = BridgeRuntime.GetOperation(methodInfo.Instance, methodInfo.Operation);
-            }
-            catch (Exception)
-            {
-                SendError(methodInfo, new BridgeException(BridgeErrorCode.OperationNotImplemented));
+                SendError(requestId, operationKey, new BridgeException(BridgeErrorCode.OperationNotImplemented));
                 return;
             }
 
             var parametersCount = operation.ParametersCount;
             if (parametersCount > 0 && call.Arguments() == null)
             {
-                SendError(methodInfo, new BridgeException(BridgeErrorCode.OperationArgumentsCountMismatch));
+                SendError(requestId, operationKey, new BridgeException(BridgeErrorCode.OperationArgumentsCountMismatch));
                 return;
             }
 
@@ -339,7 +277,7 @@ namespace FlutterBridge.Maui
                     }
                     else
                     {
-                        SendError(methodInfo, new BridgeException(BridgeErrorCode.OperationArgumentsInvalid));
+                        SendError(requestId, operationKey, new BridgeException(BridgeErrorCode.OperationArgumentsInvalid));
                         return;
                     }
 
@@ -348,7 +286,7 @@ namespace FlutterBridge.Maui
             }
             catch (Exception)
             {
-                SendError(methodInfo, new BridgeException(BridgeErrorCode.OperationArgumentsParsingError));
+                SendError(requestId, operationKey, new BridgeException(BridgeErrorCode.OperationArgumentsParsingError));
                 return;
             }
 
@@ -357,18 +295,18 @@ namespace FlutterBridge.Maui
             {
                 if (result.Error is BridgeException flutterException)
                 {
-                    SendError(methodInfo, flutterException);
+                    SendError(requestId, operationKey, flutterException);
                 }
                 else
                 {
                     //In case of an unhandled exception, send to Flutter a verbose error message for better diagnostic
-                    BridgeException error = new BridgeException(BridgeErrorCode.OperationFailed, result.Error.ToStringCleared(), result.Error);
-                    SendError(methodInfo, error);
+                    var error = new BridgeException(BridgeErrorCode.OperationFailed, result.Error.ToStringCleared(), result.Error);
+                    SendError(requestId, operationKey, error);
                 }
             }
             else
             {
-                SendResult(methodInfo, result.Result);
+                SendResult(requestId, operationKey, result.Result);
             }
         }
 
@@ -381,7 +319,7 @@ namespace FlutterBridge.Maui
 
             var eventInfo = new BridgeEventInfo
             {
-                InstanceId = e.ServiceName,
+                ServiceName = e.ServiceName,
                 EventName = e.EventName.FirstCharLower(),
                 EventData = e.EventData.ToProtoBytes(),
             };
@@ -418,11 +356,12 @@ namespace FlutterBridge.Maui
 
         }
 
-        private void SendResult(BridgeMethodInfo methodInfo, object? result)
+        private void SendResult(long requestId, string operationKey, object? result)
         {
             var message = new BridgeMessageInfo
             {
-                MethodInfo = methodInfo,
+                RequestId = requestId,
+                OperationKey = operationKey,
                 Result = result.ToProtoBytes(),
             };
 
@@ -431,13 +370,13 @@ namespace FlutterBridge.Maui
             MainThread.BeginInvokeOnMainThread(() => _methodChannelIncoming.InvokeMethod("result", dartReturnValue));
         }
 
-        private void SendError(BridgeMethodInfo methodInfo, BridgeException exception)
+        private void SendError(long requestId, string operationKey, BridgeException exception)
         {
             var message = new BridgeMessageInfo
             {
-                MethodInfo = methodInfo,
-                // NOTE: Please consider removing ErrorCode and ErrorMessage
-                ErrorCode = BridgeErrorCode.OperationFailed,
+                RequestId = requestId,
+                OperationKey = operationKey,
+                ErrorCode = exception.Code,
                 ErrorMessage = exception.Message,
                 Exception = exception
             };

@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace FlutterBridge.Maui.Models
 {
-    [Obfuscation(Exclude = true)]
     [ProtoContract]
     public enum BridgeErrorCode
     {

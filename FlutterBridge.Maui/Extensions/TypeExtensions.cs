@@ -272,12 +272,12 @@ namespace FlutterBridge.Maui.Extensions
         private static bool IsSupportedBridgeEvent(this EventInfo e)
         {
             return e.EventHandlerType == typeof(EventHandler) ||
-                   e.EventHandlerType.IsGenericType && e.EventHandlerType.GetGenericTypeDefinition() == typeof(EventHandler<>);
+                   e.EventHandlerType?.IsGenericType == true && e.EventHandlerType.GetGenericTypeDefinition() == typeof(EventHandler<>);
         }
 
         public static Type GetBridgeEventArgs(this EventInfo e)
         {
-            if (e.EventHandlerType.IsGenericType && e.EventHandlerType.GetGenericTypeDefinition() == typeof(EventHandler<>))
+            if (e.EventHandlerType?.IsGenericType == true && e.EventHandlerType.GetGenericTypeDefinition() == typeof(EventHandler<>))
             {
                 return e.EventHandlerType.GenericTypeArguments.First();
             }

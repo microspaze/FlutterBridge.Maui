@@ -17,9 +17,11 @@ namespace FlutterBridge.Maui.Models
         private readonly ConcurrentDictionary<string, Delegate> _events = new();
         private readonly ConcurrentDictionary<string, BridgeOperationInfo> _operations = new();
 
-        public BridgeServiceInfo(Type type, string instanceName, object? instance = null)
+        public ConcurrentDictionary<string, BridgeOperationInfo> Operations => _operations;
+
+        public BridgeServiceInfo(Type type, string serviceName, object? instance = null)
         {
-            InstanceName = instanceName;
+            ServiceName = serviceName;
             _type = type;
             _instance = instance;
 
@@ -33,9 +35,9 @@ namespace FlutterBridge.Maui.Models
             }
         }
 
-        public BridgeServiceInfo(Type type, string instanceName, MethodInfo[] methodInfos, EventInfo[] eventInfos, object? instance = null)
+        public BridgeServiceInfo(Type type, string serviceName, MethodInfo[] methodInfos, EventInfo[] eventInfos, object? instance = null)
         {
-            InstanceName = instanceName;
+            ServiceName = serviceName;
             _type = type;
             _instance = instance;
 
@@ -51,11 +53,11 @@ namespace FlutterBridge.Maui.Models
             }
         }
 
-        public string InstanceName { get; }
+        public string ServiceName { get; }
 
-        public bool TryGetOperation(string name, out BridgeOperationInfo? operation)
+        public bool TryGetOperation(string operationName, out BridgeOperationInfo? operation)
         {
-            return _operations.TryGetValue(name, out operation);
+            return _operations.TryGetValue(operationName, out operation);
         }
 
         public void SubscribeToEvents()
@@ -74,7 +76,7 @@ namespace FlutterBridge.Maui.Models
                 var eventName = eventInfo.Name;
                 var receiver = new BridgeEventReceiver((sender, e) =>
                 {
-                    BridgeRuntime.PropagateBridgeEvent(InstanceName, eventName, sender, e);
+                    BridgeRuntime.PropagateBridgeEvent(ServiceName, eventName, sender, e);
                 });
 
                 if (eventInfo.EventHandlerType != null && handleMethod != null)

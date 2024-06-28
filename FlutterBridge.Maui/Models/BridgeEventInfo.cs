@@ -9,20 +9,16 @@ using System.Threading.Tasks;
 
 namespace FlutterBridge.Maui.Models
 {
-    [Obfuscation(Exclude = true)]
     [ProtoContract]
     public class BridgeEventInfo
     {
         [ProtoMember(1)]
-        [JsonProperty("instanceId")]
-        public string InstanceId { get; set; } = string.Empty;
+        public string ServiceName { get; set; } = string.Empty;
 
         [ProtoMember(2)]
-        [JsonProperty("event")]
         public string EventName { get; set; } = string.Empty;
 
         [ProtoMember(3)]
-        [JsonProperty("args")]
         public byte[]? EventData { get; set; }
     }
 }

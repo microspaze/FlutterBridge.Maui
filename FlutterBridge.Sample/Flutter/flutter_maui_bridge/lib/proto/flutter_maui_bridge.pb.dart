@@ -83,19 +83,19 @@ class BridgeException extends $pb.GeneratedMessage {
 
 class BridgeEventInfo extends $pb.GeneratedMessage {
   factory BridgeEventInfo({
-    $core.String? instanceId,
-    $core.String? event,
-    $core.List<$core.int>? args,
+    $core.String? serviceName,
+    $core.String? eventName,
+    $core.List<$core.int>? eventData,
   }) {
     final $result = create();
-    if (instanceId != null) {
-      $result.instanceId = instanceId;
+    if (serviceName != null) {
+      $result.serviceName = serviceName;
     }
-    if (event != null) {
-      $result.event = event;
+    if (eventName != null) {
+      $result.eventName = eventName;
     }
-    if (args != null) {
-      $result.args = args;
+    if (eventData != null) {
+      $result.eventData = eventData;
     }
     return $result;
   }
@@ -104,9 +104,9 @@ class BridgeEventInfo extends $pb.GeneratedMessage {
   factory BridgeEventInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'BridgeEventInfo', createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'instanceId', protoName: 'instanceId')
-    ..aOS(2, _omitFieldNames ? '' : 'event')
-    ..a<$core.List<$core.int>>(3, _omitFieldNames ? '' : 'args', $pb.PbFieldType.OY)
+    ..aOS(1, _omitFieldNames ? '' : 'serviceName', protoName: 'serviceName')
+    ..aOS(2, _omitFieldNames ? '' : 'eventName', protoName: 'eventName')
+    ..a<$core.List<$core.int>>(3, _omitFieldNames ? '' : 'eventData', $pb.PbFieldType.OY, protoName: 'eventData')
     ..hasRequiredFields = false
   ;
 
@@ -132,36 +132,37 @@ class BridgeEventInfo extends $pb.GeneratedMessage {
   static BridgeEventInfo? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get instanceId => $_getSZ(0);
+  $core.String get serviceName => $_getSZ(0);
   @$pb.TagNumber(1)
-  set instanceId($core.String v) { $_setString(0, v); }
+  set serviceName($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasInstanceId() => $_has(0);
+  $core.bool hasServiceName() => $_has(0);
   @$pb.TagNumber(1)
-  void clearInstanceId() => clearField(1);
+  void clearServiceName() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.String get event => $_getSZ(1);
+  $core.String get eventName => $_getSZ(1);
   @$pb.TagNumber(2)
-  set event($core.String v) { $_setString(1, v); }
+  set eventName($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasEvent() => $_has(1);
+  $core.bool hasEventName() => $_has(1);
   @$pb.TagNumber(2)
-  void clearEvent() => clearField(2);
+  void clearEventName() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.List<$core.int> get args => $_getN(2);
+  $core.List<$core.int> get eventData => $_getN(2);
   @$pb.TagNumber(3)
-  set args($core.List<$core.int> v) { $_setBytes(2, v); }
+  set eventData($core.List<$core.int> v) { $_setBytes(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasArgs() => $_has(2);
+  $core.bool hasEventData() => $_has(2);
   @$pb.TagNumber(3)
-  void clearArgs() => clearField(3);
+  void clearEventData() => clearField(3);
 }
 
 class BridgeMessageInfo extends $pb.GeneratedMessage {
   factory BridgeMessageInfo({
-    BridgeMethodInfo? methodInfo,
+    $core.int? requestId,
+    $core.String? operationKey,
     $core.Map<$core.String, $core.List<$core.int>>? arguments,
     $core.List<$core.int>? result,
     BridgeEventInfo? event,
@@ -170,8 +171,11 @@ class BridgeMessageInfo extends $pb.GeneratedMessage {
     $core.String? errorMessage,
   }) {
     final $result = create();
-    if (methodInfo != null) {
-      $result.methodInfo = methodInfo;
+    if (requestId != null) {
+      $result.requestId = requestId;
+    }
+    if (operationKey != null) {
+      $result.operationKey = operationKey;
     }
     if (arguments != null) {
       $result.arguments.addAll(arguments);
@@ -198,13 +202,14 @@ class BridgeMessageInfo extends $pb.GeneratedMessage {
   factory BridgeMessageInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'BridgeMessageInfo', createEmptyInstance: create)
-    ..aOM<BridgeMethodInfo>(1, _omitFieldNames ? '' : 'methodInfo', protoName: 'methodInfo', subBuilder: BridgeMethodInfo.create)
-    ..m<$core.String, $core.List<$core.int>>(2, _omitFieldNames ? '' : 'arguments', entryClassName: 'BridgeMessageInfo.ArgumentsEntry', keyFieldType: $pb.PbFieldType.OS, valueFieldType: $pb.PbFieldType.OY)
-    ..a<$core.List<$core.int>>(3, _omitFieldNames ? '' : 'result', $pb.PbFieldType.OY)
-    ..aOM<BridgeEventInfo>(4, _omitFieldNames ? '' : 'event', subBuilder: BridgeEventInfo.create)
-    ..aOM<BridgeException>(5, _omitFieldNames ? '' : 'exception', subBuilder: BridgeException.create)
-    ..e<BridgeErrorCode>(6, _omitFieldNames ? '' : 'errorCode', $pb.PbFieldType.OE, protoName: 'errorCode', defaultOrMaker: BridgeErrorCode.OperationNotImplemented, valueOf: BridgeErrorCode.valueOf, enumValues: BridgeErrorCode.values)
-    ..aOS(7, _omitFieldNames ? '' : 'errorMessage', protoName: 'errorMessage')
+    ..a<$core.int>(1, _omitFieldNames ? '' : 'requestId', $pb.PbFieldType.O3, protoName: 'requestId')
+    ..aOS(2, _omitFieldNames ? '' : 'operationKey', protoName: 'operationKey')
+    ..m<$core.String, $core.List<$core.int>>(3, _omitFieldNames ? '' : 'arguments', entryClassName: 'BridgeMessageInfo.ArgumentsEntry', keyFieldType: $pb.PbFieldType.OS, valueFieldType: $pb.PbFieldType.OY)
+    ..a<$core.List<$core.int>>(4, _omitFieldNames ? '' : 'result', $pb.PbFieldType.OY)
+    ..aOM<BridgeEventInfo>(5, _omitFieldNames ? '' : 'event', subBuilder: BridgeEventInfo.create)
+    ..aOM<BridgeException>(6, _omitFieldNames ? '' : 'exception', subBuilder: BridgeException.create)
+    ..e<BridgeErrorCode>(7, _omitFieldNames ? '' : 'errorCode', $pb.PbFieldType.OE, protoName: 'errorCode', defaultOrMaker: BridgeErrorCode.OperationNotImplemented, valueOf: BridgeErrorCode.valueOf, enumValues: BridgeErrorCode.values)
+    ..aOS(8, _omitFieldNames ? '' : 'errorMessage', protoName: 'errorMessage')
     ..hasRequiredFields = false
   ;
 
@@ -230,125 +235,6 @@ class BridgeMessageInfo extends $pb.GeneratedMessage {
   static BridgeMessageInfo? _defaultInstance;
 
   @$pb.TagNumber(1)
-  BridgeMethodInfo get methodInfo => $_getN(0);
-  @$pb.TagNumber(1)
-  set methodInfo(BridgeMethodInfo v) { setField(1, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasMethodInfo() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearMethodInfo() => clearField(1);
-  @$pb.TagNumber(1)
-  BridgeMethodInfo ensureMethodInfo() => $_ensure(0);
-
-  @$pb.TagNumber(2)
-  $core.Map<$core.String, $core.List<$core.int>> get arguments => $_getMap(1);
-
-  @$pb.TagNumber(3)
-  $core.List<$core.int> get result => $_getN(2);
-  @$pb.TagNumber(3)
-  set result($core.List<$core.int> v) { $_setBytes(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasResult() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearResult() => clearField(3);
-
-  @$pb.TagNumber(4)
-  BridgeEventInfo get event => $_getN(3);
-  @$pb.TagNumber(4)
-  set event(BridgeEventInfo v) { setField(4, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasEvent() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearEvent() => clearField(4);
-  @$pb.TagNumber(4)
-  BridgeEventInfo ensureEvent() => $_ensure(3);
-
-  @$pb.TagNumber(5)
-  BridgeException get exception => $_getN(4);
-  @$pb.TagNumber(5)
-  set exception(BridgeException v) { setField(5, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasException() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearException() => clearField(5);
-  @$pb.TagNumber(5)
-  BridgeException ensureException() => $_ensure(4);
-
-  @$pb.TagNumber(6)
-  BridgeErrorCode get errorCode => $_getN(5);
-  @$pb.TagNumber(6)
-  set errorCode(BridgeErrorCode v) { setField(6, v); }
-  @$pb.TagNumber(6)
-  $core.bool hasErrorCode() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearErrorCode() => clearField(6);
-
-  @$pb.TagNumber(7)
-  $core.String get errorMessage => $_getSZ(6);
-  @$pb.TagNumber(7)
-  set errorMessage($core.String v) { $_setString(6, v); }
-  @$pb.TagNumber(7)
-  $core.bool hasErrorMessage() => $_has(6);
-  @$pb.TagNumber(7)
-  void clearErrorMessage() => clearField(7);
-}
-
-class BridgeMethodInfo extends $pb.GeneratedMessage {
-  factory BridgeMethodInfo({
-    $core.int? requestId,
-    $core.String? instance,
-    $core.String? service,
-    $core.String? operation,
-  }) {
-    final $result = create();
-    if (requestId != null) {
-      $result.requestId = requestId;
-    }
-    if (instance != null) {
-      $result.instance = instance;
-    }
-    if (service != null) {
-      $result.service = service;
-    }
-    if (operation != null) {
-      $result.operation = operation;
-    }
-    return $result;
-  }
-  BridgeMethodInfo._() : super();
-  factory BridgeMethodInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory BridgeMethodInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'BridgeMethodInfo', createEmptyInstance: create)
-    ..a<$core.int>(1, _omitFieldNames ? '' : 'requestId', $pb.PbFieldType.O3, protoName: 'requestId')
-    ..aOS(2, _omitFieldNames ? '' : 'instance')
-    ..aOS(3, _omitFieldNames ? '' : 'service')
-    ..aOS(4, _omitFieldNames ? '' : 'operation')
-    ..hasRequiredFields = false
-  ;
-
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  BridgeMethodInfo clone() => BridgeMethodInfo()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  BridgeMethodInfo copyWith(void Function(BridgeMethodInfo) updates) => super.copyWith((message) => updates(message as BridgeMethodInfo)) as BridgeMethodInfo;
-
-  $pb.BuilderInfo get info_ => _i;
-
-  @$core.pragma('dart2js:noInline')
-  static BridgeMethodInfo create() => BridgeMethodInfo._();
-  BridgeMethodInfo createEmptyInstance() => create();
-  static $pb.PbList<BridgeMethodInfo> createRepeated() => $pb.PbList<BridgeMethodInfo>();
-  @$core.pragma('dart2js:noInline')
-  static BridgeMethodInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BridgeMethodInfo>(create);
-  static BridgeMethodInfo? _defaultInstance;
-
-  @$pb.TagNumber(1)
   $core.int get requestId => $_getIZ(0);
   @$pb.TagNumber(1)
   set requestId($core.int v) { $_setSignedInt32(0, v); }
@@ -358,31 +244,65 @@ class BridgeMethodInfo extends $pb.GeneratedMessage {
   void clearRequestId() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.String get instance => $_getSZ(1);
+  $core.String get operationKey => $_getSZ(1);
   @$pb.TagNumber(2)
-  set instance($core.String v) { $_setString(1, v); }
+  set operationKey($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasInstance() => $_has(1);
+  $core.bool hasOperationKey() => $_has(1);
   @$pb.TagNumber(2)
-  void clearInstance() => clearField(2);
+  void clearOperationKey() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.String get service => $_getSZ(2);
-  @$pb.TagNumber(3)
-  set service($core.String v) { $_setString(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasService() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearService() => clearField(3);
+  $core.Map<$core.String, $core.List<$core.int>> get arguments => $_getMap(2);
 
   @$pb.TagNumber(4)
-  $core.String get operation => $_getSZ(3);
+  $core.List<$core.int> get result => $_getN(3);
   @$pb.TagNumber(4)
-  set operation($core.String v) { $_setString(3, v); }
+  set result($core.List<$core.int> v) { $_setBytes(3, v); }
   @$pb.TagNumber(4)
-  $core.bool hasOperation() => $_has(3);
+  $core.bool hasResult() => $_has(3);
   @$pb.TagNumber(4)
-  void clearOperation() => clearField(4);
+  void clearResult() => clearField(4);
+
+  @$pb.TagNumber(5)
+  BridgeEventInfo get event => $_getN(4);
+  @$pb.TagNumber(5)
+  set event(BridgeEventInfo v) { setField(5, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasEvent() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearEvent() => clearField(5);
+  @$pb.TagNumber(5)
+  BridgeEventInfo ensureEvent() => $_ensure(4);
+
+  @$pb.TagNumber(6)
+  BridgeException get exception => $_getN(5);
+  @$pb.TagNumber(6)
+  set exception(BridgeException v) { setField(6, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasException() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearException() => clearField(6);
+  @$pb.TagNumber(6)
+  BridgeException ensureException() => $_ensure(5);
+
+  @$pb.TagNumber(7)
+  BridgeErrorCode get errorCode => $_getN(6);
+  @$pb.TagNumber(7)
+  set errorCode(BridgeErrorCode v) { setField(7, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasErrorCode() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearErrorCode() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.String get errorMessage => $_getSZ(7);
+  @$pb.TagNumber(8)
+  set errorMessage($core.String v) { $_setString(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasErrorMessage() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearErrorMessage() => clearField(8);
 }
 
 
