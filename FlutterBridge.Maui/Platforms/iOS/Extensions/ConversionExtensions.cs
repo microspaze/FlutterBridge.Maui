@@ -88,8 +88,13 @@ namespace FlutterBridge.Maui.Extensions
             return dataBytes;
         }
         
-        public static NSData ToByteData(this byte[] dataBytes)
+        public static NSData ToByteData(this byte[]? dataBytes)
         {
+            if (dataBytes == null)
+            {
+                return null;
+            }
+
             return NSData.FromArray(dataBytes);
         }
     }
