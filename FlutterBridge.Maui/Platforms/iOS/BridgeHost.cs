@@ -156,7 +156,7 @@ namespace FlutterBridge.Maui
             // embedded into a native Xamarin app or as a standalone app
             if (operationKey == "checkEmbedded")
             {
-                callback(true);
+                callback(NSObject.FromObject(true));
                 return;
             }
 
@@ -343,7 +343,7 @@ namespace FlutterBridge.Maui
             {
                 RequestId = requestId,
                 OperationKey = operationKey,
-                ErrorCode = BridgeErrorCode.OperationFailed,
+                ErrorCode = exception.Code,
                 ErrorMessage = exception.Message,
                 Exception = exception
             };
