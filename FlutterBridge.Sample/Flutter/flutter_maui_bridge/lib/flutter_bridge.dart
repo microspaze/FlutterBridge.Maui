@@ -23,12 +23,36 @@ enum FlutterBridgeMode {
 /// [main.dart] --> void main()
 ///
 class FlutterBridgeConfig {
-  static FlutterBridgeMode mode = FlutterBridgeMode.PlatformChannel;
+  static bool? _appEmbedded = null;
+  static const eventChannel = EventChannel('flutterbridge.outgoing');
+  static const methodChannel = MethodChannel('flutterbridge.incoming');
+  static FlutterBridgeMode mode = FlutterBridgeMode.WebSocket;
+
+  static Future<void> initMode() async {
+    var appEmbedded = await isEmbedded();
+    if (appEmbedded) {
+      mode = FlutterBridgeMode.PlatformChannel;
+    } else {
+      mode = FlutterBridgeMode.WebSocket;
+    }
+  }
+
+  static Future<bool> isEmbedded() async {
+    try {
+      if (_appEmbedded != null) {
+        return _appEmbedded!;
+      }
+      _appEmbedded = await methodChannel.invokeMethod<bool>("checkEmbedded");
+    } on MissingPluginException {
+      _appEmbedded = false;
+    }
+    return _appEmbedded == true;
+  }
 }
 
 class FlutterBridge {
   // Events from native side (MAUI)
-  static const EventChannel _events = EventChannel('flutterbridge.outgoing');
+  static const EventChannel _events = FlutterBridgeConfig.eventChannel;
 
   // The real event stream from navive side
   static final Stream<BridgeEventInfo?> _channelEvent =
@@ -141,19 +165,7 @@ class _PlatformChannel {
   Map<int, Completer<Map<String, dynamic>>> _sendRequestMap = {};
 
   // The real communication channel with native platform
-  final _platformChannel = MethodChannel('flutterbridge.incoming');
-
-  Future<bool> _isAppEmbedded() async {
-    try {
-      if (_appEmbedded != null) {
-        return _appEmbedded!;
-      }
-      _appEmbedded = await _platformChannel.invokeMethod<bool>("checkEmbedded");
-      return _appEmbedded == true;
-    } catch (ex) {
-      return false;
-    }
-  }
+  final _platformChannel = FlutterBridgeConfig.methodChannel;
 
   _PlatformChannel._internal() {
     _platformChannel.setMethodCallHandler(_onMessageReceived);
@@ -237,7 +249,7 @@ class _PlatformChannel {
         } on MissingPluginException {
           _sendRequestMap.remove(sendRequestId);
 
-          bool isAppEmbedded = await _isAppEmbedded();
+          bool isAppEmbedded = await FlutterBridgeConfig.isEmbedded();
           if (isAppEmbedded) {
             // Invalid call in embedded app
             completer.completeError(Exception(

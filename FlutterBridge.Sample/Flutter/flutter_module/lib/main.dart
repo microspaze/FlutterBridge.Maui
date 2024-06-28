@@ -5,13 +5,18 @@ import 'package:flutter_maui_bridge/flutter_bridge.dart';
 import 'package:flutter_module/proto/flutter_module.pb.dart';
 import 'package:flutter_module/service/counter_service.dart';
 
-void main() {
+void main() async {
   // Configure the bridge mode
   // http://semantic-portal.net/flutter-development-existing-app-running
   // By attaching to Flutter on device, it does not need to set Websocket mode for debugging.
   // VSCode  (ctrl+shift+p: Debug: Attach Flutter on Device or terminal: flutter attach)
   // IntelliJ (click Flutter Attach button)
-  FlutterBridgeConfig.mode = FlutterBridgeMode.PlatformChannel;
+  // Method 1: manual set mode then runApp
+  // FlutterBridgeConfig.mode = FlutterBridgeMode.PlatformChannel;
+  // runApp(MyApp());
+  // Method 2: auto init mode then runApp when init completed
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterBridgeConfig.initMode();
   runApp(MyApp());
 }
 
