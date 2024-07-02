@@ -7,9 +7,19 @@
     Shell.FlyoutBehavior="Disabled"
     Title="FlutterBridge.Sample">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <TabBar>
+        <Tab Title="Maui Page">
+            <ShellContent
+                Title="Maui Page"
+                ContentTemplate="{DataTemplate local:MainPage}"
+                Route="MainPage" />
+        </Tab>
 
+        <Tab Title="Flutter Page">
+            <ShellContent
+                Title="Flutter Page"
+                ContentTemplate="{DataTemplate local:FlutterPage}"
+                Route="FlutterPage" />
+        </Tab>
+    </TabBar>
 </Shell>

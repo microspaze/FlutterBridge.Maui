@@ -14,19 +14,11 @@ namespace FlutterBridge.Maui
     /// <summary>
     /// Runtime where you can store your BridgeService.
     /// </summary>
-    public static class BridgeRuntime
+    public static partial class BridgeRuntime
     {
         #region Initialization
 
         internal const string EnvironmentNotInitializedMsg = "The Bridge environment has not been initialized yet. Please call BridgeRuntime.Init().";
-
-        /// <summary>
-        /// Initializes the Bridge environment.
-        /// </summary>
-        public static void Init()
-        {
-            Initialized = true;
-        }
 
         internal static bool Initialized { get; private set; }
 

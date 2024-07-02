@@ -26,7 +26,7 @@ class FlutterBridgeConfig {
   static bool? _appEmbedded = null;
   static const eventChannel = EventChannel('flutterbridge.outgoing');
   static const methodChannel = MethodChannel('flutterbridge.incoming');
-  static FlutterBridgeMode mode = FlutterBridgeMode.WebSocket;
+  static FlutterBridgeMode mode = FlutterBridgeMode.PlatformChannel;
 
   static Future<void> initMode() async {
     var appEmbedded = await isEmbedded();
@@ -43,8 +43,10 @@ class FlutterBridgeConfig {
         return _appEmbedded!;
       }
       _appEmbedded = await methodChannel.invokeMethod<bool>("checkEmbedded");
+      print("isEmbedded : $_appEmbedded");
     } on MissingPluginException {
       _appEmbedded = false;
+      print("isEmbedded error!");
     }
     return _appEmbedded == true;
   }
