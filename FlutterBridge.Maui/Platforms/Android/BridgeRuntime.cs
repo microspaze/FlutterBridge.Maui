@@ -34,7 +34,7 @@ namespace FlutterBridge.Maui
                 }
 
                 // 2.Init BridgeHost
-                _bridge ??= new BridgeHost(flutterEngine, activity, _config.EnableWebsocket ? FlutterBridgeMode.WebSocket : FlutterBridgeMode.PlatformChannel);
+                _bridge ??= new BridgeHost(flutterEngine, activity, _bridgeMode);
 
                 // 3.Set Initialized
                 Initialized = true;
@@ -52,6 +52,9 @@ namespace FlutterBridge.Maui
                         }
                     }
                 }
+
+                // 5.Set FlutterEngine
+                _engine = flutterEngine;
             }
             catch(Exception ex)
             {

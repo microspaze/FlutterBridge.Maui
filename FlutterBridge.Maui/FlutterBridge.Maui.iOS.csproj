@@ -39,6 +39,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="FlutterBinding.iOS" Version="3.22.2" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.60" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.60" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -47,9 +48,5 @@
 
     <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
         <ProjectReference Include="..\FlutterBridge.Binding\FlutterBinding.Droid\FlutterBinding.Droid.csproj" />
-    </ItemGroup>
-
-    <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
-        <ProjectReference Include="..\FlutterBridge.Binding\FlutterBinding.iOS\FlutterBinding.iOS.csproj" />
     </ItemGroup>
 </Project>

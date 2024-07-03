@@ -1,4 +1,5 @@
-﻿using Microsoft.Maui.Handlers;
+﻿using FlutterBinding;
+using Microsoft.Maui.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace FlutterBridge.Maui
     public class FlutterViewHandler : ViewHandler<FlutterView, UIView>
     {
         private FlutterView _flutterView => VirtualView;
+        private FlutterViewController? _flutterViewController;
 
         public static IPropertyMapper<FlutterView, FlutterViewHandler> PropertyMapper = new PropertyMapper<FlutterView, FlutterViewHandler>(ViewHandler.ViewMapper)
         {
@@ -26,7 +28,8 @@ namespace FlutterBridge.Maui
 
         protected override UIView CreatePlatformView()
         {
-            return null;
+            _flutterViewController ??= new FlutterViewController(BridgeRuntime.Engine!, null, null);
+            return _flutterViewController.View;
         }
 
         protected override void ConnectHandler(UIView platformView)

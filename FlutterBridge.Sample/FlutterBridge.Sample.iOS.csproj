@@ -112,8 +112,8 @@
         </NativeReference>
     </ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\FlutterBridge.Maui\FlutterBridge.Maui.iOS.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\FlutterBridge.Maui\FlutterBridge.Maui.iOS.csproj" />
+    </ItemGroup>
 
 </Project>
