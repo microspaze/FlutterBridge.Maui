@@ -13,11 +13,6 @@ namespace FlutterBridge.Maui
 {
     public static partial class BridgeRuntime
     {
-        private static BridgeHost? _bridge;
-        private static FlutterConfig _config = FlutterConfig.Instance;
-
-        public const string DEFAULT_ENGINE_ID = "default";
-
         /// <summary>
         /// Initializes the Bridge environment.
         /// </summary>

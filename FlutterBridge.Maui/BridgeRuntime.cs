@@ -18,6 +18,11 @@ namespace FlutterBridge.Maui
     {
         #region Initialization
 
+        private static BridgeHost? _bridge;
+        private static FlutterConfig _config = FlutterConfig.Instance;
+
+        public const string DEFAULT_ENGINE_ID = "default";
+
         internal const string EnvironmentNotInitializedMsg = "The Bridge environment has not been initialized yet. Please call BridgeRuntime.Init().";
 
         internal static bool Initialized { get; private set; }

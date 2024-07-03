@@ -1,6 +1,8 @@
-﻿using Microsoft.Maui.LifecycleEvents;
+﻿using Microsoft.Maui.Controls.PlatformConfiguration;
+using Microsoft.Maui.LifecycleEvents;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,7 +33,7 @@ namespace FlutterBridge.Maui.Extensions
 #elif IOS
                     lifecycle.AddiOS(b =>
                     {
-                    
+                        b.FinishedLaunching((application, launchOptions) => BridgeRuntime.Init());
                     });
 #endif
                 })
@@ -40,7 +42,7 @@ namespace FlutterBridge.Maui.Extensions
 #if ANDROID
                 handlers.AddHandler(typeof(FlutterView), typeof(FlutterViewHandler));
 #elif IOS
-                
+                handlers.AddHandler(typeof(FlutterView), typeof(FlutterViewHandler));
 #elif MACCATALYST
                 
 #elif WINDOWS
