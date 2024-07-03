@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0-ios</TargetFramework>
+    <TargetFrameworks>net8.0-ios</TargetFrameworks>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <IsBindingProject>true</IsBindingProject>
@@ -9,7 +9,7 @@
     <Platforms>AnyCPU;Device</Platforms>
     <Title>FlutterBinding.iOS</Title>
     <Version>3.22.2.0</Version>
-    <Description>Flutter SDK iOS Binding</Description>
+    <Description>Flutter SDK Binding for iOS</Description>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(Configuration)' != 'Release' And '$(Platform)' != 'Device' ">

@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0-android</TargetFramework>
+    <TargetFrameworks>net8.0-android</TargetFrameworks>
     <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Version>3.22.2.0</Version>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <Description>Flutter Binding for Android</Description>
+    <Description>Flutter SDK Binding for Android</Description>
   </PropertyGroup>
     <ItemGroup Condition=" '$(Configuration)' != 'Release' ">
         <EmbeddedNativeLibrary Include="..\FlutterBinding.Native\Android\debug\lib\arm64-v8a\libflutter.so">
