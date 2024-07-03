@@ -7,6 +7,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU;Device</Platforms>
+    <Title>FlutterBinding.iOS</Title>
+    <Version>3.22.2.0</Version>
+    <Description>Flutter SDK iOS Binding</Description>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(Configuration)' != 'Release' And '$(Platform)' != 'Device' ">
