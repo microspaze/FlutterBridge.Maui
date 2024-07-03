@@ -13,6 +13,7 @@ namespace FlutterBridge.Maui
     {
         private FlutterView _flutterView => VirtualView;
         private FlutterViewController? _flutterViewController;
+        private UIView? _flutterNativeView;
 
         public static IPropertyMapper<FlutterView, FlutterViewHandler> PropertyMapper = new PropertyMapper<FlutterView, FlutterViewHandler>(ViewHandler.ViewMapper)
         {
@@ -28,8 +29,17 @@ namespace FlutterBridge.Maui
 
         protected override UIView CreatePlatformView()
         {
-            _flutterViewController ??= new FlutterViewController(BridgeRuntime.Engine!, null, null);
-            return _flutterViewController.View;
+            var parentView = _flutterView.Parent.Handler?.PlatformView as UIView;
+            var parentViewController = FetchViewController(parentView);
+            if (parentView != null && parentViewController != null)
+            {
+                _flutterViewController ??= new FlutterViewController(BridgeRuntime.Engine!, null, null);
+                parentViewController.AddChildViewController(_flutterViewController);
+                _flutterViewController.DidMoveToParentViewController(parentViewController);
+                _flutterNativeView = _flutterViewController.View!;
+                _flutterNativeView.SetNeedsLayout();
+            }
+            return _flutterNativeView;
         }
 
         protected override void ConnectHandler(UIView platformView)
@@ -41,6 +51,20 @@ namespace FlutterBridge.Maui
         {
             platformView.Dispose();
             base.DisconnectHandler(platformView);
+        }
+        
+        private static UIViewController? FetchViewController(UIView? view)
+        {
+            var responder = view?.NextResponder;
+            while (responder != null)
+            {
+                if (responder is UIViewController parentViewController)
+                {
+                    return parentViewController;
+                }
+                responder = responder.NextResponder;
+            }
+            return null;
         }
     }
 }
