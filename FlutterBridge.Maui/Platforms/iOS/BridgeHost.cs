@@ -234,13 +234,13 @@ namespace FlutterBridge.Maui
                         var argumentValue = dartArguments[paramName];
                         if (argumentValue != null)
                         {
-                            if (argumentValue is NSData argumentBytes)
+                            if (argumentValue is FlutterStandardTypedData argumentTypedData)
                             {
-                                value = argumentBytes.ToByteArray().ToProtoObject(paramType);
+                                value = argumentTypedData.Data.ToByteArray().ToProtoObject(paramType);
                             }
                             else
                             {
-                                value = Convert.ChangeType(argumentValue, paramType);
+                                value = argumentValue.ToObject(paramType);
                             }
                         }
                     }

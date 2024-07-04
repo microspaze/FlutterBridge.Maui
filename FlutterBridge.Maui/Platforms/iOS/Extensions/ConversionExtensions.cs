@@ -97,5 +97,65 @@ namespace FlutterBridge.Maui.Extensions
 
             return NSData.FromArray(dataBytes);
         }
+        
+        public static object? ToObject(this NSObject data, Type dataType)
+        {
+            object? value = null;
+            try
+            {
+                if (data is NSNumber num)
+                {
+                    #region NSNumber Value
+
+                    if (num is NSDecimalNumber d)
+                    {
+                        // handle NSDecimalNumber type directly
+                        value = (decimal)d.NSDecimalValue;
+                    }
+                    else
+                    {
+                        value = num.ObjCType switch
+                        {
+                            "c" when num.Class.Name == "__NSCFBoolean" => num.BoolValue, // ObjC bool
+                            "c" => num.SByteValue, // signed char
+                            "i" => num.Int32Value, // signed int
+                            "s" => num.Int16Value, // signed short
+                            "l" => num.Int32Value, // signed long (32 bit)
+                            "q" => num.Int64Value, // signed long long (64 bit)
+                            "C" => num.ByteValue, // unsigned char
+                            "I" => num.UInt32Value, // unsigned int
+                            "S" => num.UInt16Value, // unsigned short
+                            "L" => num.UInt32Value, // unsigned long (32 bit)
+                            "Q" => num.UInt64Value, // unsigned long long (64 bit)
+                            "f" => num.FloatValue, // float
+                            "d" => num.DoubleValue, // double
+                            "B" => num.BoolValue, // C++ bool or C99 _Bool
+                            _ => throw new ArgumentOutOfRangeException(nameof(num), num,
+                                $"NSNumber \"{num.StringValue}\" has an unknown ObjCType \"{num.ObjCType}\" (Class: \"{num.Class.Name}\")")
+                        };
+                    }
+
+                    #endregion
+                }
+                else if (data is NSString str)
+                {
+                    #region NSString Value
+
+                    value = str.ToString();
+
+                    #endregion
+                }
+                else
+                {
+                    value = Convert.ChangeType(data, dataType);
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return value;
+        }
     }
 }
