@@ -14,5 +14,17 @@ namespace FlutterBridge.Maui.Attributes
         /// when the underlying platform is iOS.
         /// </summary>
         public bool MainThreadRequired { get; set; }
+
+        /// <summary>
+        /// Customized opertion name
+        /// </summary>
+        public string Name { get; set; } = string.Empty;
+
+        public BridgeOperationAttribute() { }
+
+        public BridgeOperationAttribute(string name)
+        {
+            Name = name;
+        }
     }
 }

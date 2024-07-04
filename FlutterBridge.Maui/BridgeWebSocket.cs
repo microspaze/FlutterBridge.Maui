@@ -149,7 +149,7 @@ namespace FlutterBridge.Maui
                         Type paramType = param.IsOut || param.ParameterType.IsByRef
                             ? param.ParameterType.GetElementType()!
                             : param.ParameterType;
-                        string paramName = param.Name!.FirstCharUpper();
+                        string paramName = param.Name!;
 
                         object? value;
                         if (request.Arguments!.ContainsKey(paramName))

@@ -22,10 +22,12 @@ namespace FlutterBridge.Maui.Models
         public BridgeException(BridgeErrorCode errorCode, string message) : base(message)
         {
             Code = errorCode;
+            Message = message;
         }
         public BridgeException(BridgeErrorCode errorCode, string message, Exception innerException) : base(message, innerException)
         {
             Code = errorCode;
+            Message = message;
         }
 
         public BridgeException(string message) : base(message)

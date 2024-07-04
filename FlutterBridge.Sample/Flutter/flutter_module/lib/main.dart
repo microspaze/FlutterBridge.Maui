@@ -172,6 +172,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () => _decrement(),
                 ),
                 FloatingActionButton(
+                  child: Icon(Icons.abc_outlined),
+                  onPressed: () => _load(),
+                ),
+                FloatingActionButton(
                   child: Icon(Icons.add),
                   onPressed: () => _increment(),
                 ),

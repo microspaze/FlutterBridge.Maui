@@ -71,7 +71,7 @@ namespace FlutterBridge.Maui
         readonly FlutterEventChannel _eventChannel;
         readonly StreamHandler _streamHandler;
 
-        WebSocketService _socketService;
+        WebSocketService? _socketService;
         bool _disposed;
 
         /// <summary>
@@ -165,8 +165,10 @@ namespace FlutterBridge.Maui
             NSObject dartReturnValue;
             try
             {
-                var dartArguments = call.Arguments as NSDictionary;
-                requestId = (long)(dartArguments["requestId"] as NSNumber);
+                if (call.Arguments is NSDictionary dartArguments)
+                {
+                    requestId = (long)(dartArguments["requestId"] as NSNumber);
+                }
                 dartReturnValue = FlutterInterop.ToMethodChannelResult(0);
             }
             catch (Exception ex)
@@ -221,18 +223,25 @@ namespace FlutterBridge.Maui
                 for (int i = 0; i < parametersCount; i++)
                 {
                     ParameterInfo param = operation.Parameters![i];
-                    Type paramType = param.IsOut || param.ParameterType.IsByRef
+                    var paramType = param.IsOut || param.ParameterType.IsByRef
                         ? param.ParameterType.GetElementType()!
                         : param.ParameterType;
-                    NSString paramName = new NSString(param.Name!.FirstCharUpper());
+                    var paramName = new NSString(param.Name!);
 
                     object? value = null;
-                    if (dartArguments.ContainsKey(paramName))
+                    if (dartArguments!.ContainsKey(paramName))
                     {
                         var argumentValue = dartArguments[paramName];
-                        if (argumentValue != null && argumentValue is NSData argumentBytes)
+                        if (argumentValue != null)
                         {
-                            value = argumentBytes.ToByteArray().ToProtoObject(paramType);
+                            if (argumentValue is NSData argumentBytes)
+                            {
+                                value = argumentBytes.ToByteArray().ToProtoObject(paramType);
+                            }
+                            else
+                            {
+                                value = Convert.ChangeType(argumentValue, paramType);
+                            }
                         }
                     }
                     else if (param.HasDefaultValue)
@@ -325,32 +334,22 @@ namespace FlutterBridge.Maui
 
         private void SendResult(long requestId, string operationKey, object? result)
         {
-            var message = new BridgeMessageInfo
-            {
-                RequestId = requestId,
-                OperationKey = operationKey,
-                Result = result.ToProtoBytes(),
-            };
+            var message = new NSDictionary();
+            message["requestId"] = NSObject.FromObject(requestId);
+            message["result"] = result.ToProtoBytes().ToByteData();
 
-            NSObject dartReturnValue = FlutterInterop.ToMethodChannelResult(message);
             Console.WriteLine("Sending result to Flutter...");
-            MainThread.BeginInvokeOnMainThread(() => _methodChannelIncoming.InvokeMethod("result", dartReturnValue));
+            MainThread.BeginInvokeOnMainThread(() => _methodChannelIncoming.InvokeMethod("result", message));
         }
 
         private void SendError(long requestId, string operationKey, BridgeException exception)
         {
-            var message = new BridgeMessageInfo
-            {
-                RequestId = requestId,
-                OperationKey = operationKey,
-                ErrorCode = exception.Code,
-                ErrorMessage = exception.Message,
-                Exception = exception
-            };
+            var message = new NSDictionary();
+            message["requestId"] = NSObject.FromObject(requestId);
+            message["exception"] = exception.ToProtoBytes().ToByteData();
 
-            NSObject dartReturnValue = FlutterInterop.ToMethodChannelResult(message);
             Console.WriteLine("Sending error to Flutter...");
-            MainThread.BeginInvokeOnMainThread(() => _methodChannelIncoming.InvokeMethod("error", dartReturnValue));
+            MainThread.BeginInvokeOnMainThread(() => _methodChannelIncoming.InvokeMethod("error", message));
         }
     }
 }

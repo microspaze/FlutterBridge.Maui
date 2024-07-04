@@ -1,4 +1,5 @@
 ﻿using FlutterBridge.Maui.Attributes;
+using FlutterBridge.Maui.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,16 @@ namespace FlutterBridge.Sample.Services
         [BridgeEvent]
         public event EventHandler<CounterValueResult>? ValueChanged;
 
-        private int _value = 0;
+        private int _value = -1;
 
-        [BridgeOperation]
-        public int GetValue()
+        [BridgeOperation("GetValue()")]
+        public int GetValue(string name, int version, int versionNum, CounterValueResult prevValue)
         {
+            if (prevValue != null && prevValue.Value == _value)
+            {
+                throw new BridgeException(BridgeErrorCode.OperationCanceled, "Value Not Changed!");
+            }
+
             return _value;
         }
 

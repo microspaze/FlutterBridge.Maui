@@ -243,8 +243,9 @@ namespace FlutterBridge.Maui
                 return;
             }
 
+            var callArguments = call.Arguments();
             var parametersCount = operation.ParametersCount;
-            if (parametersCount > 0 && call.Arguments() == null)
+            if (parametersCount > 0 && callArguments == null)
             {
                 SendError(requestId, operationKey, new BridgeException(BridgeErrorCode.OperationArgumentsCountMismatch));
                 return;
@@ -259,7 +260,7 @@ namespace FlutterBridge.Maui
                     var paramType = param.IsOut || param.ParameterType.IsByRef
                         ? param.ParameterType.GetElementType()!
                         : param.ParameterType;
-                    string paramName = param.Name!.FirstCharUpper();
+                    string paramName = param.Name!;
 
                     object? value = null;
                     if (call.HasArgument(paramName))
@@ -267,8 +268,15 @@ namespace FlutterBridge.Maui
                         var argumentValue = call.Argument(paramName);
                         if (argumentValue != null)
                         {
-                            var argumentBytes = (byte[]?)argumentValue;
-                            value = argumentBytes.ToProtoObject(paramType);
+                            if (argumentValue.Class.CanonicalName == _bytesTypeName)
+                            {
+                                var argumentBytes = (byte[]?)argumentValue;
+                                value = argumentBytes.ToProtoObject(paramType);
+                            }
+                            else
+                            {
+                                value = Convert.ChangeType(argumentValue, paramType);
+                            }
                         }
                     }
                     else if (param.HasDefaultValue)
@@ -353,37 +361,26 @@ namespace FlutterBridge.Maui
                     Console.WriteLine(ex.Message);
                 }
             }
-
         }
 
         private void SendResult(long requestId, string operationKey, object? result)
         {
-            var message = new BridgeMessageInfo
-            {
-                RequestId = requestId,
-                OperationKey = operationKey,
-                Result = result.ToProtoBytes(),
-            };
+            var message = new Java.Util.HashMap();
+            message.Put("requestId", requestId);
+            message.Put("result", result.ToProtoBytes());
 
-            var dartReturnValue = FlutterInterop.ToMethodChannelResult(message);
             Console.WriteLine("Sending result to Flutter...");
-            MainThread.BeginInvokeOnMainThread(() => _methodChannelIncoming.InvokeMethod("result", dartReturnValue));
+            MainThread.BeginInvokeOnMainThread(() => _methodChannelIncoming.InvokeMethod("result", message));
         }
 
         private void SendError(long requestId, string operationKey, BridgeException exception)
         {
-            var message = new BridgeMessageInfo
-            {
-                RequestId = requestId,
-                OperationKey = operationKey,
-                ErrorCode = exception.Code,
-                ErrorMessage = exception.Message,
-                Exception = exception
-            };
+            var message = new Java.Util.HashMap();
+            message.Put("requestId", requestId);
+            message.Put("exception", exception.ToProtoBytes());
 
-            var dartReturnValue = FlutterInterop.ToMethodChannelResult(message);
             Console.WriteLine("Sending error to Flutter...");
-            MainThread.BeginInvokeOnMainThread(() => _methodChannelIncoming.InvokeMethod("error", dartReturnValue));
+            MainThread.BeginInvokeOnMainThread(() => _methodChannelIncoming.InvokeMethod("error", message));
         }
     }
 }

@@ -3,30 +3,34 @@ import 'package:flutter/services.dart';
 import 'package:flutter_maui_bridge/flutter_bridge.dart';
 import 'package:flutter_maui_bridge/proto/flutter_maui_bridge.pb.dart';
 import 'package:flutter_module/proto/flutter_module.pb.dart';
+import 'package:protobuf_wellknown/protobuf_wellknown.dart';
 
 class CounterService {
   static const String _serviceName = "counter_service";
   static final FlutterBridge _bridge = FlutterBridge();
 
   // Events *****************************
-  final Stream<CounterValueResult> _valueChanged = _bridge
-      .events(serviceName: _serviceName, eventName: 'valueChanged')
-      .map((_) => CounterValueResult.fromBuffer(_));
+  final Stream<CounterValueResult> _valueChanged =
+      _bridge.events(serviceName: _serviceName, eventName: 'valueChanged').map((_) => CounterValueResult.fromBuffer(_));
   Stream<CounterValueResult> get valueChanged => _valueChanged;
 
   // Operations *****************************
   static const _kGetValue = 'GetValue()';
   Future<int> getValue() async {
     try {
-      await _bridge.invokeMethod(
+      var arguments = Map<String, dynamic>();
+      arguments["name"] = StringValue(value: "flutterBridge").writeToBuffer();
+      arguments["version"] = Int32Value(value: 105).writeToBuffer();
+      arguments["versionNum"] = 106;
+      arguments["prevValue"] = CounterValueResult(value: 0).writeToBuffer();
+      var result = await _bridge.invokeMethod(
         service: _serviceName,
         operation: _kGetValue,
-        arguments: null,
+        arguments: arguments,
       );
-      return 0;
+      return Int32Value.fromBuffer(result).value;
     } on PlatformException catch (e) {
-      throw Exception(
-          "Unable to execute method 'getValue': ${e.code}, ${e.message}");
+      throw Exception("Unable to execute method 'getValue': ${e.code}, ${e.message}");
     } on BridgeException catch (fe) {
       throw fe;
     } on Exception catch (e) {
@@ -43,8 +47,7 @@ class CounterService {
         arguments: null,
       );
     } on PlatformException catch (e) {
-      throw Exception(
-          "Unable to execute method 'increment': ${e.code}, ${e.message}");
+      throw Exception("Unable to execute method 'increment': ${e.code}, ${e.message}");
     } on BridgeException catch (fe) {
       throw fe;
     } on Exception catch (e) {
@@ -61,8 +64,7 @@ class CounterService {
         arguments: null,
       );
     } on PlatformException catch (e) {
-      throw Exception(
-          "Unable to execute method 'decrement': ${e.code}, ${e.message}");
+      throw Exception("Unable to execute method 'decrement': ${e.code}, ${e.message}");
     } on BridgeException catch (fe) {
       throw fe;
     } on Exception catch (e) {

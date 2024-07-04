@@ -11,6 +11,8 @@ namespace FlutterBridge.Maui.Extensions
 {
     public static class ProtobufExtensions
     {
+        private static readonly Type _bytesType = typeof(byte[]);
+
         public static byte[]? ToProtoBytes(this object? model)
         {
             byte[]? bytes = null;
@@ -36,6 +38,8 @@ namespace FlutterBridge.Maui.Extensions
             object? result = null;
             if (bytes != null && bytes.Length > 0)
             {
+                if(type == _bytesType) { return bytes; }
+
                 try
                 {
                     using var stream = new MemoryStream(bytes);

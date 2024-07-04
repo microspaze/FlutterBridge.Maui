@@ -14,11 +14,11 @@ namespace FlutterBridge.Maui.Models
     {
         public BridgeOperationInfo(MethodInfo method, object? serviceInstance = null)
         {
-            OperationName = method.GetCSharpSignature();
             MethodName = method.Name;
             HasResult = method.ReturnType.Name != "Void";
             Parameters = method.GetParameters();
             OperationAttribute = method.GetCustomAttribute(typeof(BridgeOperationAttribute), true) as BridgeOperationAttribute;
+            OperationName = OperationAttribute != null && !string.IsNullOrEmpty(OperationAttribute.Name) ? OperationAttribute.Name : method.GetCSharpSignature(); 
             IsAsyncTask = method.ReturnType.IsTask();
 
             if (method.IsStatic)

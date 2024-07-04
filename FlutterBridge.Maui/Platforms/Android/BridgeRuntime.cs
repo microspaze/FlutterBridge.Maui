@@ -13,6 +13,9 @@ namespace FlutterBridge.Maui
 {
     public static partial class BridgeRuntime
     {
+        private static FlutterEngine? _engine;
+        public static FlutterEngine? Engine => _engine;
+
         /// <summary>
         /// Initializes the Bridge environment.
         /// </summary>

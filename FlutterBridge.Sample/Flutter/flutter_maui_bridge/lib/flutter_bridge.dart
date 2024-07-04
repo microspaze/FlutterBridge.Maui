@@ -57,12 +57,10 @@ class FlutterBridge {
   static const EventChannel _events = FlutterBridgeConfig.eventChannel;
 
   // The real event stream from navive side
-  static final Stream<BridgeEventInfo?> _channelEvent =
-      _events.receiveBroadcastStream().map(_mapEvent);
+  static final Stream<BridgeEventInfo?> _channelEvent = _events.receiveBroadcastStream().map(_mapEvent);
 
   // The event stream exposed to all the services
-  final Stream<BridgeEventInfo?>
-      _netEvent; // = _events.receiveBroadcastStream().map(_mapEvent);
+  final Stream<BridgeEventInfo?> _netEvent; // = _events.receiveBroadcastStream().map(_mapEvent);
 
   //
   // Filter the bridge event stream
@@ -73,13 +71,10 @@ class FlutterBridge {
     required String eventName,
   }) {
     // Filter the stream by instanceId and event name.
-    return _netEvent
-        .where((e) => e!.serviceName == serviceName && e.eventName == eventName)
-        .map((e) => e!.eventData);
+    return _netEvent.where((e) => e!.serviceName == serviceName && e.eventName == eventName).map((e) => e!.eventData);
   }
 
-  static final FlutterBridge _instance =
-      FlutterBridge._internal(FlutterBridgeConfig.mode);
+  static final FlutterBridge _instance = FlutterBridge._internal(FlutterBridgeConfig.mode);
 
   FlutterBridge._internal(FlutterBridgeMode mode)
       : invokeMethod = (buildMode == _BuildMode.release)
@@ -96,13 +91,13 @@ class FlutterBridge {
   factory FlutterBridge() => _instance;
 
   /// Invoke the message on the channel
-  final Future<Map<String, dynamic>> Function({
+  final Future<Uint8List> Function({
     required String? service,
     required String? operation,
     required Map<String, dynamic>? arguments,
   }) invokeMethod;
 
-  static Future<Map<String, dynamic>> _invokeOnChannel({
+  static Future<Uint8List> _invokeOnChannel({
     required String? service,
     required String? operation,
     required Map<String, dynamic>? arguments,
@@ -117,7 +112,7 @@ class FlutterBridge {
     );
   }
 
-  static Future<Map<String, dynamic>> _invokeOnSocket({
+  static Future<Uint8List> _invokeOnSocket({
     required String? service,
     required String? operation,
     required Map<String, dynamic>? arguments,
@@ -164,7 +159,7 @@ class _PlatformChannel {
   Lock _sendLock = new Lock();
 
   // All the request to be satisfied by channel.
-  Map<int, Completer<Map<String, dynamic>>> _sendRequestMap = {};
+  Map<int, Completer<Uint8List>> _sendRequestMap = {};
 
   // The real communication channel with native platform
   final _platformChannel = FlutterBridgeConfig.methodChannel;
@@ -185,44 +180,43 @@ class _PlatformChannel {
   Future<dynamic> _onMessageReceived(MethodCall call) async {
     // Manage message received
     try {
-      BridgeMessageInfo msg =
-          BridgeMessageInfo.fromBuffer(call.arguments as Uint8List);
+      var message = call.arguments as Map;
 
       // Insert the response the the map
       await _sendLock.synchronized(() {
-        var requestId = msg.requestId;
+        var requestId = message["requestId"];
         if (_sendRequestMap.containsKey(requestId)) {
-          // Invoke the task completion
-          // var isFailed = msg.errorCode != null && msg.errorCode.isNotEmpty;
-          // if (isFailed && msg.exception != null) {
-          //   Completer<Map<String, dynamic>>? request =
-          //       _sendRequestMap[requestId];
-          //   var exception = PlatformOperationException.fromJsonDynamic(
-          //     msg.exception as Map<String, dynamic>,
-          //   );
-          //   request?.completeError(exception);
-          // }
+          var request = _sendRequestMap[requestId];
+          if (request != null) {
+            var result = message["result"];
+            if (result != null) {
+              request?.complete(result as Uint8List);
+            } else {
+              var exception = message["exception"];
+              if (exception != null) {
+                request.completeError(BridgeException.fromBuffer(exception as Uint8List));
+              }
+            }
+          }
           _sendRequestMap.remove(requestId);
         }
       });
     } catch (e) {
       // Error during deserialization
       print(
-        "flutter_MAUI_debug1: error during _onMessageReceived deserialization." +
-            e.toString(),
+        "flutter_MAUI_debug1: error during _onMessageReceived deserialization." + e.toString(),
       );
     }
 
     return _emptyString;
   }
 
-  Future<Map<String, dynamic>> invokeMethod({
+  Future<Uint8List> invokeMethod({
     required String? service,
     required String? operation,
     required Map<String, dynamic>? arguments,
   }) {
-    final Completer<Map<String, dynamic>> completer =
-        new Completer<Map<String, dynamic>>();
+    final completer = new Completer<Uint8List>();
 
     _sendLock.synchronized(
       () async {
@@ -236,17 +230,15 @@ class _PlatformChannel {
             () => completer,
           );
 
-          // Serialize all the args as protobuf bytes
-          final Map<String, dynamic>? args = arguments != null
-              ? arguments!.map(
-                  (argName, value) => MapEntry(argName, value.writeToBuffer()))
-              : Map<String, dynamic>();
-          args!["requestId"] = sendRequestId;
+          if (arguments == null) {
+            arguments = Map<String, dynamic>();
+          }
+          arguments!["requestId"] = sendRequestId;
 
           // Send to platform channel
           await _platformChannel.invokeMethod(
             operationKey,
-            args,
+            arguments,
           );
         } on MissingPluginException {
           _sendRequestMap.remove(sendRequestId);
@@ -297,8 +289,7 @@ class _WebSocketChannel {
 
   Stream<BridgeEventInfo> get events => _eventsOut;
 
-  _WebSocketChannel._internal(
-      this._eventsController, this._eventsIn, this._eventsOut) {
+  _WebSocketChannel._internal(this._eventsController, this._eventsIn, this._eventsOut) {
     _sendLock.synchronized(() async {
       // Wait until the connection open
       while (_socketChannelConnected == false) {
@@ -317,11 +308,9 @@ class _WebSocketChannel {
 
   factory _WebSocketChannel() {
     if (_instance == null) {
-      StreamController<BridgeEventInfo> controller =
-          StreamController<BridgeEventInfo>();
+      StreamController<BridgeEventInfo> controller = StreamController<BridgeEventInfo>();
       Stream<BridgeEventInfo> outEvent = controller.stream.asBroadcastStream();
-      _instance =
-          _WebSocketChannel._internal(controller, controller.sink, outEvent);
+      _instance = _WebSocketChannel._internal(controller, controller.sink, outEvent);
     }
     return _instance!;
   }
@@ -350,7 +339,7 @@ class _WebSocketChannel {
   ///
   /// All the request to be satisfied by debug WEB SOCKET.
   ///
-  Map<int, Completer<Map<String, dynamic>>> _sendRequestMap = {};
+  Map<int, Completer<Uint8List>> _sendRequestMap = {};
 
   ///
   /// All message sended to debug server
@@ -361,8 +350,7 @@ class _WebSocketChannel {
   ///
   /// Oopen the connection resending all the queued messages with no response.
   ///
-  Future<void> _autoConnect(
-      {required Duration delay, bool forceOpen = false}) async {
+  Future<void> _autoConnect({required Duration delay, bool forceOpen = false}) async {
     // * If disposed we release the memory
     if (_disposed) {
       await _closeConnection();
@@ -370,9 +358,7 @@ class _WebSocketChannel {
       await _releaseMemory();
     }
     // * If the connectin is open, but not message: close the connection.
-    else if (_outboxMessages.length <= 0 &&
-        _socketChannelConnected == true &&
-        forceOpen == false) {
+    else if (_outboxMessages.length <= 0 && _socketChannelConnected == true && forceOpen == false) {
       await _closeConnection();
       _socketChannelConnected = false;
       await _releaseMemory();
@@ -502,9 +488,6 @@ class _WebSocketChannel {
           _eventsIn.add(msg.event);
         }
 
-        // Deserialize the real application message
-        //FNetMessage result = FNetSerializer.deserialize(msg.fnetMessage);
-
         // Insert the response the the map
         await _sendLock.synchronized(() {
           var requestId = msg.requestId;
@@ -513,24 +496,25 @@ class _WebSocketChannel {
           }
 
           if (_sendRequestMap.containsKey(requestId)) {
-            // Invoke the task completion
-            // var isFailed = msg.errorCode != null && msg.errorCode!.isNotEmpty;
-            // if (isFailed && msg.exception != null) {
-            //   Completer<Map<String, dynamic>>? request =
-            //       _sendRequestMap[requestId];
-            //   var exception = PlatformOperationException.fromJsonDynamic(
-            //     msg.exception as Map<String, dynamic>,
-            //   );
-            //   request?.completeError(exception);
-            // }
+            var request = _sendRequestMap[requestId];
+            if (request != null) {
+              var result = msg.result;
+              if (result != null) {
+                request?.complete(result as Uint8List);
+              } else {
+                var exception = msg.exception;
+                if (exception != null) {
+                  request.completeError(exception);
+                }
+              }
+            }
             _sendRequestMap.remove(requestId);
           }
         });
       } catch (e) {
         // Error during deserialization
         print(
-          "flutter_MAUI_debug2: error during _onMessageReceived deserialization." +
-              e.toString(),
+          "flutter_MAUI_debug2: error during _onMessageReceived deserialization." + e.toString(),
         );
       }
     } else {
@@ -538,13 +522,12 @@ class _WebSocketChannel {
     }
   }
 
-  Future<Map<String, dynamic>> invokeMethod({
+  Future<Uint8List> invokeMethod({
     required String? service,
     required String? operation,
     required Map<String, dynamic>? arguments,
   }) {
-    final Completer<Map<String, dynamic>> completer =
-        new Completer<Map<String, dynamic>>();
+    final completer = new Completer<Uint8List>();
 
     _sendLock.synchronized(
       () async {
@@ -552,10 +535,8 @@ class _WebSocketChannel {
         String operationKey = "$service.$operation";
 
         try {
-          final Map<String, Uint8List>? args = arguments != null
-              ? arguments!.map(
-                  (argName, value) => MapEntry(argName, value.writeToBuffer()))
-              : null;
+          final Map<String, Uint8List>? args =
+              arguments != null ? arguments!.map((argName, value) => MapEntry(argName, value.writeToBuffer())) : null;
 
           final BridgeMessageInfo debugMessage = BridgeMessageInfo(
             requestId: sendRequestId,

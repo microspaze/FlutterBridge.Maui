@@ -1,5 +1,4 @@
-﻿using FlutterBinding;
-using FlutterBridge.Maui.Attributes;
+﻿using FlutterBridge.Maui.Attributes;
 using FlutterBridge.Maui.Extensions;
 using FlutterBridge.Maui.Models;
 using System;
@@ -20,11 +19,8 @@ namespace FlutterBridge.Maui
         #region Initialization
 
         private static BridgeHost? _bridge;
-        private static FlutterEngine? _engine;
         private static FlutterConfig _config = FlutterConfig.Instance;
         private static FlutterBridgeMode _bridgeMode => _config.EnableWebsocket ? FlutterBridgeMode.WebSocket : FlutterBridgeMode.PlatformChannel;
-
-        public static FlutterEngine? Engine => _engine;
 
         public const string DEFAULT_ENGINE_ID = "default";
 
