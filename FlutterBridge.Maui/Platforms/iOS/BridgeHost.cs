@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using UIKit;
+using Exception = System.Exception;
 
 namespace FlutterBridge.Maui
 {
@@ -334,9 +335,10 @@ namespace FlutterBridge.Maui
 
         private void SendResult(long requestId, string operationKey, object? result)
         {
-            var message = new NSDictionary();
-            message["requestId"] = NSObject.FromObject(requestId);
-            message["result"] = result.ToProtoBytes().ToByteData();
+            var message = new NSDictionary(
+                "requestId", new NSNumber(requestId),
+                "result", result.ToProtoBytes().ToByteData()
+            );
 
             Console.WriteLine("Sending result to Flutter...");
             MainThread.BeginInvokeOnMainThread(() => _methodChannelIncoming.InvokeMethod("result", message));
@@ -344,9 +346,10 @@ namespace FlutterBridge.Maui
 
         private void SendError(long requestId, string operationKey, BridgeException exception)
         {
-            var message = new NSDictionary();
-            message["requestId"] = NSObject.FromObject(requestId);
-            message["exception"] = exception.ToProtoBytes().ToByteData();
+            var message = new NSDictionary(
+                "requestId", new NSNumber(requestId),
+                "exception", exception.ToProtoBytes().ToByteData()
+            );
 
             Console.WriteLine("Sending error to Flutter...");
             MainThread.BeginInvokeOnMainThread(() => _methodChannelIncoming.InvokeMethod("error", message));
