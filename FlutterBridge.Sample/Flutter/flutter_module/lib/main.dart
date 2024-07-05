@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _load() async {
     // Get the value from MAUI
     try {
-      int value = await _counterService.getValue();
+      int value = await _counterService.getValue(_counterValue);
       setState(() {
         _counterValue = value;
         _counterError = "got";
@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       await _counterService.increment();
       setState(() {
-        _counterError = "increased";
+        _counterError = "added";
       });
     } catch (ex) {
       setState(() {
@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       await _counterService.decrement();
       setState(() {
-        _counterError = "decreased";
+        _counterError = "subed";
       });
     } catch (ex) {
       setState(() {

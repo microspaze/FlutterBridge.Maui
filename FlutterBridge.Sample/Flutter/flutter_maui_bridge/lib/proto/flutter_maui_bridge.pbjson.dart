@@ -101,3 +101,51 @@ final $typed_data.Uint8List bridgeMessageInfoDescriptor = $convert.base64Decode(
     'DGVycm9yTWVzc2FnZRo8Cg5Bcmd1bWVudHNFbnRyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2YW'
     'x1ZRgCIAEoDFIFdmFsdWU6AjgB');
 
+@$core.Deprecated('Use int32ListValueDescriptor instead')
+const Int32ListValue$json = {
+  '1': 'Int32ListValue',
+  '2': [
+    {'1': 'value', '3': 1, '4': 3, '5': 5, '10': 'value'},
+  ],
+};
+
+/// Descriptor for `Int32ListValue`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List int32ListValueDescriptor = $convert.base64Decode(
+    'Cg5JbnQzMkxpc3RWYWx1ZRIUCgV2YWx1ZRgBIAMoBVIFdmFsdWU=');
+
+@$core.Deprecated('Use int64ListValueDescriptor instead')
+const Int64ListValue$json = {
+  '1': 'Int64ListValue',
+  '2': [
+    {'1': 'value', '3': 1, '4': 3, '5': 3, '10': 'value'},
+  ],
+};
+
+/// Descriptor for `Int64ListValue`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List int64ListValueDescriptor = $convert.base64Decode(
+    'Cg5JbnQ2NExpc3RWYWx1ZRIUCgV2YWx1ZRgBIAMoA1IFdmFsdWU=');
+
+@$core.Deprecated('Use float32ListValueDescriptor instead')
+const Float32ListValue$json = {
+  '1': 'Float32ListValue',
+  '2': [
+    {'1': 'value', '3': 1, '4': 3, '5': 2, '10': 'value'},
+  ],
+};
+
+/// Descriptor for `Float32ListValue`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List float32ListValueDescriptor = $convert.base64Decode(
+    'ChBGbG9hdDMyTGlzdFZhbHVlEhQKBXZhbHVlGAEgAygCUgV2YWx1ZQ==');
+
+@$core.Deprecated('Use float64ListValueDescriptor instead')
+const Float64ListValue$json = {
+  '1': 'Float64ListValue',
+  '2': [
+    {'1': 'value', '3': 1, '4': 3, '5': 1, '10': 'value'},
+  ],
+};
+
+/// Descriptor for `Float64ListValue`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List float64ListValueDescriptor = $convert.base64Decode(
+    'ChBGbG9hdDY0TGlzdFZhbHVlEhQKBXZhbHVlGAEgAygBUgV2YWx1ZQ==');
+

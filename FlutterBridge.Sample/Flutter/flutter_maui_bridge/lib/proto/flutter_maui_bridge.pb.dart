@@ -11,6 +11,7 @@
 
 import 'dart:core' as $core;
 
+import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 import 'flutter_maui_bridge.pbenum.dart';
@@ -303,6 +304,182 @@ class BridgeMessageInfo extends $pb.GeneratedMessage {
   $core.bool hasErrorMessage() => $_has(7);
   @$pb.TagNumber(8)
   void clearErrorMessage() => clearField(8);
+}
+
+class Int32ListValue extends $pb.GeneratedMessage {
+  factory Int32ListValue({
+    $core.Iterable<$core.int>? value,
+  }) {
+    final $result = create();
+    if (value != null) {
+      $result.value.addAll(value);
+    }
+    return $result;
+  }
+  Int32ListValue._() : super();
+  factory Int32ListValue.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Int32ListValue.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Int32ListValue', createEmptyInstance: create)
+    ..p<$core.int>(1, _omitFieldNames ? '' : 'value', $pb.PbFieldType.K3)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Int32ListValue clone() => Int32ListValue()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Int32ListValue copyWith(void Function(Int32ListValue) updates) => super.copyWith((message) => updates(message as Int32ListValue)) as Int32ListValue;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static Int32ListValue create() => Int32ListValue._();
+  Int32ListValue createEmptyInstance() => create();
+  static $pb.PbList<Int32ListValue> createRepeated() => $pb.PbList<Int32ListValue>();
+  @$core.pragma('dart2js:noInline')
+  static Int32ListValue getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Int32ListValue>(create);
+  static Int32ListValue? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$core.int> get value => $_getList(0);
+}
+
+class Int64ListValue extends $pb.GeneratedMessage {
+  factory Int64ListValue({
+    $core.Iterable<$fixnum.Int64>? value,
+  }) {
+    final $result = create();
+    if (value != null) {
+      $result.value.addAll(value);
+    }
+    return $result;
+  }
+  Int64ListValue._() : super();
+  factory Int64ListValue.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Int64ListValue.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Int64ListValue', createEmptyInstance: create)
+    ..p<$fixnum.Int64>(1, _omitFieldNames ? '' : 'value', $pb.PbFieldType.K6)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Int64ListValue clone() => Int64ListValue()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Int64ListValue copyWith(void Function(Int64ListValue) updates) => super.copyWith((message) => updates(message as Int64ListValue)) as Int64ListValue;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static Int64ListValue create() => Int64ListValue._();
+  Int64ListValue createEmptyInstance() => create();
+  static $pb.PbList<Int64ListValue> createRepeated() => $pb.PbList<Int64ListValue>();
+  @$core.pragma('dart2js:noInline')
+  static Int64ListValue getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Int64ListValue>(create);
+  static Int64ListValue? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$fixnum.Int64> get value => $_getList(0);
+}
+
+class Float32ListValue extends $pb.GeneratedMessage {
+  factory Float32ListValue({
+    $core.Iterable<$core.double>? value,
+  }) {
+    final $result = create();
+    if (value != null) {
+      $result.value.addAll(value);
+    }
+    return $result;
+  }
+  Float32ListValue._() : super();
+  factory Float32ListValue.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Float32ListValue.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Float32ListValue', createEmptyInstance: create)
+    ..p<$core.double>(1, _omitFieldNames ? '' : 'value', $pb.PbFieldType.KF)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Float32ListValue clone() => Float32ListValue()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Float32ListValue copyWith(void Function(Float32ListValue) updates) => super.copyWith((message) => updates(message as Float32ListValue)) as Float32ListValue;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static Float32ListValue create() => Float32ListValue._();
+  Float32ListValue createEmptyInstance() => create();
+  static $pb.PbList<Float32ListValue> createRepeated() => $pb.PbList<Float32ListValue>();
+  @$core.pragma('dart2js:noInline')
+  static Float32ListValue getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Float32ListValue>(create);
+  static Float32ListValue? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$core.double> get value => $_getList(0);
+}
+
+class Float64ListValue extends $pb.GeneratedMessage {
+  factory Float64ListValue({
+    $core.Iterable<$core.double>? value,
+  }) {
+    final $result = create();
+    if (value != null) {
+      $result.value.addAll(value);
+    }
+    return $result;
+  }
+  Float64ListValue._() : super();
+  factory Float64ListValue.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Float64ListValue.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Float64ListValue', createEmptyInstance: create)
+    ..p<$core.double>(1, _omitFieldNames ? '' : 'value', $pb.PbFieldType.KD)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Float64ListValue clone() => Float64ListValue()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Float64ListValue copyWith(void Function(Float64ListValue) updates) => super.copyWith((message) => updates(message as Float64ListValue)) as Float64ListValue;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static Float64ListValue create() => Float64ListValue._();
+  Float64ListValue createEmptyInstance() => create();
+  static $pb.PbList<Float64ListValue> createRepeated() => $pb.PbList<Float64ListValue>();
+  @$core.pragma('dart2js:noInline')
+  static Float64ListValue getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Float64ListValue>(create);
+  static Float64ListValue? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$core.double> get value => $_getList(0);
 }
 
 

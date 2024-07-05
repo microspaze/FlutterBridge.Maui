@@ -1,6 +1,6 @@
 name: flutter_maui_bridge
 description: A new Flutter package project.
-version: 0.0.1
+version: 1.0.0
 homepage:
 
 environment:
@@ -10,8 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  protobuf: any
-  json_annotation: ^4.9.0
+  protobuf: ^3.1.0
+  protobuf_wellknown: ^0.1.1
   web_socket_channel: ^3.0.0
   synchronized: ^3.1.0+1
   meta: ^1.12.0
@@ -19,7 +19,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^2.3.3
-  json_serializable: ^6.8.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

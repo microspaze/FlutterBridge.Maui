@@ -267,15 +267,7 @@ namespace FlutterBridge.Maui
                         var argumentValue = call.Argument(paramName);
                         if (argumentValue != null)
                         {
-                            if (argumentValue.Class.CanonicalName == _bytesTypeName)
-                            {
-                                var argumentBytes = (byte[]?)argumentValue;
-                                value = argumentBytes.ToProtoObject(paramType);
-                            }
-                            else
-                            {
-                                value = Convert.ChangeType(argumentValue, paramType);
-                            }
+                            value = argumentValue.ToObject(paramType);
                         }
                     }
                     else if (param.HasDefaultValue)

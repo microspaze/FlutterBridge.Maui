@@ -17,7 +17,7 @@ namespace FlutterBridge.Sample.Services
         private int _value = -1;
 
         [BridgeOperation("GetValue()")]
-        public int GetValue(string name, int version, int versionNum, CounterValueResult prevValue)
+        public int GetValue(string name, bool male, int age, long birth, double weight, int[] milks, float[] sleeps, long[] stamps, double[] milstamps, byte[] avatar, CounterValueResult prevValue)
         {
             if (prevValue != null && prevValue.Value == _value)
             {

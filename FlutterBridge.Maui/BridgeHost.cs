@@ -8,6 +8,5 @@ namespace FlutterBridge.Maui
 {
     public partial class BridgeHost
     {
-        private static readonly string _bytesTypeName = "byte[]";
     }
 }

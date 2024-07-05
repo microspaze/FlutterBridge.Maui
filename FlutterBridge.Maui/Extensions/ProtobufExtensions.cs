@@ -18,6 +18,7 @@ namespace FlutterBridge.Maui.Extensions
             byte[]? bytes = null;
             if (model != null)
             {
+                if (model is byte[] mbytes) { return mbytes; }
                 try
                 {
                     var bufferWriter = new ArrayBufferWriter<byte>();

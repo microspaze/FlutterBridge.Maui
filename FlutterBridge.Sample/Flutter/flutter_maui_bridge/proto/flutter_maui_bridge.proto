@@ -33,3 +33,19 @@ message BridgeMessageInfo {
    BridgeErrorCode errorCode = 7;
    string errorMessage = 8;
 }
+
+message Int32ListValue {
+   repeated int32 value = 1;
+}
+
+message Int64ListValue {
+   repeated int64 value = 1;
+}
+
+message Float32ListValue {
+   repeated float value = 1;
+}
+
+message Float64ListValue {
+   repeated double value = 1;
+}

@@ -91,13 +91,13 @@ class FlutterBridge {
   factory FlutterBridge() => _instance;
 
   /// Invoke the message on the channel
-  final Future<Uint8List> Function({
+  final Future<Uint8List?> Function({
     required String? service,
     required String? operation,
     required Map<String, dynamic>? arguments,
   }) invokeMethod;
 
-  static Future<Uint8List> _invokeOnChannel({
+  static Future<Uint8List?> _invokeOnChannel({
     required String? service,
     required String? operation,
     required Map<String, dynamic>? arguments,
@@ -112,7 +112,7 @@ class FlutterBridge {
     );
   }
 
-  static Future<Uint8List> _invokeOnSocket({
+  static Future<Uint8List?> _invokeOnSocket({
     required String? service,
     required String? operation,
     required Map<String, dynamic>? arguments,
@@ -159,7 +159,7 @@ class _PlatformChannel {
   Lock _sendLock = new Lock();
 
   // All the request to be satisfied by channel.
-  Map<int, Completer<Uint8List>> _sendRequestMap = {};
+  Map<int, Completer<Uint8List?>> _sendRequestMap = {};
 
   // The real communication channel with native platform
   final _platformChannel = FlutterBridgeConfig.methodChannel;
@@ -188,14 +188,16 @@ class _PlatformChannel {
         if (_sendRequestMap.containsKey(requestId)) {
           var request = _sendRequestMap[requestId];
           if (request != null) {
-            var result = message["result"];
-            if (result != null) {
-              request?.complete(result as Uint8List);
+            var exception = message["exception"];
+            if (exception != null) {
+              request.completeError(BridgeException.fromBuffer(exception as Uint8List));
             } else {
-              var exception = message["exception"];
-              if (exception != null) {
-                request.completeError(BridgeException.fromBuffer(exception as Uint8List));
+              Uint8List? result = null;
+              var resultBytes = message["result"];
+              if (resultBytes != null) {
+                result = resultBytes as Uint8List;
               }
+              request.complete(result);
             }
           }
           _sendRequestMap.remove(requestId);
@@ -211,12 +213,12 @@ class _PlatformChannel {
     return _emptyString;
   }
 
-  Future<Uint8List> invokeMethod({
+  Future<Uint8List?> invokeMethod({
     required String? service,
     required String? operation,
     required Map<String, dynamic>? arguments,
   }) {
-    final completer = new Completer<Uint8List>();
+    final completer = new Completer<Uint8List?>();
 
     _sendLock.synchronized(
       () async {
@@ -339,7 +341,7 @@ class _WebSocketChannel {
   ///
   /// All the request to be satisfied by debug WEB SOCKET.
   ///
-  Map<int, Completer<Uint8List>> _sendRequestMap = {};
+  Map<int, Completer<Uint8List?>> _sendRequestMap = {};
 
   ///
   /// All message sended to debug server
@@ -522,12 +524,12 @@ class _WebSocketChannel {
     }
   }
 
-  Future<Uint8List> invokeMethod({
+  Future<Uint8List?> invokeMethod({
     required String? service,
     required String? operation,
     required Map<String, dynamic>? arguments,
   }) {
-    final completer = new Completer<Uint8List>();
+    final completer = new Completer<Uint8List?>();
 
     _sendLock.synchronized(
       () async {
