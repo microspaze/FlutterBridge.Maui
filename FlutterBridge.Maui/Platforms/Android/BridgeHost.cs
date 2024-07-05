@@ -3,7 +3,6 @@ using FlutterBinding.Plugin.Common;
 using FlutterBridge.Maui.Extensions;
 using FlutterBridge.Maui.Models;
 using Java.Nio;
-using Newtonsoft.Json;
 using System.Reflection;
 using Object = Java.Lang.Object;
 
