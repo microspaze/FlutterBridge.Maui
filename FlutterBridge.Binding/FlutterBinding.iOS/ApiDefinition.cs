@@ -67,7 +67,7 @@ namespace FlutterBinding
         void CleanupConnection(long connection);
     }
 
-    interface IFlutterBinaryMessenger
+    interface IFlutterBinaryMessenger : FlutterBinaryMessenger
     {
     }
 
@@ -93,7 +93,7 @@ namespace FlutterBinding
         NSObject Decode([NullAllowed] NSData message);
     }
 
-    interface IFlutterMessageCodec
+    interface IFlutterMessageCodec : FlutterMessageCodec
     {
     }
 
@@ -343,7 +343,7 @@ namespace FlutterBinding
         NSObject DecodeEnvelope(NSData envelope);
     }
 
-    interface IFlutterMethodCodec
+    interface IFlutterMethodCodec : FlutterMethodCodec
     {
     }
 
@@ -465,7 +465,7 @@ namespace FlutterBinding
         FlutterError OnCancel([NullAllowed] NSObject arguments);
     }
 
-    interface IFlutterStreamHandler
+    interface IFlutterStreamHandler : FlutterStreamHandler
     {
     }
 
@@ -505,7 +505,7 @@ namespace FlutterBinding
         UIView View { get; }
     }
 
-    interface IFlutterPlatformView
+    interface IFlutterPlatformView : FlutterPlatformView
     {
     }
 
@@ -526,7 +526,7 @@ namespace FlutterBinding
         IFlutterMessageCodec CreateArgsCodec { get; }
     }
 
-    interface IFlutterPlatformViewFactory
+    interface IFlutterPlatformViewFactory : FlutterPlatformViewFactory
     {
     }
 
@@ -548,7 +548,7 @@ namespace FlutterBinding
         void OnTextureUnregistered(IFlutterTexture texture);
     }
 
-    interface IFlutterTexture
+    interface IFlutterTexture : FlutterTexture
     {
     }
 
@@ -575,7 +575,7 @@ namespace FlutterBinding
         void UnregisterTexture(long textureId);
     }
 
-    interface IFlutterTextureRegistry
+    interface IFlutterTextureRegistry : FlutterTextureRegistry
     {
     }
 
@@ -674,7 +674,7 @@ namespace FlutterBinding
         bool ApplicationContinueUserActivity(UIApplication application, NSUserActivity userActivity, UIApplicationRestorationHandler restorationHandler);
     }
 
-    interface IFlutterApplicationLifeCycleDelegate
+    interface IFlutterApplicationLifeCycleDelegate : FlutterApplicationLifeCycleDelegate
     {
     }
 
@@ -708,7 +708,7 @@ namespace FlutterBinding
         void HandleMethodCall(FlutterMethodCall call, FlutterResult result);
     }
 
-    interface IFlutterPlugin
+    interface IFlutterPlugin : FlutterPlugin
     {
     }
 
@@ -765,7 +765,7 @@ namespace FlutterBinding
         string LookupKeyForAsset(string asset, string package);
     }
 
-    interface IFlutterPluginRegistrar
+    interface IFlutterPluginRegistrar : FlutterPluginRegistrar
     {
     }
 
@@ -792,7 +792,7 @@ namespace FlutterBinding
         NSObject ValuePublishedByPlugin(string pluginKey);
     }
 
-    interface IFlutterPluginRegistry
+    interface IFlutterPluginRegistry : FlutterPluginRegistry
     {
     }
 
@@ -806,7 +806,7 @@ namespace FlutterBinding
         void AddApplicationLifeCycleDelegate(NSObject @delegate);
     }
 
-    interface IFlutterAppLifeCycleProvider
+    interface IFlutterAppLifeCycleProvider : FlutterAppLifeCycleProvider
     {
     }
 
