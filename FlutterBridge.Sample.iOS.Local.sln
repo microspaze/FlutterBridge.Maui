@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35004.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlutterBridge.Sample.iOS", "FlutterBridge.Sample\FlutterBridge.Sample.iOS.Local.csproj", "{33DCA98E-C04D-4956-AAF1-E298A8296F08}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlutterBridge.Maui.iOS", "FlutterBridge.Maui\FlutterBridge.Maui.iOS.Local.csproj", "{AAEB6A21-C7B9-41D3-85DE-FEE675586027}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlutterBinding.iOS", "FlutterBridge.Binding\FlutterBinding.iOS\FlutterBinding.iOS.csproj", "{4DF40767-6F3A-4583-8FA0-7A38E3C964CE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Device = Debug|Device
+		Release|Any CPU = Release|Any CPU
+		Release|Device = Release|Device
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{33DCA98E-C04D-4956-AAF1-E298A8296F08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33DCA98E-C04D-4956-AAF1-E298A8296F08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33DCA98E-C04D-4956-AAF1-E298A8296F08}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{33DCA98E-C04D-4956-AAF1-E298A8296F08}.Debug|Device.ActiveCfg = Debug|Device
+		{33DCA98E-C04D-4956-AAF1-E298A8296F08}.Debug|Device.Build.0 = Debug|Device
+		{33DCA98E-C04D-4956-AAF1-E298A8296F08}.Debug|Device.Deploy.0 = Debug|Device
+		{33DCA98E-C04D-4956-AAF1-E298A8296F08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33DCA98E-C04D-4956-AAF1-E298A8296F08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33DCA98E-C04D-4956-AAF1-E298A8296F08}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{33DCA98E-C04D-4956-AAF1-E298A8296F08}.Release|Device.ActiveCfg = Release|Device
+		{33DCA98E-C04D-4956-AAF1-E298A8296F08}.Release|Device.Build.0 = Release|Device
+		{33DCA98E-C04D-4956-AAF1-E298A8296F08}.Release|Device.Deploy.0 = Release|Device
+		{AAEB6A21-C7B9-41D3-85DE-FEE675586027}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAEB6A21-C7B9-41D3-85DE-FEE675586027}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAEB6A21-C7B9-41D3-85DE-FEE675586027}.Debug|Device.ActiveCfg = Debug|Device
+		{AAEB6A21-C7B9-41D3-85DE-FEE675586027}.Debug|Device.Build.0 = Debug|Device
+		{AAEB6A21-C7B9-41D3-85DE-FEE675586027}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAEB6A21-C7B9-41D3-85DE-FEE675586027}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAEB6A21-C7B9-41D3-85DE-FEE675586027}.Release|Device.ActiveCfg = Release|Device
+		{AAEB6A21-C7B9-41D3-85DE-FEE675586027}.Release|Device.Build.0 = Release|Device
+		{4DF40767-6F3A-4583-8FA0-7A38E3C964CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DF40767-6F3A-4583-8FA0-7A38E3C964CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DF40767-6F3A-4583-8FA0-7A38E3C964CE}.Debug|Device.ActiveCfg = Debug|Device
+		{4DF40767-6F3A-4583-8FA0-7A38E3C964CE}.Debug|Device.Build.0 = Debug|Device
+		{4DF40767-6F3A-4583-8FA0-7A38E3C964CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DF40767-6F3A-4583-8FA0-7A38E3C964CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DF40767-6F3A-4583-8FA0-7A38E3C964CE}.Release|Device.ActiveCfg = Release|Device
+		{4DF40767-6F3A-4583-8FA0-7A38E3C964CE}.Release|Device.Build.0 = Release|Device
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FD6D89D8-3AD9-4658-9223-AB7A4F386993}
+	EndGlobalSection
+EndGlobal
