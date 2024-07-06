@@ -394,8 +394,8 @@ class Int64ListValue extends $pb.GeneratedMessage {
   $core.List<$fixnum.Int64> get value => $_getList(0);
 }
 
-class Float32ListValue extends $pb.GeneratedMessage {
-  factory Float32ListValue({
+class DoubleListValue extends $pb.GeneratedMessage {
+  factory DoubleListValue({
     $core.Iterable<$core.double>? value,
   }) {
     final $result = create();
@@ -404,12 +404,12 @@ class Float32ListValue extends $pb.GeneratedMessage {
     }
     return $result;
   }
-  Float32ListValue._() : super();
-  factory Float32ListValue.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory Float32ListValue.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  DoubleListValue._() : super();
+  factory DoubleListValue.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DoubleListValue.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Float32ListValue', createEmptyInstance: create)
-    ..p<$core.double>(1, _omitFieldNames ? '' : 'value', $pb.PbFieldType.KF)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'DoubleListValue', createEmptyInstance: create)
+    ..p<$core.double>(1, _omitFieldNames ? '' : 'value', $pb.PbFieldType.KD)
     ..hasRequiredFields = false
   ;
 
@@ -417,22 +417,22 @@ class Float32ListValue extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  Float32ListValue clone() => Float32ListValue()..mergeFromMessage(this);
+  DoubleListValue clone() => DoubleListValue()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  Float32ListValue copyWith(void Function(Float32ListValue) updates) => super.copyWith((message) => updates(message as Float32ListValue)) as Float32ListValue;
+  DoubleListValue copyWith(void Function(DoubleListValue) updates) => super.copyWith((message) => updates(message as DoubleListValue)) as DoubleListValue;
 
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static Float32ListValue create() => Float32ListValue._();
-  Float32ListValue createEmptyInstance() => create();
-  static $pb.PbList<Float32ListValue> createRepeated() => $pb.PbList<Float32ListValue>();
+  static DoubleListValue create() => DoubleListValue._();
+  DoubleListValue createEmptyInstance() => create();
+  static $pb.PbList<DoubleListValue> createRepeated() => $pb.PbList<DoubleListValue>();
   @$core.pragma('dart2js:noInline')
-  static Float32ListValue getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Float32ListValue>(create);
-  static Float32ListValue? _defaultInstance;
+  static DoubleListValue getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DoubleListValue>(create);
+  static DoubleListValue? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.double> get value => $_getList(0);

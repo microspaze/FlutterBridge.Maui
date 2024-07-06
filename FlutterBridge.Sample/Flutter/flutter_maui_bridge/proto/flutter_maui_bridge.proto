@@ -42,8 +42,8 @@ message Int64ListValue {
    repeated int64 value = 1;
 }
 
-message Float32ListValue {
-   repeated float value = 1;
+message DoubleListValue {
+   repeated double value = 1;
 }
 
 message Float64ListValue {

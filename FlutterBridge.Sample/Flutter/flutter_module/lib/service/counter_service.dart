@@ -26,12 +26,12 @@ class CounterService {
       var birth = 1707447360000; //int64 from package:fixnum
       var weight = 3.7; //double
       var milks = Int32List.fromList([151, 120, 160, 130, 150]); //Int32List
-      var sleeps = Float32List.fromList([4.5, 2.1, 2.4, 5.5]); //Float32List
+      var sleeps = Float64List.fromList([4.5, 2.1, 2.4, 5.5]); //DO NOT USE Float32List, There's no float type in Dart;
       var stamps = Int64List.fromList([birth]); //Int64List
       var stampList = [Int64(birth)]; //List<Int64>
       var milstamps = Float64List.fromList([1707447360000.5]); //Float64List
       var avatar = StringValue(value: "avatar").writeToBuffer(); //Uint8List
-      var prevValue = CounterValueResult(value: 0).writeToBuffer(); //Model
+      var prevValue = CounterValueResult(value: currentValue).writeToBuffer(); //Model
       var useProto = currentValue % 2 == 0;
       var arguments = Map<String, dynamic>();
       arguments["name"] = !useProto ? name : StringValue(value: name).writeToBuffer();
@@ -40,17 +40,69 @@ class CounterService {
       arguments["birth"] = !useProto ? birth : Int64Value(value: Int64(birth)).writeToBuffer();
       arguments["weight"] = !useProto ? weight : DoubleValue(value: weight).writeToBuffer();
       arguments["milks"] = !useProto ? milks : Int32ListValue(value: milks).writeToBuffer();
-      arguments["sleeps"] = !useProto ? sleeps : Float32ListValue(value: sleeps).writeToBuffer();
+      arguments["sleeps"] = !useProto ? sleeps : DoubleListValue(value: sleeps).writeToBuffer();
       arguments["stamps"] = !useProto ? stamps : Int64ListValue(value: stampList).writeToBuffer();
       arguments["milstamps"] = !useProto ? milstamps : Float64ListValue(value: milstamps).writeToBuffer();
       arguments["avatar"] = avatar;
-      arguments["prevValue"] = prevValue;
+      arguments["prev"] = prevValue;
       var result = await _bridge.invokeMethod(
         service: _serviceName,
         operation: _kGetValue,
         arguments: arguments,
       );
-      return Int32Value.fromBuffer(result!).value;
+      var resultValue = currentValue;
+      if (result == null) {
+        return resultValue;
+      }
+      dynamic resultModel;
+      switch (currentValue % 13) {
+        case 0:
+          resultModel = Int32Value.fromBuffer(result); //int32
+          if (resultModel is Int32Value) {
+            resultValue = resultModel.value;
+          }
+          break;
+        case 1:
+          resultModel = StringValue.fromBuffer(result); //String
+          break;
+        case 2:
+          resultModel = BoolValue.fromBuffer(result); //bool
+          break;
+        case 3:
+          resultModel = Int32Value.fromBuffer(result); //int32
+          break;
+        case 4:
+          resultModel = Int64Value.fromBuffer(result); //int64
+          break;
+        case 5:
+          resultModel = DoubleValue.fromBuffer(result); //double
+          break;
+        case 6:
+          resultModel = Int32ListValue.fromBuffer(result); //int[]
+          break;
+        case 7:
+          resultModel = DoubleListValue.fromBuffer(result); //float[] There's no float type in Dart, use double instead.
+          break;
+        case 8:
+          resultModel = Int64ListValue.fromBuffer(result); //long[]
+          break;
+        case 9:
+          resultModel = Float64ListValue.fromBuffer(result); //double[] Float64ListValue equals DoubleListValue
+          break;
+        case 10:
+          resultModel = result; //byte[]
+          break;
+        case 11:
+          resultModel = CounterValueResult.fromBuffer(result); //Model
+          break;
+        case 12:
+          // Exception from MAUI!
+          break;
+      }
+
+      print(resultModel);
+
+      return resultValue;
     } on PlatformException catch (e) {
       throw Exception("Unable to execute method 'getValue': ${e.code}, ${e.message}");
     } on BridgeException catch (fe) {

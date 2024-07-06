@@ -125,17 +125,17 @@ const Int64ListValue$json = {
 final $typed_data.Uint8List int64ListValueDescriptor = $convert.base64Decode(
     'Cg5JbnQ2NExpc3RWYWx1ZRIUCgV2YWx1ZRgBIAMoA1IFdmFsdWU=');
 
-@$core.Deprecated('Use float32ListValueDescriptor instead')
-const Float32ListValue$json = {
-  '1': 'Float32ListValue',
+@$core.Deprecated('Use doubleListValueDescriptor instead')
+const DoubleListValue$json = {
+  '1': 'DoubleListValue',
   '2': [
-    {'1': 'value', '3': 1, '4': 3, '5': 2, '10': 'value'},
+    {'1': 'value', '3': 1, '4': 3, '5': 1, '10': 'value'},
   ],
 };
 
-/// Descriptor for `Float32ListValue`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List float32ListValueDescriptor = $convert.base64Decode(
-    'ChBGbG9hdDMyTGlzdFZhbHVlEhQKBXZhbHVlGAEgAygCUgV2YWx1ZQ==');
+/// Descriptor for `DoubleListValue`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List doubleListValueDescriptor = $convert.base64Decode(
+    'Cg9Eb3VibGVMaXN0VmFsdWUSFAoFdmFsdWUYASADKAFSBXZhbHVl');
 
 @$core.Deprecated('Use float64ListValueDescriptor instead')
 const Float64ListValue$json = {
