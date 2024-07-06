@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FlutterBinding;
 
 namespace FlutterBridge.Maui.Extensions
 {
@@ -87,7 +88,28 @@ namespace FlutterBridge.Maui.Extensions
             System.Runtime.InteropServices.Marshal.Copy(data.Bytes, dataBytes, 0, Convert.ToInt32(data.Length));
             return dataBytes;
         }
-        
+
+        public static int[] ToIntArray(this NSData data)
+        {
+            var dataInts = new int[data.Length];
+
+            return dataInts;
+        }
+
+        public static int[] ToLongArray(this NSData data)
+        {
+            var dataLongs = new int[data.Length];
+
+            return dataLongs;
+        }
+
+        public static int[] ToDoubleArray(this NSData data)
+        {
+            var dataDoubles = new int[data.Length];
+
+            return dataDoubles;
+        }
+
         public static NSData ToByteData(this byte[]? dataBytes)
         {
             if (dataBytes == null)
@@ -103,7 +125,29 @@ namespace FlutterBridge.Maui.Extensions
             object? value = null;
             try
             {
-                if (data is NSNumber num)
+                if (data is FlutterStandardTypedData typedData)
+                {
+                    #region TypedData Value
+
+                    switch (typedData.Type)
+                    {
+                        case FlutterStandardDataType.UInt8:
+                            value = typedData.Data.ToByteArray().ToProtoObject(dataType);
+                            break;
+                        case FlutterStandardDataType.Int32:
+                            value = typedData.Data.ToIntArray();
+                            break;
+                        case FlutterStandardDataType.Int64:
+                            value = typedData.Data.ToLongArray();
+                            break;
+                        case FlutterStandardDataType.Float64:
+                            value = typedData.Data.ToDoubleArray();
+                            break;
+                    }
+
+                    #endregion
+                }
+                else if (data is NSNumber num)
                 {
                     #region NSNumber Value
 
