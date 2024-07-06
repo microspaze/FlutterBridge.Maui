@@ -99,19 +99,19 @@ namespace FlutterBinding
 
     // @interface FlutterBinaryCodec : NSObject <FlutterMessageCodec>
     [BaseType(typeof(NSObject))]
-    interface FlutterBinaryCodec : IFlutterMessageCodec, FlutterMessageCodec
+    interface FlutterBinaryCodec : IFlutterMessageCodec
     {
     }
 
     // @interface FlutterStringCodec : NSObject <FlutterMessageCodec>
     [BaseType(typeof(NSObject))]
-    interface FlutterStringCodec : IFlutterMessageCodec, FlutterMessageCodec
+    interface FlutterStringCodec : IFlutterMessageCodec
     {
     }
 
     // @interface FlutterJSONMessageCodec : NSObject <FlutterMessageCodec>
     [BaseType(typeof(NSObject))]
-    interface FlutterJSONMessageCodec : IFlutterMessageCodec, FlutterMessageCodec
+    interface FlutterJSONMessageCodec : IFlutterMessageCodec
     {
     }
 
@@ -218,7 +218,7 @@ namespace FlutterBinding
 
     // @interface FlutterStandardMessageCodec : NSObject <FlutterMessageCodec>
     [BaseType(typeof(NSObject))]
-    interface FlutterStandardMessageCodec : IFlutterMessageCodec, FlutterMessageCodec
+    interface FlutterStandardMessageCodec : IFlutterMessageCodec
     {
         // +(instancetype _Nonnull)codecWithReaderWriter:(FlutterStandardReaderWriter * _Nonnull)readerWriter;
         [Static]
@@ -349,13 +349,13 @@ namespace FlutterBinding
 
     // @interface FlutterJSONMethodCodec : NSObject <FlutterMethodCodec>
     [BaseType(typeof(NSObject))]
-    interface FlutterJSONMethodCodec : IFlutterMethodCodec, FlutterMethodCodec
+    interface FlutterJSONMethodCodec : IFlutterMethodCodec
     {
     }
 
     // @interface FlutterStandardMethodCodec : NSObject <FlutterMethodCodec>
     [BaseType(typeof(NSObject))]
-    interface FlutterStandardMethodCodec : IFlutterMethodCodec, FlutterMethodCodec
+    interface FlutterStandardMethodCodec : IFlutterMethodCodec
     {
         // +(instancetype _Nonnull)codecWithReaderWriter:(FlutterStandardReaderWriter * _Nonnull)readerWriter;
         [Static]
@@ -371,7 +371,7 @@ namespace FlutterBinding
 
     // @interface FlutterBasicMessageChannel : NSObject
     [BaseType(typeof(NSObject))]
-    interface FlutterBasicMessageChannel : IFlutterBinaryMessenger, FlutterBinaryMessenger
+    interface FlutterBasicMessageChannel : IFlutterBinaryMessenger
     {
         // +(instancetype _Nonnull)messageChannelWithName:(NSString * _Nonnull)name binaryMessenger:(NSObject<FlutterBinaryMessenger> * _Nonnull)messenger;
         [Static]
@@ -412,7 +412,7 @@ namespace FlutterBinding
 
     // @interface FlutterMethodChannel : NSObject
     [BaseType(typeof(NSObject))]
-    interface FlutterMethodChannel : IFlutterBinaryMessenger, FlutterBinaryMessenger
+    interface FlutterMethodChannel : IFlutterBinaryMessenger
     {
         // +(instancetype _Nonnull)methodChannelWithName:(NSString * _Nonnull)name binaryMessenger:(NSObject<FlutterBinaryMessenger> * _Nonnull)messenger;
         [Static]
@@ -471,7 +471,7 @@ namespace FlutterBinding
 
     // @interface FlutterEventChannel : NSObject
     [BaseType(typeof(NSObject))]
-    interface FlutterEventChannel : IFlutterBinaryMessenger, FlutterBinaryMessenger
+    interface FlutterEventChannel : IFlutterBinaryMessenger
     {
         // +(instancetype _Nonnull)eventChannelWithName:(NSString * _Nonnull)name binaryMessenger:(NSObject<FlutterBinaryMessenger> * _Nonnull)messenger;
         [Static]
