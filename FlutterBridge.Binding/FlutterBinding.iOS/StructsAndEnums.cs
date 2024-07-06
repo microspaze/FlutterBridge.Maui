@@ -8,6 +8,7 @@ namespace FlutterBinding
         UInt8,
         Int32,
         Int64,
+        Float32,
         Float64
     }
 

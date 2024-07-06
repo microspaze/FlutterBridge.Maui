@@ -39,7 +39,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FlutterBinding.iOS" Version="3.22.2" />
+		<PackageReference Include="FlutterBinding.iOS" Version="3.22.2.2" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.60" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.60" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

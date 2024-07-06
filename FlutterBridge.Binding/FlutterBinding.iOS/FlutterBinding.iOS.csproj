@@ -8,7 +8,7 @@
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU;Device</Platforms>
     <Title>FlutterBinding.iOS</Title>
-    <Version>3.22.2.0</Version>
+    <Version>3.22.2.2</Version>
     <Description>Flutter SDK Binding for iOS</Description>
   </PropertyGroup>
 
