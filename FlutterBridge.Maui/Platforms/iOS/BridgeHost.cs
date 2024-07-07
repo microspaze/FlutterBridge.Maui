@@ -2,14 +2,12 @@
 using FlutterBridge.Maui.Extensions;
 using FlutterBridge.Maui.Models;
 using Foundation;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using UIKit;
 using Exception = System.Exception;
 

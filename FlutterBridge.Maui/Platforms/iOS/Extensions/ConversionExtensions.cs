@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using Foundation;
+﻿using Foundation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,78 +9,7 @@ using FlutterBinding;
 namespace FlutterBridge.Maui.Extensions
 {
     internal static partial class ConversionExtensions
-    {
-        #region JObect to iOS NSDictionary
-
-        public static NSDictionary ToNSDictionary(this JObject json)
-        {
-            var nsdict = new NSMutableDictionary();
-            var propertyValuePairs = json.ToObject<Dictionary<string, object>>();
-            if (propertyValuePairs != null)
-            {
-                ProcessJObjectProperties2(propertyValuePairs);
-                ProcessJArrayProperties2(propertyValuePairs);
-
-                foreach (KeyValuePair<string, object> kvp in propertyValuePairs)
-                {
-                    nsdict.Add(new NSString(kvp.Key), NSObject.FromObject(kvp.Value));
-                }
-            }
-
-            return nsdict;
-        }
-
-        private static void ProcessJObjectProperties2(IDictionary<string, object> propertyValuePairs)
-        {
-            List<string> objectPropertyNames = (from property in propertyValuePairs
-                                                let propertyName = property.Key
-                                                let value = property.Value
-                                                where value is JObject
-                                                select propertyName).ToList();
-
-            objectPropertyNames.ForEach(propertyName =>
-                propertyValuePairs[propertyName] = ToNSDictionary((JObject)propertyValuePairs[propertyName]));
-        }
-
-        private static void ProcessJArrayProperties2(IDictionary<string, object> propertyValuePairs)
-        {
-            List<string> arrayPropertyNames = (from property in propertyValuePairs
-                                               let propertyName = property.Key
-                                               let value = property.Value
-                                               where value is JArray
-                                               select propertyName).ToList();
-
-            arrayPropertyNames.ForEach(propertyName =>
-                propertyValuePairs[propertyName] = ToNSArray((JArray)propertyValuePairs[propertyName]));
-        }
-
-        public static NSArray ToNSArray(this JArray array)
-        {
-            var nsarray = new NSMutableArray();
-            foreach (JToken token in array)
-            {
-                nsarray.Add(ProcessArrayEntry2(token.ToObject<object>()));
-            }
-            return nsarray;
-        }
-
-        private static NSObject ProcessArrayEntry2(object? value)
-        {
-            if (value is JObject objValue)
-            {
-                return ToNSDictionary(objValue);
-            }
-
-            if (value is JArray arrayValue)
-            {
-                return ToNSArray(arrayValue);
-            }
-
-            return NSObject.FromObject(value);
-        }
-
-        #endregion
-        
+    {        
         public static NSData ToByteData(this byte[]? dataBytes)
         {
             if (dataBytes == null)
@@ -187,9 +115,11 @@ namespace FlutterBridge.Maui.Extensions
         private static int[] ToIntArray(this byte[] dataBytes, int length, int itemSize)
         {
             var dataInts = new int[length];
+            var dataIndex = 0;
             for (var i = 0; i < length; i++)
             {
-                dataInts[i] = BitConverter.ToInt32(dataBytes, i * itemSize);
+                dataInts[i] = BitConverter.ToInt32(dataBytes, dataIndex);
+                dataIndex += itemSize;
             }
             return dataInts;
         }
@@ -197,9 +127,11 @@ namespace FlutterBridge.Maui.Extensions
         private static long[] ToLongArray(this byte[] dataBytes, int length, int itemSize)
         {
             var dataLongs = new long[length];
+            var dataIndex = 0;
             for (var i = 0; i < length; i++)
             {
-                dataLongs[i] = BitConverter.ToInt64(dataBytes, i * itemSize);
+                dataLongs[i] = BitConverter.ToInt64(dataBytes, dataIndex);
+                dataIndex += itemSize;
             }
             return dataLongs;
         }
@@ -207,9 +139,11 @@ namespace FlutterBridge.Maui.Extensions
         private static float[] ToFloatArray(this byte[] dataBytes, int length, int itemSize)
         {
             var dataFloats = new float[length];
+            var dataIndex = 0;
             for (var i = 0; i < length; i++)
             {
-                dataFloats[i] = BitConverter.ToSingle(dataBytes, i * itemSize);
+                dataFloats[i] = BitConverter.ToSingle(dataBytes, dataIndex);
+                dataIndex += itemSize;
             }
             return dataFloats;
         }
@@ -217,9 +151,11 @@ namespace FlutterBridge.Maui.Extensions
         private static double[] ToDoubleArray(this byte[] dataBytes, int length, int itemSize)
         {
             var dataDoubles = new double[length];
+            var dataIndex = 0;
             for (var i = 0; i < length; i++)
             {
-                dataDoubles[i] = BitConverter.ToDouble(dataBytes, i * itemSize);
+                dataDoubles[i] = BitConverter.ToDouble(dataBytes, dataIndex);
+                dataIndex += itemSize;
             }
             return dataDoubles;
         }
