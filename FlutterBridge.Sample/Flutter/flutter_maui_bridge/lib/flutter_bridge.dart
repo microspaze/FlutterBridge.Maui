@@ -11,19 +11,15 @@ import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_maui_bridge/proto/flutter_maui_bridge.pb.dart';
 
-///
-/// The bridge communication type with native side.
-///
+// The bridge communication type with native side.
 enum FlutterBridgeMode {
   PlatformChannel,
   WebSocket,
 }
 
-///
-/// The configuration used by the [FlutterBridge].
-/// Setup this before running the flutter application.
-/// [main.dart] --> void main()
-///
+// The configuration used by the [FlutterBridge].
+// Setup this before running the flutter application.
+// [main.dart] --> void main()
 class FlutterBridgeConfig {
   static bool? _appEmbedded = null;
   static const eventChannel = EventChannel('flutterbridge.outgoing');
@@ -91,7 +87,7 @@ class FlutterBridge {
 
   factory FlutterBridge() => _instance;
 
-  /// Invoke the message on the channel
+  // Invoke the message on the channel
   final Future<Uint8List?> Function({
     required String? service,
     required String? operation,
@@ -128,9 +124,7 @@ class FlutterBridge {
     );
   }
 
-  ///
-  /// Decoding events function
-  ///
+  // Decoding events function
   static BridgeEventInfo? _mapEvent(dynamic event) {
     try {
       return BridgeEventInfo.fromBuffer(event as Uint8List);
@@ -141,6 +135,7 @@ class FlutterBridge {
   }
 
   static Uint8List toArgBuffer(dynamic value) {
+    // Do net use swith(value.runtimeType) !!!
     if (value == null) {
       return Uint8List(0);
     } else if (value is Uint8List) {
@@ -204,7 +199,7 @@ class _PlatformChannel {
 
   static const _emptyString = "";
 
-  /// How manage data reception from native channel.
+  // How manage data reception from native channel.
   Future<dynamic> _onMessageReceived(MethodCall call) async {
     // Manage message received
     try {
@@ -349,14 +344,10 @@ class _WebSocketChannel {
   // Dispose state
   bool _disposed = false;
 
-  ///
-  /// The url user for the connection
-  ///
+  // The url user for the connection
   String _url = "ws://127.0.0.1:12345/flutter";
 
-  //
   // Channel used to invoke methods from Flutter to web socket native backend application.
-  //
   WebSocketChannel? _socketChannel;
 
   // Status of the debug connection
@@ -367,20 +358,10 @@ class _WebSocketChannel {
 
   Lock _sendLock = new Lock();
 
-  ///
-  /// All the request to be satisfied by debug WEB SOCKET.
-  ///
+  // All the request to be satisfied by debug WEB SOCKET.
   Map<int, Completer<Uint8List?>> _sendRequestMap = {};
 
-  ///
-  /// All message sended to debug server
-  /// that wait a respose
-  ///
-  Map<int, String> _outboxMessages = {};
-
-  ///
-  /// Oopen the connection resending all the queued messages with no response.
-  ///
+  // Oopen the connection resending all the queued messages with no response.
   Future<void> _autoConnect({required Duration delay, bool forceOpen = false}) async {
     // * If disposed we release the memory
     if (_disposed) {
@@ -388,22 +369,13 @@ class _WebSocketChannel {
       _socketChannelConnected = false;
       await _releaseMemory();
     }
-    // * If the connectin is open, but not message: close the connection.
-    else if (_outboxMessages.length <= 0 && _socketChannelConnected == true && forceOpen == false) {
-      await _closeConnection();
-      _socketChannelConnected = false;
-      await _releaseMemory();
-    }
     // * Reopen the connection
-    else if ((_outboxMessages.length > 0 && _socketChannelConnected == false) ||
-        (forceOpen == true && _socketChannelConnected == false)) {
-      // Aspetto un po prima di collegarmi
-      await Future.delayed(delay);
-
+    else if (forceOpen == true && _socketChannelConnected == false) {
       //* --------------------------------------------------------------
       //* IOWebSocketChannel.connect("ws://127.0.0.1:12345/flutter");
       //* OPEN THE CONNECCTION
       //* --------------------------------------------------------------
+      await Future.delayed(delay);
       _socketChannel = IOWebSocketChannel.connect(this._url);
       _socketChannel!.stream.listen(
         _onMessageReceived,
@@ -418,22 +390,7 @@ class _WebSocketChannel {
       _socketChannelConnected = true;
 
       // Se sono connesso provo ad inviare i messaggi
-      if (_socketChannelConnected) {
-        try {
-          //* Try to resend all the append messages (IN SORT ORDER)
-          List<int> sortedRequests = _outboxMessages.keys.toList()..sort();
-
-          sortedRequests.forEach((reqId) {
-            String? msg = _outboxMessages[reqId];
-
-            _socketChannel!.sink.add(msg);
-          });
-        } catch (ex) {
-          debugPrint("Error sending messages");
-          _socketChannelConnected = false;
-          _closeConnection();
-        }
-      } else {
+      if (!_socketChannelConnected) {
         //! Error after N try
         throw Exception("Error opening channel!");
       }
@@ -442,11 +399,11 @@ class _WebSocketChannel {
 
   Future _closeConnection() async {
     try {
-      await _socketChannel?.sink?.close(status.normalClosure);
+      await _socketChannel?.sink.close(status.normalClosure);
     } catch (ex) {}
   }
 
-  /// Release all the resources.
+  // Release all the resources.
   _releaseMemory() async {
     // Try to resend all the append messages (IN SORT ORDER)
     List<int> sortedRequests = _sendRequestMap.keys.toList()..sort();
@@ -461,14 +418,10 @@ class _WebSocketChannel {
       _sendRequestMap.clear();
     } catch (ex) {}
 
-    try {
-      _outboxMessages.clear();
-    } catch (ex) {}
-
     _eventsController.close();
   }
 
-  /// Connection close event.
+  // Connection close event.
   Future _onConnectionClosed() async {
     print("Connection closed.");
     await _sendLock.synchronized(() async {
@@ -492,7 +445,7 @@ class _WebSocketChannel {
     });
   }
 
-  /// Connection error handler.
+  // Connection error handler.
   Future _onConnectionError(dynamic error, dynamic stacktrace) async {
     print("Connection error: closing the connection.");
     await _sendLock.synchronized(() {
@@ -507,7 +460,7 @@ class _WebSocketChannel {
     });
   }
 
-  /// How manage data reception from websocket.
+  // How manage data reception from websocket.
   void _onMessageReceived(dynamic socketMessage) async {
     if (socketMessage is Uint8List) {
       // Manage message received
@@ -522,10 +475,6 @@ class _WebSocketChannel {
         // Insert the response the the map
         await _sendLock.synchronized(() {
           var requestId = msg.requestId;
-          if (_outboxMessages.containsKey(requestId)) {
-            _outboxMessages.remove(requestId);
-          }
-
           if (_sendRequestMap.containsKey(requestId)) {
             var request = _sendRequestMap[requestId];
             if (request != null) {
@@ -567,9 +516,7 @@ class _WebSocketChannel {
         String operationKey = "$service.$operation";
 
         try {
-          final Map<String, Uint8List>? args = arguments != null
-              ? arguments.map((argName, value) => MapEntry(argName, FlutterBridge.toArgBuffer(value)))
-              : null;
+          final Map<String, Uint8List>? args = arguments != null ? arguments.map((argName, value) => MapEntry(argName, FlutterBridge.toArgBuffer(value))) : null;
 
           final BridgeMessageInfo debugMessage = BridgeMessageInfo(
             requestId: sendRequestId,
@@ -581,10 +528,6 @@ class _WebSocketChannel {
           _sendRequestMap.putIfAbsent(
             sendRequestId,
             () => completer,
-          );
-          _outboxMessages.putIfAbsent(
-            sendRequestId,
-            () => "protoDegubMessage",
           );
 
           // Wait until the connection open
