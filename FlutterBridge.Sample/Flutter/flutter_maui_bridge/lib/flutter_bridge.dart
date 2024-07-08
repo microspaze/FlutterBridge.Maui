@@ -532,7 +532,7 @@ class _WebSocketChannel {
             if (request != null) {
               if (msg.hasException()) {
                 request.completeError(msg.exception);
-              } else if (msg.hasResult()) {
+              } else {
                 Uint8List? result = null;
                 var resultBytes = msg.result;
                 if (!resultBytes.isEmpty) {
