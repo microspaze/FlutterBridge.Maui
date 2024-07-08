@@ -819,7 +819,7 @@ namespace WebSocketSharp
                 return;
               }
 
-              if (completed != null && offset > 0)
+              if (completed != null)
                 completed (buff.SubArray (0, offset));
 
               return;

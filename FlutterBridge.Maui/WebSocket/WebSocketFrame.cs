@@ -471,7 +471,7 @@ Extended Payload Length: {7}
     private static WebSocketFrame processHeader (byte[] header)
     {
       if (header.Length != 2) {
-        var msg = "The header part of a frame could not be read.";
+        var msg = "The client may have been disconnected! The header part of a frame could not be read.";
         throw new WebSocketException (msg);
       }
 
