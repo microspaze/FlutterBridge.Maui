@@ -45,11 +45,10 @@ class FlutterBridgeConfig {
         return _appEmbedded!;
       }
       _appEmbedded = await methodChannel.invokeMethod<bool>("checkEmbedded");
-      print("isEmbedded : $_appEmbedded");
     } on MissingPluginException {
       _appEmbedded = false;
-      print("isEmbedded error!");
     }
+    print("isEmbedded : $_appEmbedded");
     return _appEmbedded == true;
   }
 }
