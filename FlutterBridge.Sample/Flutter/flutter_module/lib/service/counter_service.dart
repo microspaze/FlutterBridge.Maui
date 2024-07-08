@@ -11,8 +11,7 @@ class CounterService {
   static final FlutterBridge _bridge = FlutterBridge();
 
   // Events *****************************
-  final Stream<CounterValueResult> _valueChanged =
-      _bridge.events(serviceName: _serviceName, eventName: 'valueChanged').map((_) => CounterValueResult.fromBuffer(_));
+  final Stream<CounterValueResult> _valueChanged = _bridge.events(serviceName: _serviceName, eventName: 'valueChanged').map((_) => CounterValueResult.fromBuffer(_));
   Stream<CounterValueResult> get valueChanged => _valueChanged;
 
   // Operations *****************************
@@ -24,7 +23,7 @@ class CounterService {
       var age = 1; //int32
       var birth = 1707447360000; //int64 from package:fixnum
       var weight = 3.7; //double
-      var milks = Int32List.fromList([150, 120, 160, 130, 150]); //Int32List
+      var milks = Int32List.fromList([151, 120, 160, 130, 150]); //Int32List
       var sleeps = Float64List.fromList([4.5, 2.1, 2.4, 5.5]); //DO NOT USE Float32List, There's no float type in Dart;
       var stamps = Int64List.fromList([birth]); //Int64List
       var stampList = [Int64(birth)]; //List<Int64>
