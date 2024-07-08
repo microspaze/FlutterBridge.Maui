@@ -11,7 +11,6 @@ dependencies:
   flutter:
     sdk: flutter
   protobuf: ^3.1.0
-  protobuf_wellknown: ^0.1.1
   web_socket_channel: ^3.0.0
   synchronized: ^3.1.0+1
   meta: ^1.12.0

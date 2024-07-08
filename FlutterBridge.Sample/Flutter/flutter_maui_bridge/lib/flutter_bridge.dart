@@ -1,12 +1,14 @@
 import 'dart:async';
+import 'dart:core';
 import 'dart:developer';
+import 'dart:typed_data';
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:synchronized/synchronized.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
-
 import 'package:flutter_maui_bridge/proto/flutter_maui_bridge.pb.dart';
 
 ///
@@ -139,6 +141,34 @@ class FlutterBridge {
     }
   }
 
+  static Uint8List toArgBuffer(dynamic value) {
+    if (value == null) {
+      return Uint8List(0);
+    } else if (value is Uint8List) {
+      return value;
+    } else if (value is bool) {
+      return BoolValue(value: value).writeToBuffer();
+    } else if (value is String) {
+      return StringValue(value: value).writeToBuffer();
+    } else if (value is int) {
+      return Int64Value(value: Int64(value)).writeToBuffer();
+    } else if (value is double) {
+      return DoubleValue(value: value).writeToBuffer();
+    } else if (value is Int32List) {
+      return Int32ListValue(value: value).writeToBuffer();
+    } else if (value is Int64List) {
+      List<Int64> valueList = [];
+      for (var item in value) {
+        valueList.add(Int64(item));
+      }
+      return Int64ListValue(value: valueList).writeToBuffer();
+    } else if (value is Float64List) {
+      return DoubleListValue(value: value).writeToBuffer();
+    } else {
+      return value.writeToBuffer();
+    }
+  }
+
   @mustCallSuper
   void dispose() {
     // Release debug socket resources
@@ -155,7 +185,6 @@ class _PlatformChannel {
 
   // Send request id
   int _uniqueId = 0;
-  bool? _appEmbedded = null;
   Lock _sendLock = new Lock();
 
   // All the request to be satisfied by channel.
@@ -194,7 +223,7 @@ class _PlatformChannel {
             } else {
               Uint8List? result = null;
               var resultBytes = message["result"];
-              if (resultBytes != null) {
+              if (resultBytes != null && !resultBytes.isEmpty) {
                 result = resultBytes as Uint8List;
               }
               request.complete(result);
@@ -206,7 +235,7 @@ class _PlatformChannel {
     } catch (e) {
       // Error during deserialization
       print(
-        "flutter_MAUI_debug1: error during _onMessageReceived deserialization." + e.toString(),
+        "flutter_channel_debug: error during _onMessageReceived deserialization." + e.toString(),
       );
     }
 
@@ -284,6 +313,7 @@ class _PlatformChannel {
 
 class _WebSocketChannel {
   static _WebSocketChannel? _instance;
+  static Duration _delay = Duration(seconds: 1);
 
   final StreamController<BridgeEventInfo> _eventsController;
   final Stream<BridgeEventInfo> _eventsOut;
@@ -297,7 +327,7 @@ class _WebSocketChannel {
       while (_socketChannelConnected == false) {
         try {
           await _autoConnect(
-            delay: const Duration(seconds: 1),
+            delay: _delay,
             forceOpen: true,
           );
         } catch (ex) {
@@ -452,7 +482,7 @@ class _WebSocketChannel {
         try {
           print("Restoring the connection....");
           await _autoConnect(
-            delay: const Duration(seconds: 1),
+            delay: _delay,
             forceOpen: true,
           );
         } catch (ex) {
@@ -486,7 +516,7 @@ class _WebSocketChannel {
         BridgeMessageInfo msg = BridgeMessageInfo.fromBuffer(socketMessage);
 
         // Handlig for event
-        if (msg.event != null) {
+        if (msg.hasEvent() && msg.event.eventName != '') {
           _eventsIn.add(msg.event);
         }
 
@@ -500,14 +530,15 @@ class _WebSocketChannel {
           if (_sendRequestMap.containsKey(requestId)) {
             var request = _sendRequestMap[requestId];
             if (request != null) {
-              var result = msg.result;
-              if (result != null) {
-                request?.complete(result as Uint8List);
-              } else {
-                var exception = msg.exception;
-                if (exception != null) {
-                  request.completeError(exception);
+              if (msg.hasException()) {
+                request.completeError(msg.exception);
+              } else if (msg.hasResult()) {
+                Uint8List? result = null;
+                var resultBytes = msg.result;
+                if (!resultBytes.isEmpty) {
+                  result = resultBytes as Uint8List;
                 }
+                request.complete(result);
               }
             }
             _sendRequestMap.remove(requestId);
@@ -516,7 +547,7 @@ class _WebSocketChannel {
       } catch (e) {
         // Error during deserialization
         print(
-          "flutter_MAUI_debug2: error during _onMessageReceived deserialization." + e.toString(),
+          "flutter_stocket_debug: error during _onMessageReceived deserialization." + e.toString(),
         );
       }
     } else {
@@ -537,8 +568,9 @@ class _WebSocketChannel {
         String operationKey = "$service.$operation";
 
         try {
-          final Map<String, Uint8List>? args =
-              arguments != null ? arguments!.map((argName, value) => MapEntry(argName, value.writeToBuffer())) : null;
+          final Map<String, Uint8List>? args = arguments != null
+              ? arguments.map((argName, value) => MapEntry(argName, FlutterBridge.toArgBuffer(value)))
+              : null;
 
           final BridgeMessageInfo debugMessage = BridgeMessageInfo(
             requestId: sendRequestId,
@@ -560,7 +592,7 @@ class _WebSocketChannel {
           while (_socketChannelConnected == false) {
             try {
               await _autoConnect(
-                delay: const Duration(seconds: 1),
+                delay: _delay,
                 forceOpen: true,
               );
             } catch (ex) {

@@ -71,13 +71,19 @@ const BridgeMessageInfo$json = {
     {'1': 'requestId', '3': 1, '4': 1, '5': 5, '10': 'requestId'},
     {'1': 'operationKey', '3': 2, '4': 1, '5': 9, '10': 'operationKey'},
     {'1': 'arguments', '3': 3, '4': 3, '5': 11, '6': '.BridgeMessageInfo.ArgumentsEntry', '10': 'arguments'},
-    {'1': 'result', '3': 4, '4': 1, '5': 12, '10': 'result'},
-    {'1': 'event', '3': 5, '4': 1, '5': 11, '6': '.BridgeEventInfo', '10': 'event'},
-    {'1': 'exception', '3': 6, '4': 1, '5': 11, '6': '.BridgeException', '10': 'exception'},
-    {'1': 'errorCode', '3': 7, '4': 1, '5': 14, '6': '.BridgeErrorCode', '10': 'errorCode'},
+    {'1': 'result', '3': 4, '4': 1, '5': 12, '9': 0, '10': 'result', '17': true},
+    {'1': 'event', '3': 5, '4': 1, '5': 11, '6': '.BridgeEventInfo', '9': 1, '10': 'event', '17': true},
+    {'1': 'exception', '3': 6, '4': 1, '5': 11, '6': '.BridgeException', '9': 2, '10': 'exception', '17': true},
+    {'1': 'errorCode', '3': 7, '4': 1, '5': 14, '6': '.BridgeErrorCode', '9': 3, '10': 'errorCode', '17': true},
     {'1': 'errorMessage', '3': 8, '4': 1, '5': 9, '10': 'errorMessage'},
   ],
   '3': [BridgeMessageInfo_ArgumentsEntry$json],
+  '8': [
+    {'1': '_result'},
+    {'1': '_event'},
+    {'1': '_exception'},
+    {'1': '_errorCode'},
+  ],
 };
 
 @$core.Deprecated('Use bridgeMessageInfoDescriptor instead')
@@ -94,12 +100,73 @@ const BridgeMessageInfo_ArgumentsEntry$json = {
 final $typed_data.Uint8List bridgeMessageInfoDescriptor = $convert.base64Decode(
     'ChFCcmlkZ2VNZXNzYWdlSW5mbxIcCglyZXF1ZXN0SWQYASABKAVSCXJlcXVlc3RJZBIiCgxvcG'
     'VyYXRpb25LZXkYAiABKAlSDG9wZXJhdGlvbktleRI/Cglhcmd1bWVudHMYAyADKAsyIS5Ccmlk'
-    'Z2VNZXNzYWdlSW5mby5Bcmd1bWVudHNFbnRyeVIJYXJndW1lbnRzEhYKBnJlc3VsdBgEIAEoDF'
-    'IGcmVzdWx0EiYKBWV2ZW50GAUgASgLMhAuQnJpZGdlRXZlbnRJbmZvUgVldmVudBIuCglleGNl'
-    'cHRpb24YBiABKAsyEC5CcmlkZ2VFeGNlcHRpb25SCWV4Y2VwdGlvbhIuCgllcnJvckNvZGUYBy'
-    'ABKA4yEC5CcmlkZ2VFcnJvckNvZGVSCWVycm9yQ29kZRIiCgxlcnJvck1lc3NhZ2UYCCABKAlS'
-    'DGVycm9yTWVzc2FnZRo8Cg5Bcmd1bWVudHNFbnRyeRIQCgNrZXkYASABKAlSA2tleRIUCgV2YW'
-    'x1ZRgCIAEoDFIFdmFsdWU6AjgB');
+    'Z2VNZXNzYWdlSW5mby5Bcmd1bWVudHNFbnRyeVIJYXJndW1lbnRzEhsKBnJlc3VsdBgEIAEoDE'
+    'gAUgZyZXN1bHSIAQESKwoFZXZlbnQYBSABKAsyEC5CcmlkZ2VFdmVudEluZm9IAVIFZXZlbnSI'
+    'AQESMwoJZXhjZXB0aW9uGAYgASgLMhAuQnJpZGdlRXhjZXB0aW9uSAJSCWV4Y2VwdGlvbogBAR'
+    'IzCgllcnJvckNvZGUYByABKA4yEC5CcmlkZ2VFcnJvckNvZGVIA1IJZXJyb3JDb2RliAEBEiIK'
+    'DGVycm9yTWVzc2FnZRgIIAEoCVIMZXJyb3JNZXNzYWdlGjwKDkFyZ3VtZW50c0VudHJ5EhAKA2'
+    'tleRgBIAEoCVIDa2V5EhQKBXZhbHVlGAIgASgMUgV2YWx1ZToCOAFCCQoHX3Jlc3VsdEIICgZf'
+    'ZXZlbnRCDAoKX2V4Y2VwdGlvbkIMCgpfZXJyb3JDb2Rl');
+
+@$core.Deprecated('Use boolValueDescriptor instead')
+const BoolValue$json = {
+  '1': 'BoolValue',
+  '2': [
+    {'1': 'value', '3': 1, '4': 1, '5': 8, '10': 'value'},
+  ],
+};
+
+/// Descriptor for `BoolValue`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List boolValueDescriptor = $convert.base64Decode(
+    'CglCb29sVmFsdWUSFAoFdmFsdWUYASABKAhSBXZhbHVl');
+
+@$core.Deprecated('Use stringValueDescriptor instead')
+const StringValue$json = {
+  '1': 'StringValue',
+  '2': [
+    {'1': 'value', '3': 1, '4': 1, '5': 9, '10': 'value'},
+  ],
+};
+
+/// Descriptor for `StringValue`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List stringValueDescriptor = $convert.base64Decode(
+    'CgtTdHJpbmdWYWx1ZRIUCgV2YWx1ZRgBIAEoCVIFdmFsdWU=');
+
+@$core.Deprecated('Use int32ValueDescriptor instead')
+const Int32Value$json = {
+  '1': 'Int32Value',
+  '2': [
+    {'1': 'value', '3': 1, '4': 1, '5': 5, '10': 'value'},
+  ],
+};
+
+/// Descriptor for `Int32Value`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List int32ValueDescriptor = $convert.base64Decode(
+    'CgpJbnQzMlZhbHVlEhQKBXZhbHVlGAEgASgFUgV2YWx1ZQ==');
+
+@$core.Deprecated('Use int64ValueDescriptor instead')
+const Int64Value$json = {
+  '1': 'Int64Value',
+  '2': [
+    {'1': 'value', '3': 1, '4': 1, '5': 3, '10': 'value'},
+  ],
+};
+
+/// Descriptor for `Int64Value`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List int64ValueDescriptor = $convert.base64Decode(
+    'CgpJbnQ2NFZhbHVlEhQKBXZhbHVlGAEgASgDUgV2YWx1ZQ==');
+
+@$core.Deprecated('Use doubleValueDescriptor instead')
+const DoubleValue$json = {
+  '1': 'DoubleValue',
+  '2': [
+    {'1': 'value', '3': 1, '4': 1, '5': 1, '10': 'value'},
+  ],
+};
+
+/// Descriptor for `DoubleValue`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List doubleValueDescriptor = $convert.base64Decode(
+    'CgtEb3VibGVWYWx1ZRIUCgV2YWx1ZRgBIAEoAVIFdmFsdWU=');
 
 @$core.Deprecated('Use int32ListValueDescriptor instead')
 const Int32ListValue$json = {

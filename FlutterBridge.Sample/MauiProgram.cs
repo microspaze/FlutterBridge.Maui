@@ -19,7 +19,7 @@ namespace FlutterBridge.Sample
                 .UseFlutterBridge((config) =>
                 {
                     config.BridgeServices = _bridgeServices;
-                    config.EnableWebsocket = false;
+                    config.EnableWebsocket = true;
                 })
                 .ConfigureFonts(fonts =>
                 {

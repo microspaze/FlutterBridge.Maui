@@ -15,22 +15,22 @@ namespace FlutterBridge.Maui.Models
         public long RequestId { get; set; }
 
         [ProtoMember(2)]
-        public string? OperationKey { get; set; }
+        public string? OperationKey { get; set; } = null;
 
         [ProtoMember(3)]
-        public Dictionary<string, byte[]>? Arguments { get; set; }
+        public Dictionary<string, byte[]>? Arguments { get; set; } = null;
 
         [ProtoMember(4)]
-        public byte[]? Result { get; set; }
+        public byte[]? Result { get; set; } = null;
 
         [ProtoMember(5)]
-        public BridgeEventInfo? EventInfo { get; set; }
+        public BridgeEventInfo? EventInfo { get; set; } = null;
 
         [ProtoMember(6)]
-        public BridgeException? Exception { get; set; }
+        public BridgeException? Exception { get; set; } = null;
 
         [ProtoMember(7)]
-        public BridgeErrorCode? ErrorCode { get; set; }
+        public BridgeErrorCode? ErrorCode { get; set; } = null;
 
         [ProtoMember(8)]
         public string ErrorMessage { get; set; } = string.Empty;

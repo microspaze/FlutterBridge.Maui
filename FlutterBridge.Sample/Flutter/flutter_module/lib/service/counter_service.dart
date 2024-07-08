@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_maui_bridge/flutter_bridge.dart';
 import 'package:flutter_maui_bridge/proto/flutter_maui_bridge.pb.dart';
 import 'package:flutter_module/proto/flutter_module.pb.dart';
-import 'package:protobuf_wellknown/protobuf_wellknown.dart';
 
 class CounterService {
   static const String _serviceName = "counter_service";
@@ -25,13 +24,13 @@ class CounterService {
       var age = 1; //int32
       var birth = 1707447360000; //int64 from package:fixnum
       var weight = 3.7; //double
-      var milks = Int32List.fromList([151, 120, 160, 130, 150]); //Int32List
+      var milks = Int32List.fromList([150, 120, 160, 130, 150]); //Int32List
       var sleeps = Float64List.fromList([4.5, 2.1, 2.4, 5.5]); //DO NOT USE Float32List, There's no float type in Dart;
       var stamps = Int64List.fromList([birth]); //Int64List
       var stampList = [Int64(birth)]; //List<Int64>
       var milstamps = Float64List.fromList([1707447360000.5]); //Float64List
       var avatar = StringValue(value: "avatar").writeToBuffer(); //Uint8List
-      var prevValue = CounterValueResult(value: currentValue).writeToBuffer(); //Model
+      var prevValue = currentValue >= 0 ? CounterValueResult(value: currentValue).writeToBuffer() : null; //Model
       var useProto = currentValue % 2 == 0;
       var arguments = Map<String, dynamic>();
       arguments["name"] = !useProto ? name : StringValue(value: name).writeToBuffer();

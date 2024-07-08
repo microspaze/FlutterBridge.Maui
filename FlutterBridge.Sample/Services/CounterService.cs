@@ -17,10 +17,10 @@ namespace FlutterBridge.Sample.Services
         private int _value = -1;
 
         [BridgeOperation("GetValue()")]
-        public object GetValue(string name, bool male, int age, long birth, double weight, int[] milks, double[] sleeps, long[] stamps, double[] milstamps, byte[] avatar, CounterValueResult prev)
+        public object GetValue(string name, bool male, int age, long birth, double weight, int[] milks, double[] sleeps, long[] stamps, double[] milstamps, byte[] avatar, CounterValueResult? prev)
         {
             //Test Result Parsing in Flutter
-            var prevValue = prev.Value;
+            var prevValue = prev?.Value ?? 0;
             switch (prevValue % 13)
             {
                 case 0: return _value;

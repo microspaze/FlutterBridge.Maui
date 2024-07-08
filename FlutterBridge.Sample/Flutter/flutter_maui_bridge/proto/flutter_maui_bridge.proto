@@ -26,12 +26,32 @@ enum BridgeErrorCode {
 message BridgeMessageInfo {
    int32 requestId = 1;
    string operationKey = 2;
-   map<string,bytes> arguments = 3;
-   bytes result = 4;
-   BridgeEventInfo event = 5;
-   BridgeException exception = 6;
-   BridgeErrorCode errorCode = 7;
+   map<string, bytes> arguments = 3;
+   optional bytes result = 4;
+   optional BridgeEventInfo event = 5;
+   optional BridgeException exception = 6;
+   optional BridgeErrorCode errorCode = 7;
    string errorMessage = 8;
+}
+
+message BoolValue {
+   bool value = 1;
+}
+
+message StringValue {
+   string value = 1;
+}
+
+message Int32Value {
+   int32 value = 1;
+}
+
+message Int64Value {
+   int64 value = 1;
+}
+
+message DoubleValue {
+   double value = 1;
 }
 
 message Int32ListValue {

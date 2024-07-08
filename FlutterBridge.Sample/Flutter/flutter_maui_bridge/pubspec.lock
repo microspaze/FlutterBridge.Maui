@@ -363,14 +363,6 @@ packages:
       url: "https://mirrors.cloud.tencent.com/dart-pub/"
     source: hosted
     version: "3.1.0"
-  protobuf_wellknown:
-    dependency: "direct main"
-    description:
-      name: protobuf_wellknown
-      sha256: "157ccc67ef3ca525386bff28ac0b014071a12d370a09ff3fed71337b30fa0aa5"
-      url: "https://mirrors.cloud.tencent.com/dart-pub/"
-    source: hosted
-    version: "0.1.1"
   pub_semver:
     dependency: transitive
     description:

@@ -262,7 +262,7 @@ namespace FlutterBridge.Maui
                 }
                 catch (Exception ex)
                 {
-                    operationError = ex;
+                    operationError = new BridgeException(BridgeErrorCode.OperationFailed, ex.Message);
                 }
             }
 

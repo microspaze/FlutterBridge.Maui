@@ -194,7 +194,7 @@ namespace FlutterBridge.Maui
         {
             // Method format: serviceName.operationName eg. counterService.GetValue()
             var operationKey = call.Method;
-            if (string.IsNullOrEmpty(operationKey) || Mode == FlutterBridgeMode.WebSocket)
+            if (string.IsNullOrEmpty(operationKey))
             {
                 // Return an error if Flutter is invoking method calls through method channel
                 // when bridge is configured for WebSocket communication
@@ -311,11 +311,6 @@ namespace FlutterBridge.Maui
 
         private void OnHostBridgeEvent(object? sender, BridgeEventArgs e)
         {
-            // Prevent dispatching events to Flutter through event channel
-            // if bridge is configured for WebSocket communication
-            if (Mode == FlutterBridgeMode.WebSocket)
-                return;
-
             var eventInfo = new BridgeEventInfo
             {
                 ServiceName = e.ServiceName,
