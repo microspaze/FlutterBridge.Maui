@@ -141,8 +141,6 @@ namespace FlutterBridge.Maui
 
         private void HandleMethodCall(FlutterMethodCall call, FlutterResult callback)
         {
-            // Return an error if Flutter is invoking method calls through method channel
-            // when bridge is configured for WebSocket communication
             var operationKey = call.Method;
             if (string.IsNullOrEmpty(operationKey))
             {
