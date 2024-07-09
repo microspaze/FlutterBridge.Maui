@@ -13,6 +13,19 @@ import 'dart:convert' as $convert;
 import 'dart:core' as $core;
 import 'dart:typed_data' as $typed_data;
 
+@$core.Deprecated('Use bridgeModeDescriptor instead')
+const BridgeMode$json = {
+  '1': 'BridgeMode',
+  '2': [
+    {'1': 'PlatformChannel', '2': 0},
+    {'1': 'WebSocket', '2': 1},
+  ],
+};
+
+/// Descriptor for `BridgeMode`. Decode as a `google.protobuf.EnumDescriptorProto`.
+final $typed_data.Uint8List bridgeModeDescriptor = $convert.base64Decode(
+    'CgpCcmlkZ2VNb2RlEhMKD1BsYXRmb3JtQ2hhbm5lbBAAEg0KCVdlYlNvY2tldBAB');
+
 @$core.Deprecated('Use bridgeErrorCodeDescriptor instead')
 const BridgeErrorCode$json = {
   '1': 'BridgeErrorCode',

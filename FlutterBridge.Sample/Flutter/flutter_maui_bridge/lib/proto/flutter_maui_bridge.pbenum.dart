@@ -13,6 +13,21 @@ import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
+class BridgeMode extends $pb.ProtobufEnum {
+  static const BridgeMode PlatformChannel = BridgeMode._(0, _omitEnumNames ? '' : 'PlatformChannel');
+  static const BridgeMode WebSocket = BridgeMode._(1, _omitEnumNames ? '' : 'WebSocket');
+
+  static const $core.List<BridgeMode> values = <BridgeMode> [
+    PlatformChannel,
+    WebSocket,
+  ];
+
+  static final $core.Map<$core.int, BridgeMode> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static BridgeMode? valueOf($core.int value) => _byValue[value];
+
+  const BridgeMode._($core.int v, $core.String n) : super(v, n);
+}
+
 class BridgeErrorCode extends $pb.ProtobufEnum {
   static const BridgeErrorCode OperationNotImplemented = BridgeErrorCode._(0, _omitEnumNames ? '' : 'OperationNotImplemented');
   static const BridgeErrorCode OperationArgumentsCountMismatch = BridgeErrorCode._(1, _omitEnumNames ? '' : 'OperationArgumentsCountMismatch');

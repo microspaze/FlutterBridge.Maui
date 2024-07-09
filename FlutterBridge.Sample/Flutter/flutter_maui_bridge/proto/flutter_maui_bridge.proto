@@ -2,6 +2,11 @@
 
 syntax = "proto3";
 
+enum BridgeMode {
+   PlatformChannel = 0;
+   WebSocket = 1;
+}
+
 enum BridgeErrorCode {
     OperationNotImplemented = 0;
     OperationArgumentsCountMismatch = 1;

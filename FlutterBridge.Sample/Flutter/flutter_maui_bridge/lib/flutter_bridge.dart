@@ -11,12 +11,6 @@ import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_maui_bridge/proto/flutter_maui_bridge.pb.dart';
 
-// The bridge communication type with native side.
-enum FlutterBridgeMode {
-  PlatformChannel,
-  WebSocket,
-}
-
 // The configuration used by the [FlutterBridge].
 // Setup this before running the flutter application.
 // [main.dart] --> void main()
@@ -24,14 +18,14 @@ class FlutterBridgeConfig {
   static bool? _appEmbedded = null;
   static const eventChannel = EventChannel('flutterbridge.outgoing');
   static const methodChannel = MethodChannel('flutterbridge.incoming');
-  static FlutterBridgeMode mode = FlutterBridgeMode.PlatformChannel;
+  static BridgeMode mode = BridgeMode.PlatformChannel;
 
   static Future<void> initMode() async {
     var appEmbedded = await isEmbedded();
     if (appEmbedded) {
-      mode = FlutterBridgeMode.PlatformChannel;
+      mode = BridgeMode.PlatformChannel;
     } else {
-      mode = FlutterBridgeMode.WebSocket;
+      mode = BridgeMode.WebSocket;
     }
   }
 
@@ -59,10 +53,8 @@ class FlutterBridge {
   // The event stream exposed to all the services
   final Stream<BridgeEventInfo?> _netEvent; // = _events.receiveBroadcastStream().map(_mapEvent);
 
-  //
   // Filter the bridge event stream
   // using a specific instanceId, event
-  //
   Stream<List<int>> events({
     required String serviceName,
     required String eventName,
@@ -73,17 +65,9 @@ class FlutterBridge {
 
   static final FlutterBridge _instance = FlutterBridge._internal(FlutterBridgeConfig.mode);
 
-  FlutterBridge._internal(FlutterBridgeMode mode)
-      : invokeMethod = (buildMode == _BuildMode.release)
-            ? _invokeOnChannel
-            : (mode == FlutterBridgeMode.WebSocket)
-                ? _invokeOnSocket
-                : _invokeOnChannel,
-        _netEvent = (buildMode == _BuildMode.release)
-            ? _channelEvent
-            : (mode == FlutterBridgeMode.WebSocket)
-                ? _WebSocketChannel().events
-                : _channelEvent;
+  FlutterBridge._internal(BridgeMode mode)
+      : invokeMethod = (mode == BridgeMode.WebSocket) ? _invokeOnSocket : _invokeOnChannel,
+        _netEvent = (mode == BridgeMode.WebSocket) ? _WebSocketChannel().events : _channelEvent;
 
   factory FlutterBridge() => _instance;
 
@@ -100,7 +84,7 @@ class FlutterBridge {
     required Map<String, dynamic>? arguments,
   }) {
     print(
-      "Invoking on platform channel $operation on $service: build mode:$buildMode",
+      "Invoking on platform channel $operation on $service",
     );
     return _PlatformChannel().invokeMethod(
       service: service,
@@ -115,7 +99,7 @@ class FlutterBridge {
     required Map<String, dynamic>? arguments,
   }) {
     print(
-      "Invoking on socket $operation on $service: build mode:$buildMode",
+      "Invoking on socket $operation on $service",
     );
     return _WebSocketChannel().invokeMethod(
       service: service,
@@ -272,17 +256,17 @@ class _PlatformChannel {
           if (isAppEmbedded) {
             // Invalid call in embedded app
             completer.completeError(Exception(
-              "Flutter is running as an EMBEDDED module inside your MAUI app, but your MAUI project have the FlutnetBrigde configuration set to ${FlutterBridgeMode.WebSocket}.\n"
+              "Flutter is running as an EMBEDDED module inside your MAUI app, but your MAUI project have the FlutnetBrigde configuration set to ${BridgeMode.WebSocket}.\n"
               "If you want to run your Flutter project as a STANDALONE application, use your preferred Flutter IDE (like Visual Studio Code).\n"
-              "Otherwise configure your MAUI project to use ${FlutterBridgeMode.PlatformChannel}.\n"
+              "Otherwise configure your MAUI project to use ${BridgeMode.PlatformChannel}.\n"
               "Ensure to have the same FlutnetBrigde configuration for both Flutter and MAUI project.",
             ));
           } else {
             // The user have run flutter using visual studio code, but the configuration cannot be BridgeMode.PlatformChannel
             completer.completeError(Exception(
-              "Flutter is running as a STANDALONE application, so the FlutnetBrigde configuration must be ${FlutterBridgeMode.WebSocket}.\n"
-              "Set 'FlutterBridgeConfig.mode = ${FlutterBridgeMode.WebSocket}' in your Flutter project.\n"
-              "Remember to start your MAUI project with the same FlutterBridgeMode configuration.",
+              "Flutter is running as a STANDALONE application, so the FlutnetBrigde configuration must be ${BridgeMode.WebSocket}.\n"
+              "Set 'FlutterBridgeConfig.mode = ${BridgeMode.WebSocket}' in your Flutter project.\n"
+              "Remember to start your MAUI project with the same BridgeMode configuration.",
             ));
           }
         } on Exception catch (ex) {
@@ -567,21 +551,3 @@ class _WebSocketChannel {
     });
   }
 }
-
-enum _BuildMode {
-  release,
-  debug,
-  profile,
-}
-
-_BuildMode buildMode = (() {
-  if (const bool.fromEnvironment('dart.vm.product')) {
-    return _BuildMode.release;
-  }
-  var result = _BuildMode.profile;
-  assert(() {
-    result = _BuildMode.debug;
-    return true;
-  }());
-  return result;
-}());

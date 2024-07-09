@@ -20,7 +20,7 @@ namespace FlutterBridge.Maui
 
         private static BridgeHost? _bridge;
         private static FlutterConfig _config = FlutterConfig.Instance;
-        private static FlutterBridgeMode _bridgeMode => _config.EnableWebsocket ? FlutterBridgeMode.WebSocket : FlutterBridgeMode.PlatformChannel;
+        private static BridgeMode _bridgeMode => _config.EnableWebsocket ? BridgeMode.WebSocket : BridgeMode.PlatformChannel;
 
         public const string DEFAULT_ENGINE_ID = "default";
 

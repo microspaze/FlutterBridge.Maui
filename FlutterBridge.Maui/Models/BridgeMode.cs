@@ -1,20 +1,25 @@
-﻿using System;
+﻿using ProtoBuf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FlutterBridge.Maui
+namespace FlutterBridge.Maui.Models
 {
-    public enum FlutterBridgeMode
+    [ProtoContract]
+    public enum BridgeMode
     {
         /// <summary>
         /// Communication uses standard Flutter platform channel.
         /// </summary>
-        PlatformChannel,
+        [ProtoEnum]
+        PlatformChannel = 0,
+
         /// <summary>
         /// Communication uses WebSocket protocol.
         /// </summary>
-        WebSocket
+        [ProtoEnum]
+        WebSocket = 1
     }
 }

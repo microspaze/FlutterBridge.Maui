@@ -76,7 +76,7 @@ namespace FlutterBridge.Maui
         /// <summary>
         /// Initializes a new instance of the <see cref="BridgeHost"/> class.
         /// </summary>
-        public BridgeHost(FlutterEngine engine) : this(engine, FlutterBridgeMode.PlatformChannel)
+        public BridgeHost(FlutterEngine engine) : this(engine, BridgeMode.PlatformChannel)
         {
         }
 
@@ -84,7 +84,7 @@ namespace FlutterBridge.Maui
         /// Initializes a new instance of the <see cref="BridgeHost"/> class
         /// specifying how platform code and Flutter code communicate.
         /// </summary>
-        public BridgeHost(FlutterEngine engine, FlutterBridgeMode mode)
+        public BridgeHost(FlutterEngine engine, BridgeMode mode)
         {
             // Create the named channel for communicating with Flutter module using asynchronous method calls
             // NOTE: This channel is used to RECEIVE messages/requests FROM Flutter
@@ -105,7 +105,7 @@ namespace FlutterBridge.Maui
 
             BridgeRuntime.OnBridgeEvent += OnHostBridgeEvent;
 
-            if (Mode == FlutterBridgeMode.WebSocket)
+            if (Mode == BridgeMode.WebSocket)
             {
                 _socketService = new WebSocketService();
             }
@@ -125,7 +125,7 @@ namespace FlutterBridge.Maui
             _eventChannel.Dispose();
             _streamHandler.Dispose();
 
-            if (Mode == FlutterBridgeMode.WebSocket)
+            if (Mode == BridgeMode.WebSocket)
             {
                 _socketService?.Dispose();
                 _socketService = null;
@@ -137,7 +137,7 @@ namespace FlutterBridge.Maui
         /// <summary>
         /// Specifies how platform code and Flutter code communicate.
         /// </summary>
-        public FlutterBridgeMode Mode { get; }
+        public BridgeMode Mode { get; }
 
         private void HandleMethodCall(FlutterMethodCall call, FlutterResult callback)
         {
