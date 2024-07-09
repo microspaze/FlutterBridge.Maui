@@ -34,6 +34,14 @@ namespace FlutterBridge.Maui
             if (parentView != null && parentViewController != null)
             {
                 _flutterViewController ??= new FlutterViewController(BridgeRuntime.Engine!, null, null);
+                if (_flutterView.IsTransparen)
+                {
+                    _flutterViewController.ViewOpaque = false;
+                }                
+                if (!string.IsNullOrEmpty(_flutterView.InitialRoute))
+                {
+                    _flutterViewController.PushRoute(_flutterView.InitialRoute);
+                }
                 parentViewController.AddChildViewController(_flutterViewController);
                 _flutterViewController.DidMoveToParentViewController(parentViewController);
                 _flutterNativeView = _flutterViewController.View!;
