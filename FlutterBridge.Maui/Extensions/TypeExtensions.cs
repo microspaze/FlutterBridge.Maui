@@ -112,51 +112,6 @@ namespace FlutterBridge.Maui.Extensions
             typeof(string), typeof(object)
         };
 
-        public static bool IsFlutterSupportedType(this Type type)
-        {
-            Type t = Nullable.GetUnderlyingType(type) ?? type;
-
-            if (t.IsPrimitive)
-            {
-                return !FlutterUnsupportedPrimitiveTypes.Contains(t);
-            }
-
-            if (t.IsArray)
-            {
-                Type elementType = t.GetElementType();
-                return IsFlutterSupportedType(elementType);
-            }
-
-            if (t.IsGenericType)
-            {
-                bool implementsDictionary = t.GetInterfaces()
-                    .Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>));
-
-                //bool isDictionary = t.GetGenericTypeDefinition() == typeof(IDictionary<,>);
-
-                if (implementsDictionary)
-                {
-                    Type[] types = t.GetGenericArguments();
-                    return types[0] == typeof(string) && types[1].IsFlutterSupportedType();
-                }
-
-                bool implementsEnumerable = t.GetInterfaces()
-                    .Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
-
-                //bool isEnumerable = t.GetGenericTypeDefinition() == typeof(IEnumerable<>);
-
-                if (implementsEnumerable)
-                {
-                    Type[] types = t.GetGenericArguments();
-                    return types[0].IsFlutterSupportedType();
-                }
-
-                return false;
-            }
-
-            return t.GetCustomAttributes(typeof(BridgeDataAttribute), false).Length > 0 || FlutterSupportedBuiltinTypes.Contains(t);
-        }
-
         #endregion
 
         #region BridgeService + BridgeOperation utilities
