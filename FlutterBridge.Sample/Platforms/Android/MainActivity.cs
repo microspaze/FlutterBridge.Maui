@@ -3,8 +3,6 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
-using FlutterBinding.Embedding.Android;
-using FlutterBinding.Embedding.Engine;
 using FlutterBridge.Maui;
 
 namespace FlutterBridge.Sample
