@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>FlutterBinding.Droid</id>
+    <version>3.22.2.4</version>
+    <title>FlutterBinding.Droid</title>
+    <authors>microspaze</authors>
+    <owners>FlutterBridge</owners>
+    <projectUrl>https://github.com/microspaze/FlutterBridge.Maui</projectUrl>
+    <repository type="git" url="https://github.com/microspaze/FlutterBridge.Maui" />
+    <license type="expression">MIT</license>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Flutter SDK Binding for Android</description>
+    <tags>Flutter Maui Bridge</tags>
+    <dependencies>
+      <group targetFramework="net8.0-android34.0">
+        <dependency id="Xamarin.AndroidX.Browser" version="1.8.0.3" exclude="Build,Analyzers" />
+		<dependency id="Xamarin.AndroidX.Collection" version="1.4.0.5" exclude="Build,Analyzers" />
+		<dependency id="Xamarin.AndroidX.Collection.Jvm" version="1.4.0.4" exclude="Build,Analyzers" />
+		<dependency id="Xamarin.AndroidX.Collection.Ktx" version="1.4.0.4" exclude="Build,Analyzers" />
+		<dependency id="Xamarin.AndroidX.Fragment" version="1.7.0.2" exclude="Build,Analyzers" />
+		<dependency id="Xamarin.AndroidX.Lifecycle.Common" version="2.7.0.4" exclude="Build,Analyzers" />
+		<dependency id="Xamarin.AndroidX.Lifecycle.LiveData" version="2.7.0.4" exclude="Build,Analyzers" />
+		<dependency id="Xamarin.AndroidX.Lifecycle.Runtime" version="2.7.0.4" exclude="Build,Analyzers" />
+		<dependency id="Xamarin.AndroidX.Tracing.Tracing" version="1.2.0.4" exclude="Build,Analyzers" />
+		<dependency id="Xamarin.AndroidX.Window" version="1.2.0.5" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin/Debug/net8.0-android/FlutterBinding.Droid.aar" target="lib/net8.0-android34.0/Debug/FlutterBinding.Droid.aar" />
+    <file src="bin/Debug/net8.0-android/FlutterBinding.Droid.dll" target="lib/net8.0-android34.0/Debug/FlutterBinding.Droid.dll" />
+    <file src="bin/Debug/net8.0-android/FlutterBinding.Droid.pdb" target="lib/net8.0-android34.0/Debug/FlutterBinding.Droid.pdb" />
+    <file src="bin/Debug/net8.0-android/FlutterBinding.Droid.xml" target="lib/net8.0-android34.0/Debug/FlutterBinding.Droid.xml" />
+    <file src="bin/Release/net8.0-android/FlutterBinding.Droid.aar" target="lib/net8.0-android34.0/Release/FlutterBinding.Droid.aar" />
+    <file src="bin/Release/net8.0-android/FlutterBinding.Droid.dll" target="lib/net8.0-android34.0/Release/FlutterBinding.Droid.dll" />
+    <file src="bin/Release/net8.0-android/FlutterBinding.Droid.pdb" target="lib/net8.0-android34.0/Release/FlutterBinding.Droid.pdb" />
+    <file src="bin/Release/net8.0-android/FlutterBinding.Droid.xml" target="lib/net8.0-android34.0/Release/FlutterBinding.Droid.xml" />
+	<file src="FlutterBinding.Droid.targets" target="build/net8.0-android34.0/FlutterBinding.Droid.targets" />
+	<file src="FlutterBinding.Droid.targets" target="buildTransitive/net8.0-android34.0/FlutterBinding.Droid.targets" />
+  </files>
+</package>

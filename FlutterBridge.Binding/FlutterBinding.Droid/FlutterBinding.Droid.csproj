@@ -4,37 +4,48 @@
     <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>3.22.2.0</Version>
+    <Version>3.22.2.4</Version>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <Description>Flutter SDK Binding for Android</Description>
   </PropertyGroup>
     <ItemGroup Condition=" '$(Configuration)' != 'Release' ">
-        <EmbeddedNativeLibrary Include="..\FlutterBinding.Native\Android\debug\lib\arm64-v8a\libflutter.so">
+        <AndroidNativeLibrary Include="..\FlutterBinding.Native\Android\debug\lib\arm64-v8a\libflutter.so">
             <Link>lib\arm64-v8a\libflutter.so</Link>
-        </EmbeddedNativeLibrary>
-        <EmbeddedNativeLibrary Include="..\FlutterBinding.Native\Android\debug\lib\armeabi-v7a\libflutter.so">
+            <Abi>arm64-v8a</Abi>
+        </AndroidNativeLibrary>
+        <AndroidNativeLibrary Include="..\FlutterBinding.Native\Android\debug\lib\armeabi-v7a\libflutter.so">
             <Link>lib\armeabi-v7a\libflutter.so</Link>
-        </EmbeddedNativeLibrary>
-        <EmbeddedNativeLibrary Include="..\FlutterBinding.Native\Android\debug\lib\x86_64\libflutter.so">
+            <Abi>armeabi-v7a</Abi>
+        </AndroidNativeLibrary>
+        <AndroidNativeLibrary Include="..\FlutterBinding.Native\Android\debug\lib\x86_64\libflutter.so">
             <Link>lib\x86_64\libflutter.so</Link>
-        </EmbeddedNativeLibrary>
+            <Abi>x86_64</Abi>
+        </AndroidNativeLibrary>
         <AndroidLibrary Include="..\FlutterBinding.Native\Android\debug\flutter_embedding.jar">
             <Link>Jars\flutter_embedding.jar</Link>
         </AndroidLibrary>
     </ItemGroup>
     <ItemGroup Condition=" '$(Configuration)' == 'Release' ">
-        <EmbeddedNativeLibrary Include="..\FlutterBinding.Native\Android\release\lib\arm64-v8a\libflutter.so">
+        <AndroidNativeLibrary Include="..\FlutterBinding.Native\Android\release\lib\arm64-v8a\libflutter.so">
             <Link>lib\arm64-v8a\libflutter.so</Link>
-        </EmbeddedNativeLibrary>
-        <EmbeddedNativeLibrary Include="..\FlutterBinding.Native\Android\release\lib\armeabi-v7a\libflutter.so">
+            <Abi>arm64-v8a</Abi>
+        </AndroidNativeLibrary>
+        <AndroidNativeLibrary Include="..\FlutterBinding.Native\Android\release\lib\armeabi-v7a\libflutter.so">
             <Link>lib\armeabi-v7a\libflutter.so</Link>
-        </EmbeddedNativeLibrary>
-        <EmbeddedNativeLibrary Include="..\FlutterBinding.Native\Android\release\lib\x86_64\libflutter.so">
+            <Abi>armeabi-v7a</Abi>
+        </AndroidNativeLibrary>
+        <AndroidNativeLibrary Include="..\FlutterBinding.Native\Android\release\lib\x86_64\libflutter.so">
             <Link>lib\x86_64\libflutter.so</Link>
-        </EmbeddedNativeLibrary>
+            <Abi>x86_64</Abi>
+        </AndroidNativeLibrary>
         <AndroidLibrary Include="..\FlutterBinding.Native\Android\release\flutter_embedding.jar">
             <Link>Jars\flutter_embedding.jar</Link>
         </AndroidLibrary>
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="FlutterBinding.Droid.bat" />
+      <None Remove="FlutterBinding.Droid.nuspec" />
+      <None Remove="FlutterBinding.Droid.targets" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Xamarin.AndroidX.Browser" Version="1.8.0.3" />

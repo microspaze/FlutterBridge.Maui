@@ -42,28 +42,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Extensions\ConversionExtensions.Android.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
+		<PackageReference Include="FlutterBinding.Droid" Version="3.22.2.4" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.60" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.60" />
 		<PackageReference Include="protobuf-net" Version="3.2.30" />
 	</ItemGroup>
 
-    <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-        <ProjectReference Include="..\FlutterBridge.Binding\FlutterBinding.Droid\FlutterBinding.Droid.csproj" />
-    </ItemGroup>
-
-    <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
-        <ProjectReference Include="..\FlutterBridge.Binding\FlutterBinding.iOS\FlutterBinding.iOS.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="WebSocket\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Include="Platforms\Android\Extensions\ConversionExtensions.cs" />
-    </ItemGroup>
 </Project>

@@ -1,0 +1,1 @@
+nuget pack FlutterBinding.Droid.nuspec -OutputDirectory "bin"
