@@ -12,7 +12,7 @@ void main() async {
   // VSCode  (ctrl+shift+p: Debug: Attach Flutter on Device or terminal: flutter attach)
   // IntelliJ (click Flutter Attach button)
   // Method 1: manual set mode then runApp
-  // FlutterBridgeConfig.mode = FlutterBridgeMode.PlatformChannel;
+  // FlutterBridgeConfig.mode = BridgeMode.PlatformChannel;
   // runApp(MyApp());
   // Method 2: auto init mode then runApp when init completed
   WidgetsFlutterBinding.ensureInitialized();
