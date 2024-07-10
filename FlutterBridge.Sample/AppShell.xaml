@@ -8,13 +8,13 @@
     Title="FlutterBridge.Sample">
 
     <TabBar>
-        <ShellContent Icon="flutter_bridge_round.png"
-            Title="Flutter Page"
-            ContentTemplate="{DataTemplate local:FlutterPage}"
-            Route="FlutterPage" />
-        <ShellContent Icon="flutter_bridge_round.png"
-            Title="Maui Page"
-            ContentTemplate="{DataTemplate local:MainPage}"
-            Route="MainPage" />
+        <ShellContent Icon="appicon.png"
+                      Title="Flutter Page"
+                      ContentTemplate="{DataTemplate local:FlutterPage}"
+                      Route="FlutterPage" />
+        <ShellContent Icon="appicon.png"
+                      Title="Maui Page"
+                      ContentTemplate="{DataTemplate local:MainPage}"
+                      Route="MainPage" />
     </TabBar>
 </Shell>
