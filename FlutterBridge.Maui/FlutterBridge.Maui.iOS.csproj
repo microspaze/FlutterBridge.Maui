@@ -10,6 +10,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<EnableAssemblyILStripping>false</EnableAssemblyILStripping>
+        <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
@@ -40,8 +41,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="FlutterBinding.iOS" Version="3.22.2.3" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.60" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.60" />
 		<PackageReference Include="protobuf-net" Version="3.2.30" />
 	</ItemGroup>
 </Project>
