@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0-ios;</TargetFrameworks>
+		<TargetFrameworks>net8.0-android;net8.0-ios;</TargetFrameworks>
 		<!--<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>-->
 		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
 		<!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
@@ -19,11 +19,10 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<EnableAssemblyILStripping>false</EnableAssemblyILStripping>
         <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
 
-		<!-- Display name -->
-		<ApplicationTitle>FlutterBridge</ApplicationTitle>
+        <!-- Display name -->
+		<ApplicationTitle>FlutterBridge.Sample</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.i7chi.flutterbridge.sample</ApplicationId>
@@ -32,23 +31,17 @@
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">12.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
-		<Configurations>Debug;Release</Configurations>
-		<Platforms>AnyCPU;Device</Platforms>
 		<!--<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>-->
-	</PropertyGroup>
-
-	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-		<CreatePackage>false</CreatePackage>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon.png" Color="#512BD4" />
+		<MauiIcon Include="Resources\AppIcon\appicon.png" />
 
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
@@ -65,24 +58,22 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AndroidResource Remove="Flutter\**" />
+	  <AndroidResource Remove="Platforms\MacCatalyst\**" />
+	  <AndroidResource Remove="Platforms\Windows\**" />
 	  <Compile Remove="Flutter\**" />
-	  <Compile Remove="Platforms\Android\**" />
 	  <Compile Remove="Platforms\MacCatalyst\**" />
 	  <Compile Remove="Platforms\Windows\**" />
 	  <EmbeddedResource Remove="Flutter\**" />
-	  <EmbeddedResource Remove="Platforms\Android\**" />
 	  <EmbeddedResource Remove="Platforms\MacCatalyst\**" />
 	  <EmbeddedResource Remove="Platforms\Windows\**" />
 	  <MauiCss Remove="Flutter\**" />
-	  <MauiCss Remove="Platforms\Android\**" />
 	  <MauiCss Remove="Platforms\MacCatalyst\**" />
 	  <MauiCss Remove="Platforms\Windows\**" />
 	  <MauiXaml Remove="Flutter\**" />
-	  <MauiXaml Remove="Platforms\Android\**" />
 	  <MauiXaml Remove="Platforms\MacCatalyst\**" />
 	  <MauiXaml Remove="Platforms\Windows\**" />
 	  <None Remove="Flutter\**" />
-	  <None Remove="Platforms\Android\**" />
 	  <None Remove="Platforms\MacCatalyst\**" />
 	  <None Remove="Platforms\Windows\**" />
 	</ItemGroup>
@@ -92,26 +83,34 @@
     </ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="FlutterBridge.Maui" Version="1.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
-		<PackageReference Include="protobuf-net.BuildTools" Version="3.2.33">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+        <PackageReference Include="protobuf-net.BuildTools" Version="3.2.33">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
 	</ItemGroup>
 
-    <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
-		<NativeReference Condition=" '$(Configuration)' != 'Release' And '$(Platform)' != 'Device' " Include="Flutter/flutter_module/build/ios/framework/Debug/App.xcframework">
-			<Kind>Framework</Kind>
-			<SmartLink>False</SmartLink>
-		</NativeReference>
-        <NativeReference Condition=" '$(Configuration)' == 'Release' Or '$(Platform)' == 'Device' " Include="Flutter/flutter_module/build/ios/framework/Release/App.xcframework">
-            <Kind>Framework</Kind>
-			<SmartLink>False</SmartLink>
-        </NativeReference>
+    <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+        <PackageReference Include="Xamarin.AndroidX.Activity" Version="1.9.0.3" />
+        <PackageReference Include="Xamarin.AndroidX.Activity.Ktx" Version="1.9.0.3" />
+        <AndroidLibrary Condition="'$(Configuration)' == 'Debug'" Include="Flutter\flutter_module\build\host\outputs\repo\com\example\flutter_module\flutter_debug\1.0\flutter_debug-1.0.aar" Bind="false">
+            <Link>Platforms\Android\Jars\flutter_debug-1.0.aar</Link>
+        </AndroidLibrary>
+        <AndroidLibrary Condition="'$(Configuration)' == 'Release'" Include="Flutter\flutter_module\build\host\outputs\repo\com\example\flutter_module\flutter_release\1.0\flutter_release-1.0.aar" Bind="false">
+            <Link>Platforms\Android\Jars\flutter_release-1.0.aar</Link>
+        </AndroidLibrary>
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\FlutterBridge.Maui\FlutterBridge.Maui.iOS.Local.csproj" />
+    <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+        <NativeReference Condition=" '$(Configuration)' != 'Release' And '$(Platform)' != 'Device' " Include="Flutter/flutter_module/build/ios/framework/Debug/App.xcframework">
+            <Kind>Framework</Kind>
+            <SmartLink>False</SmartLink>
+        </NativeReference>
+        <NativeReference Condition=" '$(Configuration)' == 'Release' Or '$(Platform)' == 'Device' " Include="Flutter/flutter_module/build/ios/framework/Release/App.xcframework">
+            <Kind>Framework</Kind>
+            <SmartLink>False</SmartLink>
+        </NativeReference>
     </ItemGroup>
 
 </Project>

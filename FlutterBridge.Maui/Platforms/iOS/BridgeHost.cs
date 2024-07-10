@@ -57,7 +57,7 @@ namespace FlutterBridge.Maui
             /// Any other value, including null, are emitted as successful events.
             /// </param>
             /// <returns>A <see cref="FlutterError"/> instance, if setup fails.</returns>
-            public FlutterError OnListen(NSObject arguments, FlutterEventSink events)
+            public FlutterError OnListen(NSObject? arguments, FlutterEventSink events)
             {
                 _events = events;
                 return null;

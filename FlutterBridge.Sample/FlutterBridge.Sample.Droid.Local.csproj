@@ -19,6 +19,7 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+        <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
 
 		<!-- Display name -->
 		<ApplicationTitle>FlutterBridge</ApplicationTitle>
@@ -85,26 +86,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.60" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.60" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
-		<PackageReference Include="protobuf-net" Version="3.2.30" />
 		<PackageReference Include="protobuf-net.BuildTools" Version="3.2.33">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Xamarin.AndroidX.Activity" Version="1.9.0.3" />
-		<PackageReference Include="Xamarin.AndroidX.Activity.Ktx" Version="1.9.0.3" />
-		<PackageReference Include="Xamarin.AndroidX.Browser" Version="1.8.0.3" />
-		<PackageReference Include="Xamarin.AndroidX.Collection" Version="1.4.0.5" />
-		<PackageReference Include="Xamarin.AndroidX.Collection.Jvm" Version="1.4.0.4" />
-		<PackageReference Include="Xamarin.AndroidX.Collection.Ktx" Version="1.4.0.4" />
-		<PackageReference Include="Xamarin.AndroidX.Fragment" Version="1.7.0.2" />
-        <PackageReference Include="Xamarin.AndroidX.Lifecycle.Common" Version="2.7.0.4" />
-        <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.7.0.4" />
-        <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.7.0.4" />
-		<PackageReference Include="Xamarin.AndroidX.Tracing.Tracing" Version="1.2.0.4" />
-		<PackageReference Include="Xamarin.AndroidX.Window" Version="1.2.0.5" />
 	</ItemGroup>
 
     <ItemGroup>
@@ -112,6 +98,8 @@
 	</ItemGroup>
 
     <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+		<PackageReference Include="Xamarin.AndroidX.Activity" Version="1.9.0.3" />
+		<PackageReference Include="Xamarin.AndroidX.Activity.Ktx" Version="1.9.0.3" />
         <AndroidLibrary Condition="'$(Configuration)' == 'Debug'" Include="Flutter\flutter_module\build\host\outputs\repo\com\example\flutter_module\flutter_debug\1.0\flutter_debug-1.0.aar" Bind="false">
             <Link>Platforms\Android\Jars\flutter_debug-1.0.aar</Link>
         </AndroidLibrary>
