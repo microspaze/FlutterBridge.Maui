@@ -1,6 +1,6 @@
 name: flutter_maui_bridge
 description: A simple dart bridge library to link flutter and .net maui.
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/microspaze
 repository: https://github.com/microspaze/FlutterBridge.Maui
 

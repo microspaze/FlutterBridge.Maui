@@ -1,1 +1,1 @@
-## [1.0.0] - First Release to Pub.dev
+## [1.0.1] - First Release to Pub.dev
