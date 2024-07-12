@@ -1,0 +1,54 @@
+// protoc --plugin=protoc-gen-dart=C:\Tools\protoc-gen-dart.bat --dart_out=./lib ./proto/*.proto
+
+syntax = "proto3";
+
+option csharp_namespace="FlutterBridge.Sample.Services";
+
+message AnimalListValue {
+    repeated Animal value = 1;
+}
+
+message Animal {
+    string name = 1;
+    string birthday = 2;
+    bytes image = 3;
+    double weight = 4;
+    double height = 5;
+    string type = 6;
+    //warning: oneof subtype {...} can not be decoded in dart, use optional instead
+    optional Butterfly butterfly = 16;
+    optional Elephant elephant = 17;
+    optional Monkey monkey = 18;
+    optional Parrot parrot = 19;
+    optional Rhino rhino = 20;
+    optional Snake snake = 21;
+    optional Tiger tiger = 22;
+}
+
+message Butterfly {
+    double antenna_length = 1;
+}
+
+message Elephant {
+    double trunk_length = 1;
+}
+
+message Monkey {
+    int32 smart_level = 1;
+}
+
+message Parrot {
+    int32 beak_length = 1;
+}
+
+message Rhino {
+    double horn_length = 1;
+}
+
+message Snake {
+    int32 venom_level = 1;
+}
+
+message Tiger {
+    double claw_length = 1;
+}

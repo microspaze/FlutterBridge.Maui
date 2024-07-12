@@ -8,7 +8,8 @@ namespace FlutterBridge.Sample
     {
         private static readonly Dictionary<string, object> _bridgeServices = new()
         {
-            { "counter_service", new CounterService() }
+            { "animals_service", new AnimalsService() },
+            { "counter_service", new CounterService() },
         };
 
         public static MauiApp CreateMauiApp()
@@ -18,6 +19,7 @@ namespace FlutterBridge.Sample
                 .UseMauiApp<App>()
                 .UseFlutterBridge((config) =>
                 {
+                    config.InitialRoute = "/animals";
                     config.BridgeServices = _bridgeServices;
                     config.EnableWebsocket = true;
                 })

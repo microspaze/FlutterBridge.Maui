@@ -4,7 +4,7 @@ import 'package:fixnum/fixnum.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_maui_bridge/flutter_bridge.dart';
 import 'package:flutter_maui_bridge/proto/flutter_maui_bridge.pb.dart';
-import 'package:flutter_module/proto/flutter_module.pb.dart';
+import '../proto/flutter_module.pb.dart';
 
 class CounterService {
   static const String _serviceName = "counter_service";

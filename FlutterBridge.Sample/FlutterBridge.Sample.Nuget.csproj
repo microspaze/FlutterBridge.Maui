@@ -115,4 +115,6 @@
         </NativeReference>
     </ItemGroup>
 
+    <ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionFlutterBridgeSampleNugetHideInfoBar="True" /></VisualStudio></ProjectExtensions>
+
 </Project>
