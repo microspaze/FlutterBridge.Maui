@@ -16,6 +16,7 @@ message Animal {
     double height = 5;
     string type = 6;
     //warning: oneof subtype {...} can not be decoded in dart, use optional instead
+    //InvalidProtocolBufferException: Protocol message contained an invalid tag (zero).
     optional Butterfly butterfly = 16;
     optional Elephant elephant = 17;
     optional Monkey monkey = 18;
